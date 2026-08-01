@@ -1,0 +1,263 @@
+curl --url ^"https://www.naukri.com/jobapi/v3/search?noOfResults=20^&urlType=search_by_keyword^&searchType=adv^&keyword=software^%^20developer^&sort=f^&pageNo=1^&experience=0^&cityTypeGid=220^&cityTypeGid=350^&k=software^%^20developer^&qproductJobSource=2^&naukriCampus=true^&nignbevent_src=jobsearchDeskGNB^&experience=0^&cityTypeGid=220^&cityTypeGid=350^&seoKey=software-developer-jobs^&src=sortby^&latLong=28.61113355895745_77.4225588820066^&sid=17854845093631532_2^" ^
+  -H ^"accept: application/json^" ^
+  -H ^"accept-language: en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,hi;q=0.6,es;q=0.5^" ^
+  -H ^"appid: 109^" ^
+  -H ^"authorization: Bearer eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiUlM1MTIifQ.eyJkZXZpY2VUeXBlIjoiZDNza3QwcCIsInVkX3Jlc0lkIjoyNjQ5MTAyMjYsInN1YiI6IjI3NTkzODg1OCIsInVkX3VzZXJuYW1lIjoibmlzaGFudHNpbmdoMjcwMjIwMDRAZ21haWwuY29tIiwidWRfaXNFbWFpbCI6dHJ1ZSwiaXNzIjoiSW5mb0VkZ2UgSW5kaWEgUHZ0LiBMdGQuIiwidXNlckFnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE1MC4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiaXBBZHJlc3MiOiIyNDAxOjQ5MDA6MWM2Mzo3ZjliOjY0NzM6ODQ2NzpkOWEwOjJkNDIiLCJ1ZF9pc1RlY2hPcHNMb2dpbiI6ZmFsc2UsInVzZXJJZCI6Mjc1OTM4ODU4LCJzdWJVc2VyVHlwZSI6IiIsInVzZXJTdGF0ZSI6IkFVVEhFTlRJQ0FURUQiLCJ1ZF9pc1BhaWRDbGllbnQiOmZhbHNlLCJ1ZF9lbWFpbFZlcmlmaWVkIjp0cnVlLCJ1c2VyVHlwZSI6ImpvYnNlZWtlciIsInNlc3Npb25TdGF0VGltZSI6IjIwMjYtMDctMjhUMTc6NTk6MjIiLCJ1ZF9lbWFpbCI6Im5pc2hhbnRzaW5naDI3MDIyMDA0QGdtYWlsLmNvbSIsInVzZXJSb2xlIjoidXNlciIsImV4cCI6MTc4NTQ4ODA3OCwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3ODU0ODQ0NzgsImp0aSI6IjlkZjZkOGRiZTkwZTQ5YzBiYTI3MTRkNjM4NmZiNzcxIiwicG9kSWQiOiJwcm9kLTViYmM2YmI1OWItcms0a3YifQ.L5-Wk74_3Sg0pS-vYZPhX1-y4-XP4-_dBFdCvWCHYgItEugbMcrhw5Hlstxjy_CTu35J7teJszKL7SUMEpztpTTg-D1-IvYZug9cafg_m2ac9VZ_P61wxhiRyqT8FYYX2fIS0q487DJyjSZf2WYnUKlp6YmuKslHN4WtvOsuEivY8S2Hy-jm-I9zUZIk0tszJGIAOHuvz-BBn3gOeuwIQHBaUxPL1xLxTlbZdZI8csOMW-NPByTWxi5QJjsPbI7GQwO7Z6VTVo_YI4Idsvc5eCD_QKi3LLUj3xcV1oeUmJGG-puRXzajfTwryrnAGlqSRmTjPZnbbbozVG8hNgnCtg^" ^
+  -H ^"cache-control: no-cache^" ^
+  -H ^"clientid: d3skt0p^" ^
+  -H ^"content-type: application/json^" ^
+  -b ^"_t_ds=3c3247161758456329-413c324716-03c324716; J=0; _fbp=fb.1.1758456328603.191396864772308810; loginPreference=null_null; lastLoggedInUser=9599841680CmaLDw7Sro_mobUser; PS=9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7; test=naukri.com; ninjas_new_marketing_token=a5fc2c0440c1400f805d5ca18c24088d; _ff_ds=0189586001768470144-83634B688DB6-7AB3EE6D2AF9; _hjSessionUser_631534=eyJpZCI6Ijk1ODRlMzBiLTBlNTctNWU0Yy1iMmZlLTM5ZDIwNzJhNjY0NyIsImNyZWF0ZWQiOjE3NzE1MjMwOTU2NjEsImV4aXN0aW5nIjpmYWxzZX0=; intercom-device-id-rs5r15ps=e489d5a5-b954-451f-9822-260a3c39d756; _ga_9PX6CV4KND=GS2.1.s1771523095^$o1^$g1^$t1771523206^$j60^$l0^$h0; _ga=GA1.1.700250051.1758456329; ph_phc_s4aJa5RpiiZlHbbxy4Y1Btjhosozg9ECrSuJNVrvZuP_posthog=^%^7B^%^22distinct_id^%^22^%^3A4531146^%^7D; _ga_JCSR1LRE3X=GS2.1.s1771523273^$o6^$g0^$t1771523275^$j58^$l0^$h0; _ga_7TYVEWTVRG=GS2.1.s1771523273^$o6^$g0^$t1771523275^$j58^$l0^$h0; __insp_wid=1013263782; __insp_slim=1773088021949; __insp_nv=true; __insp_targlpu=aHR0cHM6Ly93d3cubmF1a3JpLmNvbS9uYXVrcmkzNjAtcHJvP3V0bVRlcm09TjM2MFByb19OQyZ1dG1Db250ZW50PVByZVB1cmNoYXNlVjEwJnV0bV9jYW1wYWlnbj1uYXVrcmkzNjBwcm9fcHJlX3B1cmNoYXNlJnV0bV9tZWRpdW09bm90aWZpY2F0aW9uX2NlbnRlciZ1dG1fY29udGVudD00MDAwX25hdWtyaTM2MHByb19wcmVfcHVyY2hhc2Vfbm9kZTFfc3RhcnRfOGMyZiZ1dG1fdGVybT05NjQyNDUmaWQ9ZmM5NzFkYmItZDhiOC00NmJlLTliY2ItOTcwNmYyNzhlM2UxJmNyZWF0ZWRBdD0yMDI2LTAzLTEwVDAwOjIxOjMyLjAwMA^%^3D^%^3D; __insp_targlpt=TmF1a3JpIDM2MCBQcm8gYnkgTmF1a3JpLmNvbQ^%^3D^%^3D; __insp_norec_sess=true; nauk_cs=default; _gcl_au=1.1.376741507.1777997770.289998575.1779561882.1779563169; _ga_T749QGK6MQ=GS2.1.s1779561786^$o3^$g1^$t1779563169^$j60^$l0^$h0; __gads=ID=b882f75672e5cd76:T=1758456507:RT=1780862721:S=ALNI_MZbN_Gkk21lhwBbJeOwq1PdigRjSw; __gpi=UID=0000119952adac3f:T=1758456507:RT=1780862721:S=ALNI_MZAUrlAxT7yOTrewE_4RhKKmgb2OA; __eoi=ID=46b1ef154ef8508f:T=1774372428:RT=1780862721:S=AA-AfjaJIU5Sm6kpiP6RnxnAZiff; _ga_K2YBNZVRLL=GS2.1.s1780862700^$o93^$g1^$t1780862803^$j17^$l0^$h0; geo_country=IN; ninja_auth_token=c3ff1c2fb9ee8dfa83e239997a428a9f; MYNAUKRI^[UNID^]=5f0d2f6f2229437c9f42d254c0f22a83; g_state=^{^\^"i_l^\^":0,^\^"i_ll^\^":1785241693074,^\^"i_b^\^":^\^"VESNPRcwE4suef8a06v/Tn3ttL/24UAkq3bMVfAO4NI^\^",^\^"i_e^\^":^{^\^"enable_itp_optimization^\^":24^},^\^"i_et^\^":1785241693074^}; nauk_rt=9df6d8dbe90e49c0ba2714d6386fb771; nauk_sid=9df6d8dbe90e49c0ba2714d6386fb771; nauk_otl=9df6d8dbe90e49c0ba2714d6386fb771; NKWAP=9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7~9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7~1~0; nauk_ps=campus; nauk_at=eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiUlM1MTIifQ.eyJkZXZpY2VUeXBlIjoiZDNza3QwcCIsInVkX3Jlc0lkIjoyNjQ5MTAyMjYsInN1YiI6IjI3NTkzODg1OCIsInVkX3VzZXJuYW1lIjoibmlzaGFudHNpbmdoMjcwMjIwMDRAZ21haWwuY29tIiwidWRfaXNFbWFpbCI6dHJ1ZSwiaXNzIjoiSW5mb0VkZ2UgSW5kaWEgUHZ0LiBMdGQuIiwidXNlckFnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE1MC4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiaXBBZHJlc3MiOiIyNDAxOjQ5MDA6MWM2Mzo3ZjliOjY0NzM6ODQ2NzpkOWEwOjJkNDIiLCJ1ZF9pc1RlY2hPcHNMb2dpbiI6ZmFsc2UsInVzZXJJZCI6Mjc1OTM4ODU4LCJzdWJVc2VyVHlwZSI6IiIsInVzZXJTdGF0ZSI6IkFVVEhFTlRJQ0FURUQiLCJ1ZF9pc1BhaWRDbGllbnQiOmZhbHNlLCJ1ZF9lbWFpbFZlcmlmaWVkIjp0cnVlLCJ1c2VyVHlwZSI6ImpvYnNlZWtlciIsInNlc3Npb25TdGF0VGltZSI6IjIwMjYtMDctMjhUMTc6NTk6MjIiLCJ1ZF9lbWFpbCI6Im5pc2hhbnRzaW5naDI3MDIyMDA0QGdtYWlsLmNvbSIsInVzZXJSb2xlIjoidXNlciIsImV4cCI6MTc4NTQ4ODA3OCwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3ODU0ODQ0NzgsImp0aSI6IjlkZjZkOGRiZTkwZTQ5YzBiYTI3MTRkNjM4NmZiNzcxIiwicG9kSWQiOiJwcm9kLTViYmM2YmI1OWItcms0a3YifQ.L5-Wk74_3Sg0pS-vYZPhX1-y4-XP4-_dBFdCvWCHYgItEugbMcrhw5Hlstxjy_CTu35J7teJszKL7SUMEpztpTTg-D1-IvYZug9cafg_m2ac9VZ_P61wxhiRyqT8FYYX2fIS0q487DJyjSZf2WYnUKlp6YmuKslHN4WtvOsuEivY8S2Hy-jm-I9zUZIk0tszJGIAOHuvz-BBn3gOeuwIQHBaUxPL1xLxTlbZdZI8csOMW-NPByTWxi5QJjsPbI7GQwO7Z6VTVo_YI4Idsvc5eCD_QKi3LLUj3xcV1oeUmJGG-puRXzajfTwryrnAGlqSRmTjPZnbbbozVG8hNgnCtg; is_login=1; failLoginCount=0; _clck=xz9zme^%^5E2^%^5Eg87^%^5E0^%^5E2090; _clsk=1jmm1i5^%^5E1785484482150^%^5E1^%^5E1^%^5Ey.clarity.ms^%^2Fcollect; bm_mi=37586D5EB5400066A9B385FFB0AC5FB9~YAAQxwVaaP644ayfAQAAU3krtwCuQZzNDfUcyv65jeaES6okoFT+dWs7Fcw5kQiLtHP/MbLBxemJB3CwBEYCwkElvpvpEMJEv+s+VkApX3b9zXhRRhLwvi+aCSSaBrs/Rrma3lnOjkp3sgtwA3W5xCRafEAwHp1ACWCiQxfXUzjs0IFHizec60ksEkvkuN69sy8DCeXq30k0l5vZB4cIhSKnVwedajCQXO9gEVc6dQxRg1XgzmG596mDi+wPkTB7iRK1RTMzS1T+KcCkpjf/awR7EoQ6oABRUG3ff6Q2hCrj6uIltpFXNBnkhXc41Upibj5bk97lbrimaXe9ZZe1CMyVV+Em~1; HOWTORT=ul=1785484506589^&r=https^%^3A^%^2F^%^2Fwww.naukri.com^%^2Fmnjuser^%^2Fhomepage^&hd=1785484506862; ak_bmsc=BDE446A3DA97169BE635002DC0E254C6~000000000000000000000000000000~YAAQxwVaaFG54ayfAQAAP34rtwBgoUjfe+6y6sXrTnlE87a3TQne2QtCcbdjcO+IU6h91YGwyhvs6zbUG6CPjFewjqrsTdSo+nNIBRTt2+Qkgw6j/kANOXF20+73Ki4M9odyheOfL4xdwkdb0Ch0ffNE6Z4UPFYwI7Q5DfMmxMqyZLhMM8W7yVaqpCFjTRneQ2RyzBtUvI1fjNDeBnxrvvNDJyF2qp6IE6WGkTVMy3RVuORNHjmxT+4q8ZZhuZKWm1QxKeEtwpMdN/IhCTOEf2JnrGC2+ylnwFlwkfBBWgKBWdB6xwpxBkgegCaf1hI9SlSOQxDdNr1r6jtOK2l33YHJvQa282OQ+yuCxKEq9F/JhfDove3z8yN4EJZElfDPY1kpzKFJPnmdS8gmjdsAME4C9XgHy2u2aOWnZ9VOJ2L2VhLAke7gjKCOTz4KYBUCzPgYAZ4MQtDCseikLrTkJdc74hPlLoQJNoeqCWrh0FqbuIFoAujQz9OIsFiDfoS6ohBwvIK/egr+Bg9nQ2ywyw5WlvLZ7jZrM6oqq77qSk+vYw==; bm_sv=7A8E10C2413EB91E17DE442FBB55DEC5~YAAQxwVaaD274ayfAQAAPKMrtwAf9Ij92SAl6uNs19QM4jsMj5KP4iaxuKiauLliwSd8mEB+tBE5vxIsdk2lEUsdFVHup/A1cJmQtmi9XjtmVLV2y/nVpL5cXIxbJCGqYGF50k543BpkHtovGr8CDBw14GqE28jUcBUbhD9eq8zVvEg46dGwTLgr09DO9f9NADesdKnxAtmKMuKLhXSE1YvHKW0KZKibX2rCc0CUO7QOoSevhonTGkWbBe2Lh994yA==~1^" ^
+  -H ^"gid: LOCATION,INDUSTRY,EDUCATION,FAREA_ROLE^" ^
+  -H ^"nkparam: Ya+eOeN2nUlCJBJu0Cgr3Qp9VnQi5zIMYsCLmuf03upbUgwxWRVldQrOn4ZdQFJV30JnpDtC5JD+Hhh6PtCyDg==^" ^
+  -H ^"pragma: no-cache^" ^
+  -H ^"priority: u=1, i^" ^
+  -H ^"referer: https://www.naukri.com/software-developer-jobs?k=software^%^20developer^&qproductJobSource=2^&naukriCampus=true^&nignbevent_src=jobsearchDeskGNB^&experience=0^&cityTypeGid=220^&cityTypeGid=350^" ^
+  -H ^"sec-ch-ua: ^\^"Not=A?Brand^\^";v=^\^"99^\^", ^\^"Google Chrome^\^";v=^\^"151^\^", ^\^"Chromium^\^";v=^\^"151^\^"^" ^
+  -H ^"sec-ch-ua-mobile: ?0^" ^
+  -H ^"sec-ch-ua-platform: ^\^"Windows^\^"^" ^
+  -H ^"sec-fetch-dest: empty^" ^
+  -H ^"sec-fetch-mode: cors^" ^
+  -H ^"sec-fetch-site: same-origin^" ^
+  -H ^"systemid: Naukri^" ^
+  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36^"
+
+
+now we have to grab this 
+"jdURL": "/job-listings-sales-coordinator-rollform-equipment-noida-ghaziabad-0-to-5-years-010826010386",
+for every job
+response - 
+"jobDetails": [
+        {
+            "title": "Sales Coordinator",
+            "logoPath": "https://img.naukimg.com/logo_images/groups/v1/4621991.gif",
+            "logoPathV3": "https://img.naukimg.com/logo_images/groups/v1/4621991.gif",
+            "jobId": "010826010386",
+            "currency": "INR",
+            "footerPlaceholderLabel": "Few Hours Ago",
+            "footerPlaceholderColor": "green",
+            "companyName": "Rollform Equipment",
+            "isSaved": false,
+            "tagsAndSkills": "Payment Collection,Data Management,MS Office,Logistics Coordination,Quotation,Customer Support,Sales,Email Management",
+            "placeholders": [
+                {
+                    "type": "experience",
+                    "label": "0-5 Yrs"
+                },
+                {
+                    "type": "salary",
+                    "label": "2-6.5 Lacs PA"
+                },
+                {
+                    "type": "location",
+                    "label": "Noida, Ghaziabad"
+                }
+            ],
+            "companyId": 3507586,
+            "jdURL": "/job-listings-sales-coordinator-rollform-equipment-noida-ghaziabad-0-to-5-years-010826010386",
+            "staticUrl": "rollform-equipment-jobs-careers-3507586",
+            "ambitionBoxData": {
+                "Url": "https://www.ambitionbox.com/reviews/rollform-equipment-reviews?utm_campaign=srp_ratings&utm_medium=desktop&utm_source=naukri&cvid=5f0d2f6f2229437c9f42d254c0f22a83",
+                "ReviewsCount": 7,
+                "AggregateRating": "4.7",
+                "Title": "Rollform Equipment Reviews by Employees"
+            },
+            "jobDescription": "Working Hours- 9:00 AM to 6:30 PM,Monday to Saturday. Qualification - BTech + MBA/ B Tech <br><br> BTech + MBA (Mechanical preferably)<br><br>Excellent written and spoken English - this is a primary requirement for the role<br><br>Compensation commensurate with qualifications and experience",
+            "showMultipleApply": true,
+            "groupId": 4621991,
+            "isTopGroup": 0,
+            "createdDate": 1785580279225,
+            "mode": "jp",
+            "board": "1",
+            "salaryDetail": {
+                "minimumSalary": 200000,
+                "maximumSalary": 650000,
+                "currency": "INR",
+                "hideSalary": false,
+                "variablePercentage": 0.0
+            },
+            "experienceText": "0-5 Yrs",
+            "minimumExperience": "0",
+            "maximumExperience": "5",
+            "applyByTime": "8:01 PM",
+            "companyApplyJob": false,
+            "walkinJob": false,
+            "segmentedTemplateId": "Template1",
+            "questionnaireIdPresent": true,
+            "roleCategoryGid": "1017",
+            "todaysJob": true,
+            "jobAgentEligle": true,
+            "saved": false
+        },
+
+now the detail page curl and response
+
+curl --url ^"https://www.naukri.com/jobapi/v2/search/simjobs/010826007037?noOfResults=6^&searchType=sim^&naukriCampus=true^" ^
+  -H ^"accept: application/json^" ^
+  -H ^"accept-language: en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,hi;q=0.6,es;q=0.5^" ^
+  -H ^"appid: 121^" ^
+  -H ^"authorization: Bearer eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiUlM1MTIifQ.eyJkZXZpY2VUeXBlIjoiZDNza3QwcCIsInVkX3Jlc0lkIjoyNjQ5MTAyMjYsInN1YiI6IjI3NTkzODg1OCIsInVkX3VzZXJuYW1lIjoibmlzaGFudHNpbmdoMjcwMjIwMDRAZ21haWwuY29tIiwidWRfaXNFbWFpbCI6dHJ1ZSwiaXNzIjoiSW5mb0VkZ2UgSW5kaWEgUHZ0LiBMdGQuIiwidXNlckFnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE1MC4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiaXBBZHJlc3MiOiIyNDAxOjQ5MDA6MWM2Mzo3ZjliOjY0NzM6ODQ2NzpkOWEwOjJkNDIiLCJ1ZF9pc1RlY2hPcHNMb2dpbiI6ZmFsc2UsInVzZXJJZCI6Mjc1OTM4ODU4LCJzdWJVc2VyVHlwZSI6IiIsInVzZXJTdGF0ZSI6IkFVVEhFTlRJQ0FURUQiLCJ1ZF9pc1BhaWRDbGllbnQiOmZhbHNlLCJ1ZF9lbWFpbFZlcmlmaWVkIjp0cnVlLCJ1c2VyVHlwZSI6ImpvYnNlZWtlciIsInNlc3Npb25TdGF0VGltZSI6IjIwMjYtMDctMjhUMTc6NTk6MjIiLCJ1ZF9lbWFpbCI6Im5pc2hhbnRzaW5naDI3MDIyMDA0QGdtYWlsLmNvbSIsInVzZXJSb2xlIjoidXNlciIsImV4cCI6MTc4NTYwMzYzNiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3ODU2MDAwMzYsImp0aSI6IjlkZjZkOGRiZTkwZTQ5YzBiYTI3MTRkNjM4NmZiNzcxIiwicG9kSWQiOiJwcm9kLTViYmM2YmI1OWItbnp2ajkifQ.t2waTh9b4NWLfl-2UCjGyfgQLiExG3OCx-1Mbj9Cfbg-xYLiby96qtxHdqB6hLD7N_sWxHTyWjOSc42zuLdeEN9n-wjBUwZJLY-1CLkakQcm-m-fgDa6c8XygPuZqjzCyAaq1MkRkUIsBW1IYOJ0OZVRXEvgv1B9t4ve6zSj0g1_-bBkozZGIfevyxYaNbuh6Qp2Dhx7ymnjHXDrHDVOH6Ya0Tkwr342gyNp3H-c5XOa6tlTijjDuEL1i4oA-3Qlr0NQGRmZYQc1XulnDEx2t0P7cCxrOJeKtekUf11DXWTYoitqb4VN8j-XO1rm_AbR_gfgc_c8AzsNYapeMDOoJQ^" ^
+  -H ^"cache-control: no-cache^" ^
+  -H ^"clientid: d3skt0p^" ^
+  -H ^"content-type: application/json^" ^
+  -b ^"_t_ds=3c3247161758456329-413c324716-03c324716; J=0; _fbp=fb.1.1758456328603.191396864772308810; loginPreference=null_null; lastLoggedInUser=9599841680CmaLDw7Sro_mobUser; PS=9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7; test=naukri.com; ninjas_new_marketing_token=a5fc2c0440c1400f805d5ca18c24088d; _ff_ds=0189586001768470144-83634B688DB6-7AB3EE6D2AF9; _hjSessionUser_631534=eyJpZCI6Ijk1ODRlMzBiLTBlNTctNWU0Yy1iMmZlLTM5ZDIwNzJhNjY0NyIsImNyZWF0ZWQiOjE3NzE1MjMwOTU2NjEsImV4aXN0aW5nIjpmYWxzZX0=; intercom-device-id-rs5r15ps=e489d5a5-b954-451f-9822-260a3c39d756; _ga_9PX6CV4KND=GS2.1.s1771523095^$o1^$g1^$t1771523206^$j60^$l0^$h0; _ga=GA1.1.700250051.1758456329; ph_phc_s4aJa5RpiiZlHbbxy4Y1Btjhosozg9ECrSuJNVrvZuP_posthog=^%^7B^%^22distinct_id^%^22^%^3A4531146^%^7D; _ga_JCSR1LRE3X=GS2.1.s1771523273^$o6^$g0^$t1771523275^$j58^$l0^$h0; _ga_7TYVEWTVRG=GS2.1.s1771523273^$o6^$g0^$t1771523275^$j58^$l0^$h0; __insp_wid=1013263782; __insp_slim=1773088021949; __insp_nv=true; __insp_targlpu=aHR0cHM6Ly93d3cubmF1a3JpLmNvbS9uYXVrcmkzNjAtcHJvP3V0bVRlcm09TjM2MFByb19OQyZ1dG1Db250ZW50PVByZVB1cmNoYXNlVjEwJnV0bV9jYW1wYWlnbj1uYXVrcmkzNjBwcm9fcHJlX3B1cmNoYXNlJnV0bV9tZWRpdW09bm90aWZpY2F0aW9uX2NlbnRlciZ1dG1fY29udGVudD00MDAwX25hdWtyaTM2MHByb19wcmVfcHVyY2hhc2Vfbm9kZTFfc3RhcnRfOGMyZiZ1dG1fdGVybT05NjQyNDUmaWQ9ZmM5NzFkYmItZDhiOC00NmJlLTliY2ItOTcwNmYyNzhlM2UxJmNyZWF0ZWRBdD0yMDI2LTAzLTEwVDAwOjIxOjMyLjAwMA^%^3D^%^3D; __insp_targlpt=TmF1a3JpIDM2MCBQcm8gYnkgTmF1a3JpLmNvbQ^%^3D^%^3D; __insp_norec_sess=true; nauk_cs=default; _gcl_au=1.1.376741507.1777997770.289998575.1779561882.1779563169; _ga_T749QGK6MQ=GS2.1.s1779561786^$o3^$g1^$t1779563169^$j60^$l0^$h0; __gads=ID=b882f75672e5cd76:T=1758456507:RT=1780862721:S=ALNI_MZbN_Gkk21lhwBbJeOwq1PdigRjSw; __gpi=UID=0000119952adac3f:T=1758456507:RT=1780862721:S=ALNI_MZAUrlAxT7yOTrewE_4RhKKmgb2OA; __eoi=ID=46b1ef154ef8508f:T=1774372428:RT=1780862721:S=AA-AfjaJIU5Sm6kpiP6RnxnAZiff; _ga_K2YBNZVRLL=GS2.1.s1780862700^$o93^$g1^$t1780862803^$j17^$l0^$h0; geo_country=IN; ninja_auth_token=c3ff1c2fb9ee8dfa83e239997a428a9f; MYNAUKRI^[UNID^]=5f0d2f6f2229437c9f42d254c0f22a83; g_state=^{^\^"i_l^\^":0,^\^"i_ll^\^":1785241693074,^\^"i_b^\^":^\^"VESNPRcwE4suef8a06v/Tn3ttL/24UAkq3bMVfAO4NI^\^",^\^"i_e^\^":^{^\^"enable_itp_optimization^\^":24^},^\^"i_et^\^":1785241693074^}; nauk_rt=9df6d8dbe90e49c0ba2714d6386fb771; nauk_sid=9df6d8dbe90e49c0ba2714d6386fb771; nauk_otl=9df6d8dbe90e49c0ba2714d6386fb771; NKWAP=9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7~9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7~1~0; nauk_ps=campus; nauk_at=eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiUlM1MTIifQ.eyJkZXZpY2VUeXBlIjoiZDNza3QwcCIsInVkX3Jlc0lkIjoyNjQ5MTAyMjYsInN1YiI6IjI3NTkzODg1OCIsInVkX3VzZXJuYW1lIjoibmlzaGFudHNpbmdoMjcwMjIwMDRAZ21haWwuY29tIiwidWRfaXNFbWFpbCI6dHJ1ZSwiaXNzIjoiSW5mb0VkZ2UgSW5kaWEgUHZ0LiBMdGQuIiwidXNlckFnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE1MC4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiaXBBZHJlc3MiOiIyNDAxOjQ5MDA6MWM2Mzo3ZjliOjY0NzM6ODQ2NzpkOWEwOjJkNDIiLCJ1ZF9pc1RlY2hPcHNMb2dpbiI6ZmFsc2UsInVzZXJJZCI6Mjc1OTM4ODU4LCJzdWJVc2VyVHlwZSI6IiIsInVzZXJTdGF0ZSI6IkFVVEhFTlRJQ0FURUQiLCJ1ZF9pc1BhaWRDbGllbnQiOmZhbHNlLCJ1ZF9lbWFpbFZlcmlmaWVkIjp0cnVlLCJ1c2VyVHlwZSI6ImpvYnNlZWtlciIsInNlc3Npb25TdGF0VGltZSI6IjIwMjYtMDctMjhUMTc6NTk6MjIiLCJ1ZF9lbWFpbCI6Im5pc2hhbnRzaW5naDI3MDIyMDA0QGdtYWlsLmNvbSIsInVzZXJSb2xlIjoidXNlciIsImV4cCI6MTc4NTYwMzYzNiwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3ODU2MDAwMzYsImp0aSI6IjlkZjZkOGRiZTkwZTQ5YzBiYTI3MTRkNjM4NmZiNzcxIiwicG9kSWQiOiJwcm9kLTViYmM2YmI1OWItbnp2ajkifQ.t2waTh9b4NWLfl-2UCjGyfgQLiExG3OCx-1Mbj9Cfbg-xYLiby96qtxHdqB6hLD7N_sWxHTyWjOSc42zuLdeEN9n-wjBUwZJLY-1CLkakQcm-m-fgDa6c8XygPuZqjzCyAaq1MkRkUIsBW1IYOJ0OZVRXEvgv1B9t4ve6zSj0g1_-bBkozZGIfevyxYaNbuh6Qp2Dhx7ymnjHXDrHDVOH6Ya0Tkwr342gyNp3H-c5XOa6tlTijjDuEL1i4oA-3Qlr0NQGRmZYQc1XulnDEx2t0P7cCxrOJeKtekUf11DXWTYoitqb4VN8j-XO1rm_AbR_gfgc_c8AzsNYapeMDOoJQ; is_login=1; ak_bmsc=E673509BCDAE0285D6EC3DE4BAA7C219~000000000000000000000000000000~YAAQdM8uF2TXSaafAQAA9lEOvgCPA4Nvtov774hdhrWuQLDdZoecQ0W1NUEDy3tZ8CmovI73/5+I8Bbrujg26NhxQtWT3LtyIgYqj5++KRfN0rR9DnN0Ui6EEWbTajVMOqswKWi2fLoMsQJz8oAYyKbK4KjG+oTi6LpwvEZoFRG4wi6hnD2d3LQUsSpn9PqwYY3m2VKhzbu0tRyQNwcf9f8H59CwHYArlFTbIRl3pUvBGaYONuD9h/+Fn+K9Ea9Q8ZqJEBcW1ons/4EUGGrzYqtR/pb1WT5lZDi7SE3RaC+ZRFwOdRnLSVhvraPWud92I39qdE3PprJ5aGKrGGhG+BvxqJ1DW0Etc2Ou4715Qeb3N8TFDqsW9LUeupNGqP1in07UkJTrRbuTfpVijtTc6zYxIpmmeWqO2jIopF+1XS0Umb0/NTii2rSv96cXKfCnp+KTRqArPpgWTjeKorWIP8coUKjdfR/RbmP4Aluah5Z3p+uK5BfZzHo=; _clck=xz9zme^%^5E2^%^5Eg88^%^5E0^%^5E2090; _clsk=1piygzx^%^5E1785600403868^%^5E1^%^5E1^%^5Ey.clarity.ms^%^2Fcollect; bm_sv=65A4AEB093B63E87B9E4CE31C446BBAE~YAAQd88uF6pJwq2fAQAAQzEbvgA/43ufbKWA9ujTOfiQVnyMYONO6ZLiVuAMsYzpu/gsQ+ZvlEfPUQ7VOoR/SXL3cjWvKpWhU2NtKI/EGmglgK7fiNiexD+I/VFzffYYjKXUSISKd0FLuBcf1kDBS0EnQ6qXhlhpTjdmnzcJj2BWGse/J89vfNpTmgaaPAP7+ejFdKWt18vXuCmrPclvUuFmjTAcvqSq/qgllA1c8zZD4Wyr4zts6t5+gE8mCd1kbUg=~1; HOWTORT=ul=1785600878458^&r=https^%^3A^%^2F^%^2Fwww.naukri.com^%^2Fjob-listings-demand-executive-flyment-express-greater-noida-0-to-3-years-010826007037^&hd=1785600878940^" ^
+  -H ^"gid: LOCATION,INDUSTRY,EDUCATION,FAREA_ROLE^" ^
+  -H ^"pragma: no-cache^" ^
+  -H ^"priority: u=1, i^" ^
+  -H ^"referer: https://www.naukri.com/job-listings-demand-executive-flyment-express-greater-noida-0-to-3-years-010826007037^" ^
+  -H ^"sec-ch-ua: ^\^"Not=A?Brand^\^";v=^\^"99^\^", ^\^"Google Chrome^\^";v=^\^"151^\^", ^\^"Chromium^\^";v=^\^"151^\^"^" ^
+  -H ^"sec-ch-ua-mobile: ?0^" ^
+  -H ^"sec-ch-ua-platform: ^\^"Windows^\^"^" ^
+  -H ^"sec-fetch-dest: empty^" ^
+  -H ^"sec-fetch-mode: cors^" ^
+  -H ^"sec-fetch-site: same-origin^" ^
+  -H ^"systemid: Naukri^" ^
+  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36^"
+
+repsonse:
+{
+    "noOfJobs": 26,
+    "sid": "17856008822595513",
+    "isLoggedIn": true,
+    "simJobDetails": {
+        "content": [
+            {
+                "title": "Sales & Logistics Support",
+                "logoPath": "https://img.naukimg.com/logo_images/groups/v1/1501550.gif",
+                "logoPathV3": "https://img.naukimg.com/logo_images/groups/v1/1501550.gif",
+                "jobId": "090726029731",
+                "currency": "INR",
+                "footerPlaceholderLabel": "23 Days Ago",
+                "footerPlaceholderColor": "grey",
+                "companyName": "Inbody India",
+                "isSaved": false,
+                "placeholders": [
+                    {
+                        "type": "experience",
+                        "label": "0-2 Yrs"
+                    },
+                    {
+                        "type": "salary",
+                        "label": "Not disclosed"
+                    },
+                    {
+                        "type": "location",
+                        "label": "Kolkata(South Dum Dum)"
+                    }
+                ],
+                "companyId": 123687485,
+                "jdURL": "/job-listings-sales-logistics-support-inbody-india-kolkata-0-to-2-years-090726029731",
+                "staticUrl": "inbody-india-jobs-careers-2002854",
+                "ambitionBoxData": {
+                    "Url": "https://www.ambitionbox.com/reviews/inbody-reviews?utm_source=naukri&cvid=5f0d2f6f2229437c9f42d254c0f22a83",
+                    "ReviewsCount": 13,
+                    "AggregateRating": "3.8",
+                    "Title": "InBody Reviews by Employees"
+                },
+                "jobDescription": "Sales support & demos\nHandle customer queries\nCoordinate deliveries & shipments\nInstallation/training support\nCRM/logistics records & follow-upsDiploma or Bachelor's degree in any discipline. \n0–2 years of experience\nGood communication & coordination skills. \nBasic computer knowledge (MS Office/Excel).",
+                "showMultipleApply": true,
+                "groupId": 1501550,
+                "isTopGroup": 0,
+                "createdDate": 1783600513019,
+                "keySkills": {
+                    "otherSkills": [
+                        "Logistics"
+                    ],
+                    "nerSkills": [
+                        "Sales"
+                    ],
+                    "tagsOrder": [
+                        "otherSkills",
+                        "nerSkills"
+                    ]
+                },
+                "mode": "jp",
+                "board": "1",
+                "vacancy": 2,
+                "salaryDetail": {
+                    "minimumSalary": 0,
+                    "maximumSalary": 0,
+                    "currency": "INR",
+                    "hideSalary": true,
+                    "variablePercentage": 0.0,
+                    "minSalaryPerMonth": 0,
+                    "maxSalaryPerMonth": 0,
+                    "ctcBreakup": {}
+                },
+                "experienceText": "0-2 Yrs",
+                "minimumExperience": "0",
+                "maximumExperience": "2",
+                "applyByTime": "10:05 PM",
+                "companyApplyJob": false,
+                "walkinJob": false,
+                "segmentedTemplateId": "Template1",
+                "questionnaireIdPresent": true,
+                "roleCategoryGid": "1133",
+                "todaysJob": false,
+                "jobAgentEligle": true,
+                "saved": false
+            },
+            {
+                "title": "Sales & Logistics Intern",
+                "logoPath": "https://img.naukimg.com/logo_images/groups/v1/1501550.gif",
+                "logoPathV3": "https://img.naukimg.com/logo_images/groups/v1/1501550.gif",
+                "jobId": "100726008524",
+                "jobType": "internship",
+                "currency": "INR",
+                "footerPlaceholderLabel": "Starts within 1 month",
+                "footerPlaceholderColor": "green",
+                "companyName": "Inbody India",
+                "isSaved": false,
+                "placeholders": [
+                    {
+                        "type": "duration",
+                        "label": "6 months duration"
+                    },
+                    {
+                        "type": "salary",
+                        "label": "15,000/month"
+                    },
+                    {
+                        "type": "location",
+                        "label": "Kolkata(South Dum Dum)"
+                    }
+                ],
+                "companyId": 123687485,
+                "jdURL": "/job-listings-sales-logistics-intern-inbody-india-kolkata-0-to-1-years-100726008524",
+                "staticUrl": "inbody-india-jobs-careers-2002854",
+                "ambitionBoxData": {
+                    "Url": "https://www.ambitionbox.com/reviews/inbody-reviews?utm_source=naukri&cvid=5f0d2f6f2229437c9f42d254c0f22a83",
+                    "ReviewsCount": 13,
+                    "AggregateRating": "3.8",
+                    "Title": "InBody Reviews by Employees"
+                },
+                "jobDescription": "Diploma or Bachelors degree in any discipline<br><br>Preferred candidate profile . <br><br> Good communication & coordination skills",
+                "showMultipleApply": true,
+                "groupId": 1501550,
+                "isTopGroup": 0,
+                "createdDate": 0,
+                "mode": "jp",
+                "board": "1",
+                "vacancy": 4,
+                "salaryDetail": {
+                    "minimumSalary": 0,
+                    "maximumSalary": 0,
+                    "currency": "INR",
+                    "hideSalary": true,
+                    "variablePercentage": 0.0,
+                    "minSalaryPerMonth": 0,
+                    "maxSalaryPerMonth": 0,
+                    "ctcBreakup": {}
+                },
+                "companyApplyJob": false,
+                "walkinJob": false,
+                "questionnaireIdPresent": false,
+                "todaysJob": false,
+                "jobAgentEligle": true,
+                "saved": false
+            }
+        ],
+        "collaborative": []
+    },
+    "internshipSRP": false,
+    "showAgentPickedTag": false
+}
