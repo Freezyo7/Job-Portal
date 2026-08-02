@@ -1,0 +1,74 @@
+Request URL
+https://www.naukri.com/central-login-services/v0/credentials/login-status
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+[2600:1417:56:18a::23ed]:443
+Referrer Policy
+strict-origin-when-cross-origin
+content-length
+17
+content-type
+application/json
+date
+Sun, 02 Aug 2026 08:10:09 GMT
+server
+nginx
+set-cookie
+bm_sv=24B5975F409F8CA0E1268D7F09FD8FBD~YAAQbs8uF7erBrCfAQAAZ/aFwQBTIcwWh2QiGneR21zao6AhzSqBsi1xGwPG6kBoETg7RCr4/6v4R+FjwIwFEy9uoDJanBl3N4IzFU+FH7PC7viVeL41F34UpQrvyu1tw4FKWNgVl+Q08edmlOLUjxi5Jc1ah0XqAnQPlRR7s8kaiXlrMj4vVr/wGk14Kwt9rG/uRdsrsFNTyXKOXwrVzccWuTibAj8J3yn3mm2sbmxfi+YX/kukFFiz2kzuUAS/vA==~1; Domain=.naukri.com; Path=/; Expires=Sun, 02 Aug 2026 10:04:26 GMT; Max-Age=6857; Secure
+strict-transport-security
+max-age=31536000 ; includeSubDomains ; preload
+x-content-type-options
+nosniff
+x-edgeconnect-midmile-rtt
+32
+x-edgeconnect-origin-mex-latency
+11
+x-frame-options
+SAMEORIGIN
+:authority
+www.naukri.com
+:method
+GET
+:path
+/central-login-services/v0/credentials/login-status
+:scheme
+https
+accept
+application/json, text/plain, */*
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,hi;q=0.6,es;q=0.5
+appid
+801
+cache-control
+no-cache
+content-type
+application/json
+cookie
+_t_ds=3c3247161758456329-413c324716-03c324716; J=0; _fbp=fb.1.1758456328603.191396864772308810; loginPreference=null_null; lastLoggedInUser=9599841680CmaLDw7Sro_mobUser; PS=9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7; test=naukri.com; ninjas_new_marketing_token=a5fc2c0440c1400f805d5ca18c24088d; _ff_ds=0189586001768470144-83634B688DB6-7AB3EE6D2AF9; _hjSessionUser_631534=eyJpZCI6Ijk1ODRlMzBiLTBlNTctNWU0Yy1iMmZlLTM5ZDIwNzJhNjY0NyIsImNyZWF0ZWQiOjE3NzE1MjMwOTU2NjEsImV4aXN0aW5nIjpmYWxzZX0=; intercom-device-id-rs5r15ps=e489d5a5-b954-451f-9822-260a3c39d756; _ga_9PX6CV4KND=GS2.1.s1771523095$o1$g1$t1771523206$j60$l0$h0; _ga=GA1.1.700250051.1758456329; ph_phc_s4aJa5RpiiZlHbbxy4Y1Btjhosozg9ECrSuJNVrvZuP_posthog=%7B%22distinct_id%22%3A4531146%7D; _ga_JCSR1LRE3X=GS2.1.s1771523273$o6$g0$t1771523275$j58$l0$h0; _ga_7TYVEWTVRG=GS2.1.s1771523273$o6$g0$t1771523275$j58$l0$h0; __insp_wid=1013263782; __insp_slim=1773088021949; __insp_nv=true; __insp_targlpu=aHR0cHM6Ly93d3cubmF1a3JpLmNvbS9uYXVrcmkzNjAtcHJvP3V0bVRlcm09TjM2MFByb19OQyZ1dG1Db250ZW50PVByZVB1cmNoYXNlVjEwJnV0bV9jYW1wYWlnbj1uYXVrcmkzNjBwcm9fcHJlX3B1cmNoYXNlJnV0bV9tZWRpdW09bm90aWZpY2F0aW9uX2NlbnRlciZ1dG1fY29udGVudD00MDAwX25hdWtyaTM2MHByb19wcmVfcHVyY2hhc2Vfbm9kZTFfc3RhcnRfOGMyZiZ1dG1fdGVybT05NjQyNDUmaWQ9ZmM5NzFkYmItZDhiOC00NmJlLTliY2ItOTcwNmYyNzhlM2UxJmNyZWF0ZWRBdD0yMDI2LTAzLTEwVDAwOjIxOjMyLjAwMA%3D%3D; __insp_targlpt=TmF1a3JpIDM2MCBQcm8gYnkgTmF1a3JpLmNvbQ%3D%3D; __insp_norec_sess=true; nauk_cs=default; _gcl_au=1.1.376741507.1777997770.289998575.1779561882.1779563169; _ga_T749QGK6MQ=GS2.1.s1779561786$o3$g1$t1779563169$j60$l0$h0; __gads=ID=b882f75672e5cd76:T=1758456507:RT=1780862721:S=ALNI_MZbN_Gkk21lhwBbJeOwq1PdigRjSw; __gpi=UID=0000119952adac3f:T=1758456507:RT=1780862721:S=ALNI_MZAUrlAxT7yOTrewE_4RhKKmgb2OA; __eoi=ID=46b1ef154ef8508f:T=1774372428:RT=1780862721:S=AA-AfjaJIU5Sm6kpiP6RnxnAZiff; _ga_K2YBNZVRLL=GS2.1.s1780862700$o93$g1$t1780862803$j17$l0$h0; geo_country=IN; ninja_auth_token=c3ff1c2fb9ee8dfa83e239997a428a9f; MYNAUKRI[UNID]=5f0d2f6f2229437c9f42d254c0f22a83; _t_s=direct; bm_mi=8957FAD908767548DA4570DDE53ECE02~YAAQbs8uF3vWBbCfAQAAsLiAwQB9kxaK4V8N0AhyVknWHERg79nLXHop0T0LzPWhrnVYafJdf1zclDRkdxcOlQpfxJqiBWYTCIA8BRaKgz5j2VacPjwJOeG9KhL2ayDct2TnE+FXFOqxxn43uLHAYzJgL+fQy0OqZXilQNdENhWdyDKml/3pdRNcxHofrtbLjbNOAGPNp5UNnRWQdLZUP7eq1aqO6yGaGfPMb4q7+HibRgFzJkP7LVE/Zn8gyiPY955CMhsAwH/ghz2SjP6NMYfREoXxrCkbwu+DGWC8x5c8gHSYpKphzKE1+t0vWMS8MoV7PKqQzrjFdmfFeA==~1; ak_bmsc=827468482471115D3B70A6DB378FB2B7~000000000000000000000000000000~YAAQbs8uF4rXBbCfAQAAHb6AwQAtWKij7AP5QHJaUHyUZRixJQl3EAC3oTfJgkjmnFLcYBedyF1fidZuRLVn1t9Zo+g9UXpNagXOHjkCq71QkBbYu10W59js2obfJItycRGkzU5mQUfQ2CCirvUxRVdi8TUJ3/gz6tLWceX92qY/jpXo4P3b23k/9kYq8ci23HzVs5Cy0npi/bR2FK7cQxibUwuRoD6ThuXi3m4htHHDLuZEK1pB2RIZPUkHyxuRZgRAXBtwlJkxk/4uL5KPJu3FnGzOBfuTMegTGRplGm5cQLK4arnwuU8f0NTRDhuJ0S/8RzKSMHl5x7bwax5neI9SgGQJKYNGJhkc2nNH33Sm2P2oRQKvxiawFvQXZx4JK6otcZHrquPt6ZTDDpSjj7Cf6jPwfAg4lwUYgsKLTb4KSG9I7T1djcmTnheqddwIVtUhfc6pno37GVBm9Xr8eH7y/7EaEXmDHB4N7Iw3fIEz7oXU+cmK8n5F69HsTPLOtMA13Nfs1/lPkW7YWSzW/oN8xLVH89XOxEo=; _clck=xz9zme%5E2%5Eg89%5E0%5E2090; _clsk=sg2jfs%5E1785657868821%5E1%5E1%5Ej.clarity.ms%2Fcollect; _t_us=6A6EFB52; _t_r=1030%2F%2F; persona=default; g_state={"i_l":0,"i_ll":1785658194730,"i_b":"pPSMQiv5XDxrJCYFw9UBftTJ78YHDqlFQ07wOo/sxGU","i_e":{"enable_itp_optimization":24},"i_et":1785658194730}; nauk_at=eyJraWQiOiIzIiwidHlwIjoiSldUIiwiYWxnIjoiUlM1MTIifQ.eyJkZXZpY2VUeXBlIjoiZDNza3QwcCIsInVkX3Jlc0lkIjoyNjQ5MTAyMjYsInN1YiI6IjI3NTkzODg1OCIsInVkX3VzZXJuYW1lIjoibmlzaGFudHNpbmdoMjcwMjIwMDRAZ21haWwuY29tIiwidWRfaXNFbWFpbCI6dHJ1ZSwiaXNzIjoiSW5mb0VkZ2UgSW5kaWEgUHZ0LiBMdGQuIiwidXNlckFnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzE1MS4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiaXBBZHJlc3MiOiIyNDAxOjQ5MDA6MWM2NDpiYWVmOjM4ZWU6ZmU0YzpiYzZhOjE5ODgiLCJ1ZF9pc1RlY2hPcHNMb2dpbiI6ZmFsc2UsInVzZXJJZCI6Mjc1OTM4ODU4LCJzdWJVc2VyVHlwZSI6ImpvYnNlZWtlciIsInVzZXJTdGF0ZSI6IkFVVEhFTlRJQ0FURUQiLCJ1ZF9pc1BhaWRDbGllbnQiOmZhbHNlLCJ1ZF9lbWFpbFZlcmlmaWVkIjp0cnVlLCJ1c2VyVHlwZSI6ImpvYnNlZWtlciIsInNlc3Npb25TdGF0VGltZSI6IjIwMjYtMDgtMDJUMTM6NDA6MDkiLCJ1ZF9lbWFpbCI6Im5pc2hhbnRzaW5naDI3MDIyMDA0QGdtYWlsLmNvbSIsInVzZXJSb2xlIjoidXNlciIsImV4cCI6MTc4NTY2MTgwOSwidG9rZW5UeXBlIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3ODU2NTgyMDksImp0aSI6ImE4YzE5ZTZmNTg2ZTRkOGFiYzA2YTIyNzZlZjA1NjAyIiwicG9kSWQiOiJwcm9kLTViYmM2YmI1OWItcms0a3YifQ.ELdhFVf2rG8XqRmb1LZjX6BZK3GEdEcoU_0Xo3013kmUtb_X9TbQkJux31U92wmQWQC19UFQCW2PjC1BA24ApAzKlshpo6Wje12e51oKYQJwhV-7YDPhczY-pcEoBeqg9t7FtsLAmlrtZaHLBIBcOpA9J50muQ1H4nkTi5X6EahR5CAhGR_dKDcgrVLN8HltgTGMzVhrWlCfaIeC0knN-g5-iM53hjaDCxC1KgOrLD8xHWcSnjo38qbBkOkvmNBqLDDkIznS8VGucgBBIsMFd59nE-0RfN3Cn8JO_yyUk5m39XZrZLpIn6xLsJn9mixxvPrAI8i0au8AcFh2JY6msA; nauk_rt=a8c19e6f586e4d8abc06a2276ef05602; is_login=1; nauk_sid=a8c19e6f586e4d8abc06a2276ef05602; nauk_otl=a8c19e6f586e4d8abc06a2276ef05602; NKWAP=9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7~9f942f3fd5e3f0bd331d3ad4adf06d7ea427effe209da2d0b9936cf979c597329394dc9d4f9ceeda237376ccad94d1f7~1~0; nauk_ps=campus; bm_sv=24B5975F409F8CA0E1268D7F09FD8FBD~YAAQbs8uF6WrBrCfAQAAfvSFwQCSAjM37Byx+Q1EqtBnl6JC8XUsyvpxbK7yR2FVUM47nzEGpcB3pOuyuvK4/tPP+it2PPA+lNmgQXnBbcKlAKb8Qy9rhW7SQa8aUGFrRpmrWQFl3K6uWcoXPCoqo2DWNHhkXUakFICMa7dA/1xg56L8XbeQiv2vJSTp/jEhsH/g27y5OS2nlPqxfGTFmGJTtKA7b+iTU0AsVLHccN6CPpfzzUIPwjTPzN8cuR4Esg==~1; HOWTORT=cl=1785658199375&r=https%3A%2F%2Fwww.naukri.com%2F&ul=1785658207008&hd=1785658207332&nu=https%3A%2F%2Flogin.naukri.com%2FnLogin%2FLogin.php
+pragma
+no-cache
+priority
+u=1, i
+referer
+https://www.naukri.com/mnjuser/homepage
+sec-ch-ua
+"Not=A?Brand";v="99", "Google Chrome";v="151", "Chromium";v="151"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Windows"
+sec-fetch-dest
+empty
+sec-fetch-mode
+cors
+sec-fetch-site
+same-origin
+systemid
+jobseeker
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36

@@ -1,10 +1,20 @@
 import requests
 import os
 from dotenv import load_dotenv
+from pathlib import Path
+from urllib.parse import quote
+import json, time
 
 #load the env file
 load_dotenv()
 
+#directories
+CRED_DIR = Path(__file__).resolve().parents[1] / "cred"   # -> scrapers/cred
+
+CRED_DIR.mkdir(parents=True, exist_ok=True)
+
+SESSION_FILE = CRED_DIR / "naukri_session.json"
+SEARCH_PATH = "/jobapi/v3/search"
 
 class NaukriScraper:
     BASE_URL = "https://www.naukri.com" 
@@ -19,136 +29,156 @@ class NaukriScraper:
         self.password = os.getenv('NAUKRI_PASSWORD')
         self.session = requests.Session()
         self.session.headers.update({
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
             "Accept-Language": "en-US,en;q=0.9"
         })
+        self.nkparam = None
+        self.token = None
+        self._page = None
 
-    def get_homepage(self):
-        try:
-            resp = self.session.get(
-                self.BASE_URL,
-                timeout=10
-            )
-            resp.raise_for_status()
-            print(f"[✓] Homepage fetched | Status: {resp.status_code}")
-            print(f"    Cookies: {dict(self.session.cookies)}")
-            return True
+    def bootstrap(self, keyword="software developer"):
+        from playwright.sync_api import sync_playwright
 
-        except requests.RequestException as e:
-            print(f"[✗] Homepage request failed: {e}")
-            return False
+        seo_key = f"{keyword.replace(' ', '-')}-jobs"
+        search_url = f"{self.BASE_URL}/{seo_key}?k={quote(keyword)}"
+        captured = {}
 
-    def login(self):
-        if not self.username or not self.password:
-            raise ValueError("USERNAME and PASSWORD must be set in environment variables")
+        def on_request(req):
+            if SEARCH_PATH in req.url and "nkparam" in req.headers:
+                captured.update(req.headers)
 
-        headers = {
-            "Content-Type": "application/json",
-            "Clientid": "d3skt0p",
-            "Origin": self.BASE_URL,
-            "Referer": f"{self.BASE_URL}/",
-            "Appid": "103",
-            "Systemid": "jobseeker"
+        #-----browser setup----#
+        self._pw = sync_playwright().start()
+        self._browser = self._pw.chromium.launch(headless=False)
+
+        ctx_args = {
+            "user_agent": self.session.headers["User-Agent"],
+            "locale": "en-IN",
+            "viewport": {"width": 1440, "height": 900},
         }
 
-        payload = {
-            "username": self.username,
-            "password": self.password,
-        }
+        if SESSION_FILE.exists():
+            ctx_args["storage_state"] = str(SESSION_FILE)
 
-        try:
-            resp = self.session.post(
-                self.LOGIN_URL,
-                json=payload,
-                headers=headers,
-                timeout=10
-            )
-            print(f"\n[→] Login attempt | Status: {resp.status_code}")
+        ctx = self._browser.new_context(**ctx_args)
+        page = ctx.new_page()
+        page.on("request", on_request)
 
-            if resp.status_code == 200:
-                data = resp.json()
-                print("[✓] Login successful!")
-                print(f"    Response keys: {list(data.keys())}")
-                print(f"    Auth cookie set: {'nauk_at' in self.session.cookies}")
-                return data
-            else:
-                print(f"[✗] Login failed | Response: {resp.text[:300]}")
-                return False
+        page.goto(search_url, wait_until="domcontentloaded", timeout=90000)
+        page.wait_for_timeout(6000)
 
-        except requests.RequestException as e:
-            print(f"[✗] Login request failed: {e}")
+        if not captured:
+            page.mouse.wheel(0,3000)
+            page.wait_for_timeout(4000)
+
+        if not captured.get("nkparam"):
+            print("[x] Could not capture nkparam")
+            self._teardown()
             return False
+        
+        self.nkparam = captured["nkparam"]
+        for c in ctx.cookies():
+            self.session.cookies.set(c["name"], c["value"], domain=c["domain"])
 
-    def _extract_token(self, data):
-        """Pull the bearer token out of the login response.
+        self.token = self.session.cookies.get("nauk_at")
+        if self.token:
+            self.session.headers["authorization"] = f"Bearer {self.token}"
 
-        Naukri returns it as the `nauk_at` cookie; the frontend copies that
-        same value into the Authorization header. Falls back to the session
-        jar, which requests populated from Set-Cookie.
-        """
-        for c in data.get("cookies", []):
-            if c.get("name") == "nauk_at":
-                return c.get("value")
-        return self.session.cookies.get("nauk_at")
+        ctx.storage_state(path=str(SESSION_FILE))
+        self._page = page
+        print(f"[ok] nkparam {len(self.nkparam)} chars | token {'yes' if self.token else 'no'}")
+        return True
 
-    def scrap_job(self, token):
+    def _teardown(self):
+        try:
+            if getattr(self, "_browser", None):
+                self._browser.close()
+            if getattr(self, "_pw", None):
+                self._pw.stop()
+        except Exception:
+            pass
+        self._page = None
+    
+
+    def scrap_job(self,keyword="software developer", page_no=1):
 
         params = {
             "noOfResults": 20,
             "urlType": "search_by_keyword",
             "searchType": "adv",
-            "keyword": "software developer",
-            "pageNo": 1,
+            "keyword": keyword,
+            "k": keyword,
+            "pageNo": page_no,
+            "seoKey": f"{keyword.replace(' ', '-')}-jobs",
         }
 
         # Without the app identity headers the API answers
         # 406 {"message": "recaptcha required"} even with a valid token.
         headers = {
-            "authorization": f"Bearer {token}",
             "accept": "application/json",
             "appid": "109",
             "systemid": "Naukri",
             "clientid": "d3skt0p",
             "gid": "LOCATION,INDUSTRY,EDUCATION,FAREA_ROLE",
-            "referer": f"{self.BASE_URL}/software-developer-jobs?k=software%20developer",
+            "referer": f"{self.BASE_URL}/{params['seoKey']}?k={quote(keyword)}",
         }
+
+        if self.nkparam:
+            headers["nkparam"] = self.nkparam
 
         try:
             resp = self.session.get(
-                f"{self.BASE_URL}/jobapi/v3/search",
+                self.BASE_URL + SEARCH_PATH,
                 params=params,
                 headers=headers,
                 timeout=15
             )
             resp.raise_for_status()
-            data = resp.json()
-            jobs = data.get("jobDetails", [])
-            print(f"[ok] Fetched {len(jobs)} jobs (of {data.get('noOfJobs')} total)")
-            for job in jobs[:5]:
-                print(f"     {job.get('title')} | {job.get('companyName')}")
-            return data
+            return resp.json()
+        
+        except requests.HTTPError as e:          # MUST come before RequestException
+            status = e.response.status_code if e.response is not None else "?"
+            print(f"[x] requests got {status}")
+            if status in (403, 406) and self._page:
+                print("    -> retrying inside browser")
+                return self._fetch_in_browser(params)
+            return None
         except requests.RequestException as e:
-            print(f"[x] Job fetch failed: {e}")
-            if e.response is not None:
-                print(f"    {e.response.text[:200]}")
+            print(f"[x] failed: {e}")
             return None
 
-    def run(self) -> None:
-        """Run all steps in order."""
-        if not self.get_homepage():
-            return
+    def _fetch_in_browser(self, params):
+        qs = "&".join(f"{k}={quote(str(v))}" for k, v in params.items())
+        result = self._page.evaluate(
+            """async ({path, qs}) => {
+                const r = await fetch(path + "?" + qs, {
+                    headers: {"accept": "application/json", "appid": "109",
+                            "systemid": "Naukri", "clientid": "d3skt0p",
+                            "gid": "LOCATION,INDUSTRY,EDUCATION,FAREA_ROLE"}
+                });
+                return {status: r.status, body: await r.text()};
+            }""",
+            {"path": SEARCH_PATH, "qs": qs},
+        )
+        if result["status"] != 200:
+            print(f"[x] in-page: {result['status']} {result['body'][:150]}")
+            return None
+        return json.loads(result["body"])
 
-        data = self.login()
-        if not data:
-            return
 
-        token = self._extract_token(data)
-        if not token:
-            print("[x] Logged in but no nauk_at token found")
-            return
-        print(f"[ok] Token captured ({len(token)} chars)")
-
-        self.scrap_job(token)
+    def run(self, keyword="software developer"):
+        if not self.bootstrap(keyword):
+            return None
+        try:
+            data = self.scrap_job(keyword)
+            if data:
+                jobs = data.get("jobDetails", [])
+                print(f"[ok] {len(jobs)} jobs of {data.get('noOfJobs')} total")
+                for j in jobs[:5]:
+                    print(f"     {j.get('title')} | {j.get('companyName')}")
+            return data
+        finally:
+            self._teardown()
 
 
 if __name__ == "__main__":
