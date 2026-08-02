@@ -9,3 +9,7 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Saved browser sessions / captured credentials
+scrapers/cred/
+search_job.txt
