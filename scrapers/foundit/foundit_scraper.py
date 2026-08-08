@@ -166,15 +166,19 @@ class FounditScraper:
         company = raw.get("company") or {}
         min_sal = raw.get("minimumSalary") or {}
         max_sal = raw.get("maximumSalary") or {}
+        url = f"{self.BASE_URL}{jd_url}"
 
         return FounditJob(
             source_job_id=str(job_id),
             title=(raw.get("title") or "").strip(),
             # The nested company object is canonical; companyName is a copy.
             company=(company.get("name") or raw.get("companyName") or "").strip(),
-            url=f"{self.BASE_URL}{jd_url}",
-            # Aggregated posts ("jobSource": "SCRAPPING") apply off-site.
-            apply_url=(raw.get("applyUrl") or raw.get("redirectUrl") or "").strip(),
+            url=url,
+            # Aggregated posts ("jobSource": "SCRAPPING") apply off-site;
+            # native ones are applied to on Foundit, so fall back to the
+            # listing page — apply_url is always usable.
+            apply_url=(raw.get("applyUrl")
+                       or raw.get("redirectUrl") or "").strip() or url,
             # Roughly 1 in 5 listings ships without a logo.
             company_logo=(raw.get("companyLogoUrl") or company.get("logo") or "").strip(),
             company_id=str(company.get("companyId") or raw.get("companyId") or ""),

@@ -7,6 +7,8 @@ class Job(models.Model):
     class Source(models.TextChoices):
         NAUKRI = "naukri", "Naukri"
         FOUNDIT = "foundit", "Foundit"
+        HIRIST = "hirist", "Hirist"
+        UNSTOP = "unstop", "Unstop"
         INDEED = "indeed", "Indeed"
         LINKEDIN = "linkedin", "LinkedIn"
 

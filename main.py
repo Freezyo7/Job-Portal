@@ -23,6 +23,7 @@ from jobs.models import Job  # noqa: E402
 from scrapers.foundit import FounditScraper  # noqa: E402
 from scrapers.hirist import HiristScraper  # noqa: E402
 from scrapers.naukri import NaukriScraper  # noqa: E402
+from scrapers.unstop import UnstopScraper  # noqa: E402
 
 # Every keyword we search for, across all sources.
 DOMAINS = [
@@ -129,10 +130,20 @@ def _hirist_source(keywords):
     }
 
 
+def _unstop_source(keywords):
+    """Unstop is keyword-driven and nationwide — no city or freshness
+    filter is exposed by its API."""
+    return UnstopScraper, ", ".join(keywords), {
+        "keywords": keywords,
+        "pages": PAGES,
+    }
+
+
 SOURCES = {
     "foundit": _keyword_source(FounditScraper, FOUNDIT_CITIES),
     "naukri": _keyword_source(NaukriScraper, NAUKRI_CITIES),
     "hirist": _hirist_source,
+    "unstop": _unstop_source,
 }
 
 
