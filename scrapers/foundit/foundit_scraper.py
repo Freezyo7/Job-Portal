@@ -19,6 +19,8 @@ from datetime import datetime, timezone
 import requests
 from dotenv import load_dotenv
 
+from scrapers.common import clean_html, to_text
+
 load_dotenv()
 
 
@@ -31,15 +33,24 @@ class FounditJob:
     company: str
     url: str
     apply_url: str = ""
+    company_logo: str = ""
+    company_id: str = ""
     location: str = ""
     min_experience: int | None = None
     max_experience: int | None = None
     min_salary: int | None = None
     max_salary: int | None = None
     currency: str = ""
-    description: str = ""
+    description: str = ""        # sanitized HTML, safe to render
+    description_text: str = ""   # plain text, for previews and search
     skills: list[str] = field(default_factory=list)
+    industry: str = ""
+    function: str = ""
+    job_type: str = ""
+    employment_type: str = ""
+    applicant_count: int | None = None
     posted_at: datetime | None = None
+    expires_at: datetime | None = None
     is_active: bool = True
     source: str = "foundit"
 
@@ -51,8 +62,14 @@ class FounditJob:
 class FounditScraper:
 
     BASE_URL = "https://www.foundit.in"
-    SEARCH_URL = "https://www.foundit.in/middleware/jobsearch"
-    RESULTS_PER_PAGE = 15
+    SEARCH_URL = "https://www.foundit.in/home/api/searchResultsPage"
+    RESULTS_PER_PAGE = 20
+
+    # Foundit's own city labels — these strings must match what the site
+    # sends, so keep them lowercase and spelled as the UI does.
+    CITIES = ["gurgaon / gurugram", "noida", "greater noida"]
+    # Days since posting; 1 = last 24h. Set to None to drop the filter.
+    FRESHNESS_DAYS = 1
 
     # Raw keywords — requests handles the URL encoding.
     DOMAIN = {"Software Developer": "software developer",
@@ -66,11 +83,13 @@ class FounditScraper:
             "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                            "AppleWebKit/537.36 (KHTML, like Gecko) "
                            "Chrome/151.0.0.0 Safari/537.36"),
-            "Accept": "application/json",
+            "Accept": "*/*",
             "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
-            # Foundit rejects API calls without these app identifiers.
-            "x-language-code": "EN",
+            # Identifies the Foundit tenant; present on every API call.
             "x-source-site-context": "rexmonster",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
         })
 
         # The account signs in through Google, so there is no password to
@@ -156,6 +175,9 @@ class FounditScraper:
             url=f"{self.BASE_URL}{jd_url}",
             # Aggregated posts ("jobSource": "SCRAPPING") apply off-site.
             apply_url=(raw.get("applyUrl") or raw.get("redirectUrl") or "").strip(),
+            # Roughly 1 in 5 listings ships without a logo.
+            company_logo=(raw.get("companyLogoUrl") or company.get("logo") or "").strip(),
+            company_id=str(company.get("companyId") or raw.get("companyId") or ""),
             location=self._location(raw),
             # 0 years is a real value here (fresher roles), so keep it.
             min_experience=self._to_int(
@@ -165,22 +187,46 @@ class FounditScraper:
             min_salary=None if hidden else self._to_int(min_sal.get("absoluteValue")),
             max_salary=None if hidden else self._to_int(max_sal.get("absoluteValue")),
             currency="" if hidden else (raw.get("currencyCode") or ""),
-            description=(raw.get("description") or "").strip(),
+            description=clean_html(raw.get("description")),
+            description_text=to_text(raw.get("description")),
             skills=self._skills(raw),
+            # These arrive as lists but carry one meaningful value each.
+            industry=self._first(raw.get("industries")),
+            function=self._first(raw.get("functions")),
+            job_type=self._first(raw.get("jobTypes")),
+            employment_type=self._first(raw.get("employmentTypes")),
+            applicant_count=self._to_int(raw.get("totalApplicants"), keep_zero=True),
             posted_at=self._to_datetime(raw.get("postedAt") or raw.get("createdAt")),
+            expires_at=self._to_datetime(raw.get("closedAt")),
             is_active=bool(raw.get("isJobActive", raw.get("activeJob", True))),
         )
 
     @staticmethod
+    def _first(values) -> str:
+        """Take the first entry of a list-valued field."""
+        for v in values or []:
+            if v:
+                return str(v).strip()
+        return ""
+
+    @staticmethod
     def _location(raw: dict) -> str:
         """Join the city names. Entries can be country-only (no city key),
-        and the same city can repeat across entries."""
-        cities = [
-            (loc.get("city") or "").strip()
-            for loc in raw.get("locations") or []
-        ]
-        # dict.fromkeys dedupes while preserving order
-        return ", ".join(dict.fromkeys(c for c in cities if c))
+        and the same place repeats under variant spellings — Foundit lists
+        both "Gurugram" and "Gurgaon / Gurugram" on the same job."""
+        out: list[str] = []
+        seen: set[str] = set()
+        for loc in raw.get("locations") or []:
+            city = (loc.get("city") or "").strip()
+            if not city:
+                continue
+            # Treat "Gurgaon / Gurugram" as covering plain "Gurugram".
+            parts = {p.strip().lower() for p in city.split("/")}
+            if parts & seen:
+                continue
+            seen |= parts
+            out.append(city)
+        return ", ".join(out)
 
     @staticmethod
     def _skills(raw: dict) -> list[str]:
@@ -222,19 +268,24 @@ class FounditScraper:
     # Fetching
     # ------------------------------------------------------------------
 
-    def fetch_jobs(self, keyword: str, pages: int = 1) -> list[FounditJob]:
-        """Search `keyword` across `pages` pages and return parsed listings."""
+    def fetch_jobs(self, keyword: str, pages: int = 1, cities=None,
+                   freshness: int | None = None) -> list[FounditJob]:
+        """Search `keyword` across `pages` pages and return parsed listings.
+
+        `cities` and `freshness` default to the class constants when None.
+        """
         jobs: list[FounditJob] = []
         seen: set[str] = set()
 
         for page_no in range(pages):
-            data = self.search(keyword, start=page_no * self.RESULTS_PER_PAGE)
+            data = self.search(keyword, start=page_no * self.RESULTS_PER_PAGE,
+                               cities=cities, freshness=freshness)
             if not data:
                 break
 
             cards = data.get("data") or []
             if not cards:
-                break
+                break  # nothing left
 
             for raw in cards:
                 job = self._parse(raw)
@@ -243,26 +294,47 @@ class FounditScraper:
                     seen.add(job.source_job_id)
                     jobs.append(job)
 
-            print(f"[ok] page {page_no + 1}: {len(cards)} cards ({len(jobs)} unique)")
+            # The API reports the true match count; trust it over the page
+            # size, since a page can come back short without being the last.
+            total = ((data.get("meta") or {}).get("paging") or {}).get("total")
+            fetched = (page_no + 1) * self.RESULTS_PER_PAGE
+            suffix = f" of {total} total" if total is not None else ""
+            print(f"[ok] page {page_no + 1}: {len(cards)} cards "
+                  f"({len(jobs)} unique{suffix})")
 
-            if len(cards) < self.RESULTS_PER_PAGE:
-                break  # last page
+            if total is not None and fetched >= total:
+                break  # collected everything the search matched
             if page_no < pages - 1:
                 time.sleep(self.delay)
 
         return jobs
 
-    def search(self, keyword: str, start: int = 0) -> dict | None:
-        """Hit the search endpoint. Returns the parsed JSON payload."""
+    def search(self, keyword: str, start: int = 0, cities=None,
+               freshness: int | None = None, country: str = "India") -> dict | None:
+        """Hit the search endpoint. Returns the parsed JSON payload.
+
+        `cities` are Foundit's own lowercase labels, e.g.
+        "gurgaon / gurugram", "noida", "greater noida" — requests repeats
+        the key for each one. `freshness` filters by days since posting.
+        """
+        cities = self.CITIES if cities is None else cities
+        freshness = self.FRESHNESS_DAYS if freshness is None else freshness
+
         params = {
-            "query": keyword,
-            "locations": "",
             "start": start,
             "limit": self.RESULTS_PER_PAGE,
-            "sort": "1",          # 1 = most recent
+            "query": keyword,
+            "queryDerived": "true",
+            "countries": country,
         }
+        if freshness:
+            params["jobFreshness"] = freshness
+        if cities:
+            params["jobCities"] = list(cities)
+
+        seo_key = f"{keyword.replace(' ', '-')}-jobs"
         headers = {
-            "referer": f"{self.BASE_URL}/srp/results?query={keyword.replace(' ', '%20')}",
+            "referer": f"{self.BASE_URL}/search/{seo_key}",
         }
 
         try:
@@ -286,7 +358,8 @@ class FounditScraper:
             print("[x] search returned a non-JSON body")
             return None
 
-    def run(self, keywords=None, pages: int = 2) -> dict[str, list[FounditJob]]:
+    def run(self, keywords=None, pages: int = 2, cities=None,
+            freshness: int | None = None) -> dict[str, list[FounditJob]]:
         """Scrape every keyword and report what came back."""
         if not self.check_auth():
             return {}
@@ -298,7 +371,8 @@ class FounditScraper:
         results: dict[str, list[FounditJob]] = {}
         for kw in keywords:
             print(f"\n=== {kw} ===")
-            results[kw] = self.fetch_jobs(kw, pages=pages)
+            results[kw] = self.fetch_jobs(kw, pages=pages, cities=cities,
+                                          freshness=freshness)
             for job in results[kw][:3]:
                 print(f"     {job.title} | {job.company} | {job.location}")
             time.sleep(self.delay)

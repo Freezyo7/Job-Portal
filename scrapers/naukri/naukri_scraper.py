@@ -7,6 +7,8 @@ from pathlib import Path
 from urllib.parse import quote
 import json, time
 
+from scrapers.common import clean_html, to_text
+
 #load the env file
 load_dotenv()
 
@@ -27,15 +29,20 @@ class NaukriJob:
     title: str
     company: str
     url: str
+    apply_url: str = ""
+    company_logo: str = ""
+    company_id: str = ""
     location: str = ""
     min_experience: int | None = None
     max_experience: int | None = None
     min_salary: int | None = None
     max_salary: int | None = None
     currency: str = ""
-    description: str = ""
+    description: str = ""        # sanitized HTML, safe to render
+    description_text: str = ""   # plain text, for previews and search
     skills: list[str] = field(default_factory=list)
     posted_at: datetime | None = None
+    is_active: bool = True
     source: str = "naukri"
 
     def as_dict(self) -> dict:
@@ -45,6 +52,21 @@ class NaukriJob:
 
 class NaukriScraper:
     BASE_URL = "https://www.naukri.com"
+    # Naukri identifies locations by numeric gid, not name. Values taken
+    # from the site's own filter UI.
+    CITY_GIDS = {
+        "new delhi": 6,
+        "bengaluru": 97,
+        "mumbai": 134,
+        "noida": 220,
+        "greater noida": 350,
+        "delhi / ncr": 9508,
+    }
+    # Which of the above to search by default.
+    CITIES = ["noida", "greater noida", "delhi / ncr"]
+    # jobAge in days; 1 = posted in the last 24h. None drops the filter.
+    FRESHNESS_DAYS = 1
+
     # Raw keywords — requests handles the URL encoding.
     DOMAIN = {"Software Developer": "software developer",
               "Graduate Engineer": "graduate engineer",
@@ -175,7 +197,11 @@ class NaukriScraper:
         self._page = None
     
 
-    def scrap_job(self,keyword="software developer", page_no=1):
+    def scrap_job(self, keyword="software developer", page_no=1,
+                  cities=None, freshness: int | None = None):
+
+        cities = self.CITIES if cities is None else cities
+        freshness = self.FRESHNESS_DAYS if freshness is None else freshness
 
         params = {
             "noOfResults": 20,
@@ -184,11 +210,15 @@ class NaukriScraper:
             "keyword": keyword,
             "k": keyword,
             "pageNo": page_no,
-            "cityTypeGid": [220,350],
             "sort": "f",
             "src": "sortby",
             "seoKey": f"{keyword.replace(' ', '-')}-jobs",
         }
+        gids = self._city_gids(cities)
+        if gids:
+            params["cityTypeGid"] = gids
+        if freshness:
+            params["jobAge"] = freshness
 
         # Without the app identity headers the API answers
         # 406 {"message": "recaptcha required"} even with a valid token.
@@ -266,11 +296,21 @@ class NaukriScraper:
         salary = raw.get("salaryDetail") or {}
         hidden = salary.get("hideSalary", False)
 
+        description = raw.get("jobDescription")
+        url = f"{self.BASE_URL}{jd_url}"
+
         return NaukriJob(
             source_job_id=job_id,
             title=(raw.get("title") or "").strip(),
             company=(raw.get("companyName") or "").strip(),
-            url=f"{self.BASE_URL}{jd_url}",
+            url=url,
+            # Only crawled listings ("mode": "crawled") carry an external
+            # apply link. Native ones ("jp") are applied to on Naukri, so
+            # fall back to the listing page — apply_url is always usable.
+            apply_url=(raw.get("applyRedirectUrl")
+                       or raw.get("companyApplyUrl") or "").strip() or url,
+            company_logo=(raw.get("logoPathV3") or raw.get("logoPath") or "").strip(),
+            company_id=str(raw.get("companyId") or ""),
             location=self._placeholder(raw, "location"),
             # 0 years is a real value here (fresher roles), so keep it.
             min_experience=self._to_int(raw.get("minimumExperience"), keep_zero=True),
@@ -278,10 +318,30 @@ class NaukriScraper:
             min_salary=None if hidden else self._to_int(salary.get("minimumSalary")),
             max_salary=None if hidden else self._to_int(salary.get("maximumSalary")),
             currency="" if hidden else (raw.get("currency") or ""),
-            description=(raw.get("jobDescription") or "").strip(),
+            description=clean_html(description),
+            description_text=to_text(description),
             skills=self._skills(raw),
             posted_at=self._to_datetime(raw.get("createdDate")),
         )
+
+    @classmethod
+    def _city_gids(cls, cities) -> list[int]:
+        """Translate city names to Naukri's numeric gids.
+
+        Accepts names or raw gids. An unknown name raises rather than being
+        skipped — a silently dropped filter would scrape the wrong cities.
+        """
+        gids: list[int] = []
+        for city in cities or []:
+            if isinstance(city, int):
+                gids.append(city)
+                continue
+            gid = cls.CITY_GIDS.get(str(city).strip().lower())
+            if gid is None:
+                known = ", ".join(sorted(cls.CITY_GIDS))
+                raise ValueError(f"Unknown Naukri city {city!r}. Known: {known}")
+            gids.append(gid)
+        return gids
 
     @staticmethod
     def _placeholder(raw: dict, kind: str) -> str:
@@ -327,19 +387,21 @@ class NaukriScraper:
 
     # ------------------------------------------------------------------
 
-    def fetch_jobs(self, keyword: str, pages: int = 1) -> list[NaukriJob]:
+    def fetch_jobs(self, keyword: str, pages: int = 1, cities=None,
+                   freshness: int | None = None) -> list[NaukriJob]:
         """Search `keyword` across `pages` pages and return parsed listings."""
         jobs: list[NaukriJob] = []
         seen: set[str] = set()
 
         for page_no in range(1, pages + 1):
-            data = self.scrap_job(keyword, page_no)
+            data = self.scrap_job(keyword, page_no, cities=cities,
+                                  freshness=freshness)
             if not data:
                 break
 
             cards = data.get("jobDetails") or []
             if not cards:
-                break
+                break  # nothing left
 
             for raw in cards:
                 job = self._parse(raw)
@@ -348,20 +410,29 @@ class NaukriScraper:
                     seen.add(job.source_job_id)
                     jobs.append(job)
 
-            print(f"[ok] page {page_no}: {len(cards)} cards ({len(jobs)} unique)")
+            # Naukri reports the true match count; trust it over the page
+            # size, since a page can come back short without being the last.
+            total = data.get("noOfJobs")
+            suffix = f" of {total} total" if total is not None else ""
+            print(f"[ok] page {page_no}: {len(cards)} cards "
+                  f"({len(jobs)} unique{suffix})")
 
-            if len(cards) < 20:
-                break  # last page
+            if total is not None and page_no * 20 >= total:
+                break  # collected everything the search matched
             if page_no < pages:
                 time.sleep(1)
 
         return jobs
 
-    def run(self, keywords=None, pages: int = 2) -> dict[str, list[NaukriJob]]:
+    def run(self, keywords=None, pages: int = 2, cities=None,
+            freshness: int | None = None) -> dict[str, list[NaukriJob]]:
         """Bootstrap one browser session, then scrape every keyword."""
         if isinstance(keywords, str):
             keywords = [keywords]
         keywords = keywords or list(self.DOMAIN.values())
+
+        # Fail before opening a browser if a city name is wrong.
+        self._city_gids(self.CITIES if cities is None else cities)
 
         # nkparam is per-session, not per-keyword: bootstrap once and reuse.
         if not self.bootstrap(keywords[0]):
@@ -371,7 +442,8 @@ class NaukriScraper:
         try:
             for kw in keywords:
                 print(f"\n=== {kw} ===")
-                results[kw] = self.fetch_jobs(kw, pages=pages)
+                results[kw] = self.fetch_jobs(kw, pages=pages, cities=cities,
+                                              freshness=freshness)
                 for job in results[kw][:3]:
                     print(f"     {job.title} | {job.company} | {job.location}")
                 time.sleep(1)
