@@ -13,3 +13,5 @@ wheels/
 # Saved browser sessions / captured credentials
 scrapers/cred/
 search_job.txt
+foundit.txt
+wellfound.txt

@@ -1,5 +1,5 @@
 from scrapers.indeed.scraper import IndeedScraper
-from scrapers.naukri.scraper import NaukriScraper
+from scrapers.naukri.naukri_scraper import NaukriScraper
 
 
 if __name__ == "__main__":

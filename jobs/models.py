@@ -6,6 +6,7 @@ class Job(models.Model):
 
     class Source(models.TextChoices):
         NAUKRI = "naukri", "Naukri"
+        FOUNDIT = "foundit", "Foundit"
         INDEED = "indeed", "Indeed"
         LINKEDIN = "linkedin", "LinkedIn"
 
@@ -18,6 +19,8 @@ class Job(models.Model):
     company = models.CharField(max_length=255)
     location = models.CharField(max_length=255, blank=True)
     url = models.URLField(max_length=500)
+    # Where you actually apply — often an external site on aggregated posts.
+    apply_url = models.URLField(max_length=500, blank=True)
 
     # Experience (years)
     min_experience = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -31,6 +34,10 @@ class Job(models.Model):
     # Content
     description = models.TextField(blank=True)
     skills = models.JSONField(default=list, blank=True)
+
+    # Set false when the source reports the listing closed, so stale rows
+    # can be filtered out without deleting the history.
+    is_active = models.BooleanField(default=True)
 
     # Timestamps — posted_at comes from the source, the others are ours.
     posted_at = models.DateTimeField(null=True, blank=True)
