@@ -21,6 +21,7 @@ from django.db.models import Count  # noqa: E402  (must follow django.setup())
 
 from jobs.models import Job  # noqa: E402
 from scrapers.foundit import FounditScraper  # noqa: E402
+from scrapers.hirist import HiristScraper  # noqa: E402
 from scrapers.naukri import NaukriScraper  # noqa: E402
 
 # Every keyword we search for, across all sources.
@@ -40,6 +41,11 @@ TEST_DOMAINS = ["data engineering"]
 # Naukri takes names this scraper maps to numeric gids.
 FOUNDIT_CITIES = ["gurgaon / gurugram", "noida", "greater noida"]
 NAUKRI_CITIES = ["noida", "greater noida", "delhi / ncr"]
+
+# Hirist searches DOMAINS by keyword like the others, and is nationwide so
+# it takes no city list. These categories are browsed *in addition* to the
+# keyword searches — set to [] to search by keyword only.
+HIRIST_CATEGORIES = []
 
 FRESHNESS_DAYS = 1
 # Upper bound only — the scrapers stop early once they have every match.
@@ -69,19 +75,18 @@ def save_jobs(jobs) -> tuple[int, int]:
     return created, updated
 
 
-def run_scraper(name, scraper, keywords, cities, pages=PAGES) -> tuple[int, int]:
-    """Scrape one source and persist whatever it returns."""
+def run_scraper(name, scraper, label, **run_kwargs) -> tuple[int, int]:
+    """Scrape one source and persist whatever it returns.
+
+    Sources don't share a signature — Naukri and Foundit take keywords and
+    cities, Hirist takes categories — so callers pass the kwargs directly.
+    """
     print(f"\n{'=' * 60}")
-    print(f"{name.upper()} | {', '.join(keywords)}")
+    print(f"{name.upper()} | {label}")
     print(f"{'=' * 60}")
 
     try:
-        results = scraper.run(
-            keywords=keywords,
-            pages=pages,
-            cities=cities,
-            freshness=FRESHNESS_DAYS,
-        )
+        results = scraper.run(**run_kwargs)
     except Exception as e:
         # One source failing shouldn't abandon the others.
         print(f"[x] {name} failed: {type(e).__name__}: {e}")
@@ -101,9 +106,33 @@ def run_scraper(name, scraper, keywords, cities, pages=PAGES) -> tuple[int, int]
     return created, updated
 
 
+def _keyword_source(cls, cities):
+    """Build the run() kwargs for a keyword+city source."""
+    def build(keywords):
+        return cls, ", ".join(keywords), {
+            "keywords": keywords,
+            "pages": PAGES,
+            "cities": cities,
+            "freshness": FRESHNESS_DAYS,
+        }
+    return build
+
+
+def _hirist_source(keywords):
+    """Hirist supports free-text search and is nationwide, so it takes the
+    shared keyword list but no city filter. Set HIRIST_CATEGORIES to also
+    browse its fixed sections."""
+    return HiristScraper, ", ".join(keywords), {
+        "keywords": keywords,
+        "categories": HIRIST_CATEGORIES,
+        "pages": PAGES,
+    }
+
+
 SOURCES = {
-    "foundit": (FounditScraper, FOUNDIT_CITIES),
-    "naukri": (NaukriScraper, NAUKRI_CITIES),
+    "foundit": _keyword_source(FounditScraper, FOUNDIT_CITIES),
+    "naukri": _keyword_source(NaukriScraper, NAUKRI_CITIES),
+    "hirist": _hirist_source,
 }
 
 
@@ -145,8 +174,8 @@ def main() -> None:
 
     total_created = total_updated = 0
     for name in names:
-        scraper_cls, cities = SOURCES[name]
-        c, u = run_scraper(name, scraper_cls(), keywords, cities)
+        scraper_cls, label, run_kwargs = SOURCES[name](keywords)
+        c, u = run_scraper(name, scraper_cls(), label, **run_kwargs)
         total_created += c
         total_updated += u
 
