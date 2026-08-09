@@ -6,6 +6,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework.throttling import ScopedRateThrottle
 
 from .emails import send_verification_code
 from .models import EmailVerificationCode
@@ -46,6 +48,8 @@ class RegisterView(APIView):
     """POST /api/auth/register/ — create an unverified account."""
 
     permission_classes = [AllowAny]  # chicken-and-egg exception
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "register"
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
@@ -74,6 +78,8 @@ class VerifyEmailView(APIView):
     """POST /api/auth/verify/ — exchange a code for a verified, logged-in session."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "verify"
 
     def post(self, request):
         email = str(request.data.get("email", "")).lower().strip()
@@ -120,6 +126,8 @@ class ResendVerificationView(APIView):
     """POST /api/auth/resend/ — email a fresh code."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "resend"
 
     def post(self, request):
         serializer = ResendVerificationSerializer(data=request.data)
@@ -141,7 +149,9 @@ class LoginView(APIView):
     """POST /api/auth/login/ — exchange credentials for auth cookies."""
 
     permission_classes = [AllowAny]  # chicken-and-egg exception
-
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "login"
+    
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
@@ -163,6 +173,12 @@ class LogoutView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        raw = request.COOKIES.get(settings.AUTH_COOKIE_REFRESH)
+        if raw:
+            try:
+                RefreshToken(raw).blacklist()
+            except TokenError:
+                pass
         response = Response({"message": "Logged out successfully"})
         response.delete_cookie(settings.AUTH_COOKIE)
         response.delete_cookie(settings.AUTH_COOKIE_REFRESH)
@@ -185,3 +201,31 @@ def first_error(serializer) -> str:
         if isinstance(messages, list) and messages:
             return str(messages[0])
     return "Invalid input"
+
+class RefreshView(APIView):
+    """POST /api/auth/refresh/ — mint a new access token from the refresh cookie."""
+
+    permission_classes = [AllowAny]  # the access token is expired by definition
+
+    def post(self, request):
+        raw = request.COOKIES.get(settings.AUTH_COOKIE_REFRESH)
+        if not raw:
+            return Response(
+                {"message": "No refresh token"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        try:
+            refresh = RefreshToken(raw)
+            user = User.objects.get(id=refresh["user_id"], is_active=True)
+            refresh.blacklist()
+        except (TokenError, User.DoesNotExist, KeyError):
+            response = Response(
+                {"message": "Session expired, please log in again"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+            response.delete_cookie(settings.AUTH_COOKIE)
+            response.delete_cookie(settings.AUTH_COOKIE_REFRESH)
+            return response
+
+        response = Response({"message": "Token refreshed"})
+        return set_auth_cookies(response, user)

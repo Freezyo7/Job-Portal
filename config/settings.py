@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_simplejwt.token_blacklist',
     'rest_framework',
     'django_filters',
     'corsheaders',
@@ -167,16 +168,34 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        # Broad safety net for ordinary browsing.
+        "anon": "60/hour",
+        "user": "1000/hour",
+        # Tight limits on the endpoints worth attacking. Keyed by the
+        # throttle_scope set on each view.
+        "login": "10/hour",
+        "register": "5/hour",
+        "verify": "20/hour",
+        "resend": "3/hour",
+    },
 }
 
 SIMPLE_JWT = {
-    # Short-lived: a stolen access token stops working quickly.
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    # Long-lived, and only ever sent to the refresh endpoint.
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "SIGNING_KEY": SECRET_KEY,
+    # Issue a brand-new refresh token on every refresh...
+    "ROTATE_REFRESH_TOKENS": True,
+    # ...and blacklist the old one so it can't be replayed.
+    "BLACKLIST_AFTER_ROTATION": True,
 }
+
 
 # Names of the cookies we set at login.
 AUTH_COOKIE = "token"

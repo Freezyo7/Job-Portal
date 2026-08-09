@@ -11,11 +11,14 @@ class CookieJWTAuthentication(JWTAuthentication):
     """
 
     def authenticate(self, request):
-        raw_token = request.COOKIES.get(settings.AUTH_COOKIE)
+        raw_token = (request.COOKIES.get(settings.AUTH_COOKIE) or "").strip()
 
-        # Fall back to the Authorization header so curl, Postman, and the
-        # DRF browsable API still work during development.
-        if raw_token is None:
+        # Treat a missing OR empty cookie as "not logged in" and fall back to
+        # the Authorization header (so curl/Postman/the browsable API work).
+        # delete_cookie() leaves an empty-string cookie behind, and passing
+        # that to get_validated_token() would 401 the request — which would
+        # lock a logged-out user out of the login endpoint itself.
+        if not raw_token:
             return super().authenticate(request)
 
         # Raises AuthenticationFailed if expired, tampered with, or malformed.
