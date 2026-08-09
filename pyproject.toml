@@ -21,4 +21,5 @@ dependencies = [
     "djangorestframework",
     "django-filter",
     "psycopg[binary]",
+    "djangorestframework-simplejwt>=5.5.1",
 ]

@@ -154,4 +154,32 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
+    # How DRF figures out who the requesting user is. Ours reads the JWT
+    # from an httpOnly cookie; we write this class in Step 3.
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "accounts.authentication.CookieJWTAuthentication",
+    ],
+    # Fail closed: everything requires login unless a view explicitly opts
+    # out with permission_classes = [AllowAny]. Only register, login, and
+    # the logo proxy should ever do that.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
 }
+
+SIMPLE_JWT = {
+    # Short-lived: a stolen access token stops working quickly.
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    # Long-lived, and only ever sent to the refresh endpoint.
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "SIGNING_KEY": SECRET_KEY,
+}
+
+# Names of the cookies we set at login.
+AUTH_COOKIE = "token"
+AUTH_COOKIE_REFRESH = "refresh_token"
+# Cross-site cookies require Secure=True in browsers, so in dev (http://
+# localhost) we must stay on Lax; in production both flip on together.
+AUTH_COOKIE_SECURE = not DEBUG
+AUTH_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
