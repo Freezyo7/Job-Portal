@@ -185,3 +185,20 @@ AUTH_COOKIE_REFRESH = "refresh_token"
 # localhost) we must stay on Lax; in production both flip on together.
 AUTH_COOKIE_SECURE = not DEBUG
 AUTH_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
+
+
+# Email
+# Dev prints messages to the console; production needs real SMTP creds.
+EMAIL_BACKEND = env(
+    "EMAIL_BACKEND",
+    default="django.core.mail.backends.console.EmailBackend",
+)
+EMAIL_HOST = env("EMAIL_HOST", default="")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="no-reply@careerhub.local")
+
+# Shown in verification emails.
+SITE_NAME = env("SITE_NAME", default="Career Hub")
