@@ -48,11 +48,21 @@ class LoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             raise serializers.ValidationError("Invalid email or password")
 
+        # authenticate() returns None for BOTH a wrong password and an
+        # inactive account, so the unverified case has to be detected here —
+        # after this call the two are indistinguishable. We still verify the
+        # password first, so an attacker can't learn an address is registered
+        # without also knowing its password.
+        if not user.check_password(attrs["password"]):
+            raise serializers.ValidationError("Invalid email or password")
+        if not user.is_active:
+            raise serializers.ValidationError(
+                "Please verify your email address before logging in"
+            )
+
         user = authenticate(username=user.username, password=attrs["password"])
         if user is None:
             raise serializers.ValidationError("Invalid email or password")
-        if not user.is_active:
-            raise serializers.ValidationError("Please verify your email address before logging in")
 
         attrs["user"] = user
         return attrs
