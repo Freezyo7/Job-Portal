@@ -66,3 +66,83 @@ class EmailVerificationCode(models.Model):
             and self.attempts < self.MAX_ATTEMPTS
             and timezone.now() < self.expires_at
         )
+
+# ===================================PRofile=====================================
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+
+    # Profile is the source of truth for display name; User.first_name /
+    # last_name from AbstractUser stay unused. Optional so an empty profile
+    # can be created the first time a user opens the page.
+    first_name = models.CharField(max_length=60, blank=True)
+    last_name = models.CharField(max_length=60, blank=True)
+
+    designation = models.CharField(max_length=120, blank=True)
+    phone = models.CharField(max_length=32, blank=True)
+    contact_email = models.EmailField(blank=True)
+
+    country = models.CharField(max_length=80, blank=True)
+    city = models.CharField(max_length=80, blank=True)
+    full_address = models.CharField(max_length=255, blank=True)
+
+    dob = models.CharField(max_length=40, blank=True)
+    gender = models.CharField(max_length=32, blank=True)
+
+    summary = models.TextField(blank=True)
+    linkedin = models.URLField(max_length=300, blank=True)
+    github = models.URLField(max_length=300, blank=True)
+    portfolio = models.URLField(max_length=300, blank=True)
+
+    # A flat list with no attributes of its own — a JSON array beats a join
+    # table here, and matches how Job.skills is already stored, which makes
+    # skill-based matching a straight comparison later.
+    skills = models.JSONField(default=list, blank=True)
+
+    resume_file_name = models.CharField(max_length=255, blank=True)
+    resume_parsed_at = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Profile of {self.user.username}"
+
+class Experience(models.Model):
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="experience"
+    )
+    title = models.CharField(max_length=150)
+    company = models.CharField(max_length=150)
+    employment_type = models.CharField(max_length=60, blank=True)
+    # Free text to match the frontend's month/year inputs.
+    start_date = models.CharField(max_length=40, blank=True)
+    end_date = models.CharField(max_length=40, blank=True)
+    current = models.BooleanField(default=False)
+
+    class Meta:
+        # Current roles first, then most recent.
+        ordering = ["-current", "-start_date"]
+
+    def __str__(self) -> str:
+        return f"{self.title} at {self.company}"
+
+class Education(models.Model):
+    """One qualification a user holds."""
+
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, related_name="education"
+    )
+    institution = models.CharField(max_length=200)
+    degree = models.CharField(max_length=150)
+    field_of_study = models.CharField(max_length=150, blank=True)
+    grade = models.CharField(max_length=40, blank=True)
+    start_date = models.CharField(max_length=40, blank=True)
+    end_date = models.CharField(max_length=40, blank=True)
+    current = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-current", "-start_date"]
+        verbose_name_plural = "education"
+
+    def __str__(self) -> str:
+        return f"{self.degree} — {self.institution}"

@@ -191,7 +191,7 @@ class UnstopScraper:
             posted_at=self._to_datetime(raw.get("approved_date")
                                         or raw.get("updated_at")),
             expires_at=self._to_datetime(raw.get("end_date")),
-            is_active=(raw.get("status") == "LIVE") and bool(raw.get("regn_open", 1)),
+            is_active=self._is_open(raw),
         )
 
     def _salary(self, detail: dict, key: str) -> int | None:
@@ -245,6 +245,22 @@ class UnstopScraper:
             return None
         return number
 
+    @classmethod
+    def _is_open(cls, raw: dict) -> bool:
+        """Whether applications are actually still accepted.
+
+        Unstop reports status="LIVE" and regn_open=1 on effectively every
+        card, including listings whose deadline passed months ago, so the
+        status flags alone can't be trusted. end_date is the field the site
+        actually maintains, so it decides.
+        """
+        if raw.get("status") != "LIVE" or not raw.get("regn_open", 1):
+            return False
+
+        end = cls._to_datetime(raw.get("end_date"))
+        # No deadline given: leave it open rather than guess.
+        return end is None or end > datetime.now(timezone.utc)
+
     @staticmethod
     def _to_datetime(value) -> datetime | None:
         """Dates arrive ISO-8601 with an offset, or as
@@ -252,17 +268,20 @@ class UnstopScraper:
         if not value:
             return None
         text = str(value).strip()
+
+        def aware(parsed: datetime) -> datetime:
+            """Django runs with USE_TZ, and naive datetimes can't be compared
+            against aware ones — so every result carries a timezone."""
+            return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
         try:
-            return datetime.fromisoformat(text)
+            return aware(datetime.fromisoformat(text))
         except ValueError:
             pass
         cleaned = text.replace("GMT", "").strip()
         for fmt in ("%Y-%m-%d %H:%M:%S %z", "%Y-%m-%d %H:%M:%S"):
             try:
-                parsed = datetime.strptime(cleaned, fmt)
-                if parsed.tzinfo is None:
-                    parsed = parsed.replace(tzinfo=timezone.utc)
-                return parsed
+                return aware(datetime.strptime(cleaned, fmt))
             except ValueError:
                 continue
         return None

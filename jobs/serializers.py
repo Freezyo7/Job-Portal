@@ -38,6 +38,9 @@ class JobListSerializer(serializers.ModelSerializer):
             "company",
             "location",
             "url",
+            # Where the user actually applies — often the employer's own site
+            # rather than the aggregator's listing page.
+            "apply_url",
             "company_logo",
             "job_type",
             "employment_type",

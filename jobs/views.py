@@ -3,10 +3,23 @@ from urllib.parse import urlparse
 import requests
 from django.http import HttpResponse, JsonResponse
 from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
 
 from .filters import JobFilter
 from .models import Job
 from .serializers import JobListSerializer, JobSerializer
+
+from .search import search_jobs
+
+class JobPagination(PageNumberPagination):
+    """Lets the client choose a page size, within a hard ceiling.
+
+    Without max_page_size a client could send ?page_size=1000000 and force a
+    full-table serialization on every request.
+    """
+
+    page_size_query_param = "page_size"
+    max_page_size = 100
 
 
 class JobListView(generics.ListAPIView):
@@ -14,17 +27,23 @@ class JobListView(generics.ListAPIView):
 
     serializer_class = JobListSerializer
     filterset_class = JobFilter
+    pagination_class = JobPagination
 
-    search_fields = ["title", "company", "skills", "description_text"]
-
+    # Relevance search replaces DRF's SearchFilter — see jobs/search.py.
     ordering_fields = ["posted_at", "min_salary", "max_salary", "applicant_count"]
-    ordering = ["-posted_at"]
+    # No `ordering` default here: OrderingFilter would re-sort search results
+    # by date and silently discard the relevance ranking.
 
     def get_queryset(self):
         # Dead listings are never shown — a business rule, not a user choice,
         # so it lives here rather than in JobFilter.
-        return Job.objects.filter(is_active=True)
+        queryset = Job.objects.filter(is_active=True)
 
+        search = self.request.query_params.get("search", "")
+        if search:
+            return search_jobs(queryset, search)
+
+        return queryset.order_by("-posted_at")
 
 class JobDetailView(generics.RetrieveAPIView):
     """GET /api/jobs/<id>/ — one job, including full HTML description."""

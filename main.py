@@ -27,12 +27,10 @@ from scrapers.unstop import UnstopScraper  # noqa: E402
 
 # Every keyword we search for, across all sources.
 DOMAINS = [
-    "data engineering",
     "software developer",
     "graduate engineer",
-    "cyber security",
     "python developer",
-    "full stack developer",
+    "backend developer"
 ]
 
 # Keep the test run small until the pipeline is proven end to end.
@@ -48,7 +46,7 @@ NAUKRI_CITIES = ["noida", "greater noida", "delhi / ncr"]
 # keyword searches — set to [] to search by keyword only.
 HIRIST_CATEGORIES = []
 
-FRESHNESS_DAYS = 1
+FRESHNESS_DAYS = 2
 # Upper bound only — the scrapers stop early once they have every match.
 PAGES = 3
 

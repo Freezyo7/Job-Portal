@@ -85,6 +85,12 @@ class JobAPITests(TestCase):
         for key in ("count", "results"):
             self.assertIn(key, body)
 
+    def test_list_includes_apply_url(self):
+        # The Apply button needs the employer's application link, which is
+        # often a different host from the aggregator's listing page.
+        row = self.client.get("/api/jobs/").json()["results"][0]
+        self.assertIn("apply_url", row)
+
     def test_list_excludes_heavy_and_internal_fields(self):
         row = self.client.get("/api/jobs/").json()["results"][0]
         self.assertIn("description_text", row)
@@ -105,10 +111,36 @@ class JobAPITests(TestCase):
         )
 
     def test_search_matches_skills(self):
-        # Guards the `skills` field name in search_fields.
+        # Guards the `skills` field in the search vector.
         self.assertEqual(
             self.titles(self.client.get("/api/jobs/?search=Django")), {"Backend Engineer"}
         )
+
+    def test_search_requires_all_terms(self):
+        # "backend engineer" must not match the frontend role just because it
+        # contains the word "engineer" somewhere.
+        titles = self.titles(self.client.get("/api/jobs/?search=backend+engineer"))
+        self.assertIn("Backend Engineer", titles)
+        self.assertNotIn("Frontend Developer", titles)
+
+    def test_search_stems_word_variants(self):
+        # Postgres FTS stems, so "engineering" should still find "Engineer".
+        self.assertIn(
+            "Backend Engineer",
+            self.titles(self.client.get("/api/jobs/?search=backend+engineering")),
+        )
+
+    def test_search_ranks_title_matches_first(self):
+        results = self.client.get("/api/jobs/?search=engineer").json()["results"]
+        self.assertEqual(
+            results[0]["title"],
+            "Backend Engineer",
+            "a title match must outrank a description-only match",
+        )
+
+    def test_search_with_no_matches_returns_empty(self):
+        body = self.client.get("/api/jobs/?search=plumbing").json()
+        self.assertEqual(body["count"], 0)
 
     # --- filters -------------------------------------------------------
 
