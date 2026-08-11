@@ -22,4 +22,5 @@ dependencies = [
     "django-filter",
     "psycopg[binary]",
     "djangorestframework-simplejwt>=5.5.1",
+    "pypdf>=6.15.0",
 ]

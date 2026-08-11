@@ -1,6 +1,7 @@
 import hashlib
 import secrets
 from datetime import timedelta
+from pathlib import Path
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -68,6 +69,20 @@ class EmailVerificationCode(models.Model):
         )
 
 # ===================================PRofile=====================================
+def resume_upload_path(instance, filename) -> str:
+    """Where an uploaded resume is stored on disk.
+
+    The name is a random token, never the user-supplied filename: that
+    filename could contain path separators, and a predictable name would let
+    someone guess another user's file if MEDIA_ROOT were ever served
+    directly. The original name is kept in Profile.resume_file_name.
+    """
+    suffix = Path(filename).suffix.lower()
+    if suffix not in {".pdf", ".doc", ".docx"}:
+        suffix = ""
+    return f"resumes/{instance.user_id}/{secrets.token_hex(16)}{suffix}"
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
@@ -98,6 +113,10 @@ class Profile(models.Model):
     # skill-based matching a straight comparison later.
     skills = models.JSONField(default=list, blank=True)
 
+    # The stored upload. Filenames are randomised (see resume_upload_path)
+    # because the original is user-supplied and two users can both send
+    # "resume.pdf"; resume_file_name keeps the original for display.
+    resume = models.FileField(upload_to=resume_upload_path, blank=True, null=True)
     resume_file_name = models.CharField(max_length=255, blank=True)
     resume_parsed_at = models.DateTimeField(null=True, blank=True)
 

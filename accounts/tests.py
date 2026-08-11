@@ -12,7 +12,7 @@ from django.core.cache import cache
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
-from .models import EmailVerificationCode
+from .models import Education, EmailVerificationCode, Experience, Profile
 
 User = get_user_model()
 
@@ -319,6 +319,335 @@ class AuthFlowTests(TestCase):
         token = self.client.cookies[settings.AUTH_COOKIE].value
         self.client.cookies[settings.AUTH_COOKIE] = token[:-4] + "AAAA"
         self.assertEqual(self.client.get("/api/auth/me/").status_code, 401)
+
+
+@override_settings(REST_FRAMEWORK=NO_THROTTLE, EMAIL_BACKEND=MEMORY_MAIL)
+class ProfileTests(TestCase):
+    """Profile, experience, education, and skills endpoints.
+
+    Every route is per-user: the profile is always the caller's own, and
+    nothing accepts an id that would let one account reach another's rows.
+    """
+
+    # The routes as the frontend calls them, so a typo in urls.py fails here
+    # rather than silently 404ing in the browser.
+    PROFILE = "/api/auth/profile/"
+    PERSONAL = "/api/auth/profile/personal/"
+    EXPERIENCE = "/api/auth/profile/experience/"
+    EDUCATION = "/api/auth/profile/education/"
+    SKILLS = "/api/auth/profile/skills/"
+
+    EXPERIENCE_PAYLOAD = {
+        "title": "Backend Engineer",
+        "company": "Acme",
+        "employment_type": "Full-time",
+        "start_date": "Jan 2020",
+        "current": True,
+    }
+    EDUCATION_PAYLOAD = {
+        "institution": "State University",
+        "degree": "B.Tech",
+        "field_of_study": "Computer Science",
+        "start_date": "2016",
+        "end_date": "2020",
+    }
+
+    def setUp(self):
+        cache.clear()
+
+    # --- helpers -------------------------------------------------------
+
+    def sign_in(self, client=None, email=EMAIL, username="tester"):
+        """Register and verify a user; leaves auth cookies on the client."""
+        client = client or self.client
+        client.post(
+            "/api/auth/register/",
+            {"username": username, "email": email, "password": PASSWORD},
+            content_type="application/json",
+        )
+        code = re.search(r"\b(\d{6})\b", mail.outbox[-1].body).group(1)
+        client.post(
+            "/api/auth/verify/",
+            {"email": email, "code": code},
+            content_type="application/json",
+        )
+        return client
+
+    def post_json(self, client, url, payload):
+        return client.post(url, payload, content_type="application/json")
+
+    def patch_json(self, client, url, payload):
+        return client.patch(url, payload, content_type="application/json")
+
+    # --- authentication ------------------------------------------------
+
+    def test_every_profile_route_requires_authentication(self):
+        routes = [
+            ("get", self.PROFILE),
+            ("patch", self.PERSONAL),
+            ("post", self.EXPERIENCE),
+            ("delete", f"{self.EXPERIENCE}1/"),
+            ("post", self.EDUCATION),
+            ("delete", f"{self.EDUCATION}1/"),
+            ("patch", self.SKILLS),
+        ]
+        for method, url in routes:
+            with self.subTest(method=method, url=url):
+                response = getattr(self.client, method)(
+                    url, content_type="application/json"
+                )
+                self.assertEqual(response.status_code, 401)
+
+    # --- reading the profile -------------------------------------------
+
+    def test_first_fetch_creates_the_profile_row(self):
+        self.sign_in()
+        self.assertFalse(Profile.objects.filter(user__email=EMAIL).exists())
+
+        response = self.client.get(self.PROFILE)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Profile.objects.filter(user__email=EMAIL).exists())
+
+    def test_new_profile_is_empty_but_carries_the_account_identity(self):
+        self.sign_in()
+        body = self.client.get(self.PROFILE).json()
+
+        self.assertEqual(body["email"], EMAIL)
+        self.assertEqual(body["username"], "tester")
+        self.assertEqual(body["first_name"], "")
+        self.assertEqual(body["skills"], [])
+        self.assertEqual(body["experience"], [])
+        self.assertEqual(body["education"], [])
+
+    def test_fetching_twice_reuses_the_same_profile(self):
+        self.sign_in()
+        self.client.get(self.PROFILE)
+        self.client.get(self.PROFILE)
+        self.assertEqual(Profile.objects.filter(user__email=EMAIL).count(), 1)
+
+    def test_profile_never_exposes_the_password(self):
+        self.sign_in()
+        self.assertNotIn("password", self.client.get(self.PROFILE).json())
+
+    def test_each_user_sees_only_their_own_profile(self):
+        first = self.sign_in(email="first@example.com", username="first")
+        self.patch_json(first, self.PERSONAL, {"first_name": "First"})
+
+        second = self.sign_in(
+            self.client_class(), email="second@example.com", username="second"
+        )
+        body = second.get(self.PROFILE).json()
+
+        self.assertEqual(body["email"], "second@example.com")
+        self.assertEqual(body["first_name"], "")
+
+    # --- personal info -------------------------------------------------
+
+    def test_personal_info_is_saved_and_returned(self):
+        self.sign_in()
+        response = self.patch_json(
+            self.client,
+            self.PERSONAL,
+            {"first_name": "Ada", "last_name": "Lovelace", "city": "London"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["first_name"], "Ada")
+        self.assertEqual(self.client.get(self.PROFILE).json()["city"], "London")
+
+    def test_personal_info_patch_leaves_untouched_fields_alone(self):
+        self.sign_in()
+        self.patch_json(
+            self.client, self.PERSONAL, {"first_name": "Ada", "city": "London"}
+        )
+        self.patch_json(self.client, self.PERSONAL, {"city": "Paris"})
+
+        body = self.client.get(self.PROFILE).json()
+        self.assertEqual(body["city"], "Paris")
+        self.assertEqual(body["first_name"], "Ada", "partial update must not clear fields")
+
+    def test_personal_info_patch_creates_the_profile_if_absent(self):
+        # The frontend can PATCH before ever issuing a GET.
+        self.sign_in()
+        response = self.patch_json(self.client, self.PERSONAL, {"first_name": "Ada"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Profile.objects.get(user__email=EMAIL).first_name, "Ada")
+
+    def test_personal_info_rejects_a_malformed_url(self):
+        self.sign_in()
+        response = self.patch_json(self.client, self.PERSONAL, {"linkedin": "not-a-url"})
+        self.assertEqual(response.status_code, 400)
+
+    def test_personal_info_cannot_overwrite_resume_metadata(self):
+        # resume_file_name is read-only; the parser owns it.
+        self.sign_in()
+        self.patch_json(self.client, self.PERSONAL, {"resume_file_name": "fake.pdf"})
+        self.assertEqual(Profile.objects.get(user__email=EMAIL).resume_file_name, "")
+
+    # --- experience ----------------------------------------------------
+
+    def test_experience_is_added_to_the_callers_profile(self):
+        self.sign_in()
+        response = self.post_json(self.client, self.EXPERIENCE, self.EXPERIENCE_PAYLOAD)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("id", response.json(), "the frontend keys deletes off this id")
+
+        entries = self.client.get(self.PROFILE).json()["experience"]
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["title"], "Backend Engineer")
+        self.assertEqual(
+            Experience.objects.get().profile.user.email,
+            EMAIL,
+            "the entry must attach to the caller, not to some other profile",
+        )
+
+    def test_experience_requires_a_title_and_company(self):
+        self.sign_in()
+        response = self.post_json(self.client, self.EXPERIENCE, {"company": "Acme"})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Experience.objects.exists())
+
+    def test_experience_can_be_deleted_by_its_owner(self):
+        self.sign_in()
+        created = self.post_json(
+            self.client, self.EXPERIENCE, self.EXPERIENCE_PAYLOAD
+        ).json()
+
+        response = self.client.delete(f"{self.EXPERIENCE}{created['id']}/")
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Experience.objects.filter(pk=created["id"]).exists())
+
+    def test_cannot_delete_another_users_experience(self):
+        victim = self.sign_in(email="victim@example.com", username="victim")
+        created = self.post_json(
+            victim, self.EXPERIENCE, self.EXPERIENCE_PAYLOAD
+        ).json()
+
+        attacker = self.sign_in(
+            self.client_class(), email="attacker@example.com", username="attacker"
+        )
+        response = attacker.delete(f"{self.EXPERIENCE}{created['id']}/")
+
+        self.assertEqual(response.status_code, 404, "must not confirm the row exists")
+        self.assertTrue(
+            Experience.objects.filter(pk=created["id"]).exists(),
+            "another user's experience must survive the attempt",
+        )
+
+    def test_deleting_a_missing_experience_is_404(self):
+        self.sign_in()
+        self.assertEqual(self.client.delete(f"{self.EXPERIENCE}999/").status_code, 404)
+
+    # --- education -----------------------------------------------------
+
+    def test_education_is_added_to_the_callers_profile(self):
+        self.sign_in()
+        response = self.post_json(self.client, self.EDUCATION, self.EDUCATION_PAYLOAD)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("id", response.json())
+
+        entries = self.client.get(self.PROFILE).json()["education"]
+        self.assertEqual(len(entries), 1)
+        self.assertEqual(entries[0]["institution"], "State University")
+        self.assertEqual(Education.objects.get().profile.user.email, EMAIL)
+
+    def test_education_requires_an_institution_and_degree(self):
+        self.sign_in()
+        response = self.post_json(self.client, self.EDUCATION, {"grade": "A"})
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Education.objects.exists())
+
+    def test_education_can_be_deleted_by_its_owner(self):
+        self.sign_in()
+        created = self.post_json(
+            self.client, self.EDUCATION, self.EDUCATION_PAYLOAD
+        ).json()
+
+        response = self.client.delete(f"{self.EDUCATION}{created['id']}/")
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Education.objects.filter(pk=created["id"]).exists())
+
+    def test_cannot_delete_another_users_education(self):
+        victim = self.sign_in(email="victim@example.com", username="victim")
+        created = self.post_json(victim, self.EDUCATION, self.EDUCATION_PAYLOAD).json()
+
+        attacker = self.sign_in(
+            self.client_class(), email="attacker@example.com", username="attacker"
+        )
+        response = attacker.delete(f"{self.EDUCATION}{created['id']}/")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Education.objects.filter(pk=created["id"]).exists())
+
+    # --- skills --------------------------------------------------------
+
+    def test_skills_are_saved(self):
+        self.sign_in()
+        response = self.patch_json(
+            self.client, self.SKILLS, {"skills": ["Python", "Django"]}
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["skills"], ["Python", "Django"])
+        self.assertEqual(self.client.get(self.PROFILE).json()["skills"], ["Python", "Django"])
+
+    def test_skills_patch_replaces_rather_than_appends(self):
+        # The frontend sends the whole list every time.
+        self.sign_in()
+        self.patch_json(self.client, self.SKILLS, {"skills": ["Python", "Django"]})
+        response = self.patch_json(self.client, self.SKILLS, {"skills": ["Go"]})
+
+        self.assertEqual(response.json()["skills"], ["Go"])
+
+    def test_skills_are_trimmed_and_deduplicated_case_insensitively(self):
+        self.sign_in()
+        response = self.patch_json(
+            self.client,
+            self.SKILLS,
+            {"skills": ["Python", " python ", "PYTHON", "Django"]},
+        )
+
+        self.assertEqual(
+            response.json()["skills"],
+            ["Python", "Django"],
+            "the first spelling wins and duplicates are dropped",
+        )
+
+    def test_skills_can_be_cleared(self):
+        self.sign_in()
+        self.patch_json(self.client, self.SKILLS, {"skills": ["Python"]})
+        response = self.patch_json(self.client, self.SKILLS, {"skills": []})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["skills"], [])
+
+    def test_skills_must_be_a_list_of_strings(self):
+        self.sign_in()
+        self.assertEqual(
+            self.patch_json(self.client, self.SKILLS, {"skills": "Python"}).status_code,
+            400,
+        )
+        self.assertEqual(
+            self.patch_json(self.client, self.SKILLS, {"skills": [{"a": 1}]}).status_code,
+            400,
+        )
+
+    def test_skills_of_one_user_do_not_leak_into_another(self):
+        first = self.sign_in(email="first@example.com", username="first")
+        self.patch_json(first, self.SKILLS, {"skills": ["Python"]})
+
+        second = self.sign_in(
+            self.client_class(), email="second@example.com", username="second"
+        )
+        self.assertEqual(second.get(self.PROFILE).json()["skills"], [])
 
 
 @override_settings(EMAIL_BACKEND=MEMORY_MAIL)

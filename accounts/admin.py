@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from .models import EmailVerificationCode, User
+from .models import EmailVerificationCode, User, Education, Experience, Profile 
 
 
 @admin.register(User)
@@ -20,3 +20,22 @@ class EmailVerificationCodeAdmin(admin.ModelAdmin):
     # Codes are issued by the system; hand-editing them would only ever be
     # a way to bypass verification.
     readonly_fields = ("user", "code_hash", "created_at", "expires_at", "used_at", "attempts")
+
+class ExperienceInline(admin.TabularInline):
+    model = Experience
+    extra = 0
+
+
+class EducationInline(admin.TabularInline):
+    model = Education
+    extra = 0
+
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ("user", "first_name", "last_name", "designation", "city", "country")
+    search_fields = ("user__email", "user__username", "first_name", "last_name")
+    list_select_related = ("user",)
+    raw_id_fields = ("user",)
+    readonly_fields = ("resume_file_name", "resume_parsed_at")
+    inlines = [ExperienceInline, EducationInline]

@@ -140,6 +140,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Uploaded files (currently only resumes). Resumes are private, so MEDIA_URL
+# is never served directly — they are streamed by an authenticated view that
+# checks ownership first. See accounts.profile_views.ResumeDownloadView.
+MEDIA_ROOT = env("MEDIA_ROOT", default=str(BASE_DIR / "media"))
+MEDIA_URL = "/media/"
+
+# A resume that parses to anything useful is a handful of pages. The cap is
+# enforced in the serializer too; this stops Django buffering a huge body
+# into memory before the view ever runs.
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
+RESUME_MAX_BYTES = 5 * 1024 * 1024
+
 # CORS configuration
 # Allow local FE dev server and add deployed FE origin when available
 CORS_ALLOWED_ORIGINS = [
@@ -182,6 +194,9 @@ REST_FRAMEWORK = {
         "register": "5/hour",
         "verify": "20/hour",
         "resend": "3/hour",
+        # Every upload costs a Groq call, so this protects the bill as much
+        # as the server.
+        "resume": "10/hour",
     },
 }
 
@@ -221,3 +236,15 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="no-reply@careerhub.local
 
 # Shown in verification emails.
 SITE_NAME = env("SITE_NAME", default="Career Hub")
+
+
+# Resume parsing (Groq)
+# Blank by default so the project still boots without a key; the upload
+# endpoint reports the feature as unavailable rather than crashing.
+GROQ_API_KEY = env("GROQ_API_KEY", default="")
+GROQ_BASE_URL = env("GROQ_BASE_URL", default="https://api.groq.com/openai/v1")
+# gpt-oss-120b is the model on Groq that supports strict json_schema, so the
+# response shape is guaranteed rather than parsed hopefully. llama-3.3-70b
+# only offers json_object (valid JSON, arbitrary keys) — not enough here.
+GROQ_MODEL = env("GROQ_MODEL", default="openai/gpt-oss-120b")
+GROQ_TIMEOUT = env.int("GROQ_TIMEOUT", default=60)
