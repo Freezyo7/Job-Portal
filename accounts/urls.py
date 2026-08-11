@@ -21,4 +21,6 @@ urlpatterns = [
     path("profile/education/", profile_views.EducationListView.as_view(), name="profile-education"),
     path("profile/education/<int:pk>/", profile_views.EducationDetailView.as_view(), name="profile-education-detail"),
     path("profile/skills/", profile_views.SkillsView.as_view(), name="profile-skills"),
+    path("profile/resume/", profile_views.ResumeUploadView.as_view(), name="profile-resume"),
+    path("profile/resume/download/", profile_views.ResumeDownloadView.as_view(), name="profile-resume-download"),
 ]

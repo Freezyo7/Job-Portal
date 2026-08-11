@@ -1,3 +1,7 @@
+from pathlib import Path
+from .models import Education, Experience, Profile
+
+from django.conf import settings
 from rest_framework import serializers
 
 from .models import Education, Experience, Profile
@@ -99,3 +103,35 @@ class SkillsSerializer(serializers.Serializer):
                 seen.add(skill.lower())
                 cleaned.append(skill)
         return cleaned
+
+
+class ResumeUploadSerializer(serializers.Serializer):
+    """Validates the upload before it costs us a parse."""
+
+    ALLOWED_SUFFIXES = {".pdf"}
+    ALLOWED_TYPES = {"application/pdf", "application/x-pdf"}
+    PDF_MAGIC = b"%PDF-"
+
+    resume = serializers.FileField()
+
+    def validate_resume(self, upload):
+        if upload.size > settings.RESUME_MAX_BYTES:
+            limit_mb = settings.RESUME_MAX_BYTES // (1024 * 1024)
+            raise serializers.ValidationError(
+                f"That file is larger than {limit_mb} MB"
+            )
+        if not upload.size:
+            raise serializers.ValidationError("That file is empty.")
+
+        if Path(upload.name).suffix.lower() not in self.ALLOWED_SUFFIXES:
+            raise serializers.ValidationError("Please upload a PDF.")
+
+        if upload.content_type and upload.content_type not in self.ALLOWED_TYPES:
+            raise serializers.ValidationError("Please upload a PDF.")
+
+        header = upload.read(len(self.PDF_MAGIC))
+        upload.seek(0)
+        if header != self.PDF_MAGIC:
+            raise serializers.ValidationError("That file is not a valid PDF.")
+
+        return upload
