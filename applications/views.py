@@ -12,22 +12,22 @@ from rest_framework.views import APIView
 
 from .models import Application
 from .serializers import ApplicationSerializer, ApplySerializer
-from django.shortcuts import render
 
-# Create your views here.
 
 class ApplicationListView(APIView):
-    """GET 
-        POST"""
+    """GET  /api/applications/ — the caller's applications.
+    POST /api/applications/ — confirm they applied to a job.
+    """
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        application = (
+        applications = (
             Application.objects.filter(user=request.user)
+            # Without this the serializer fires one query per row.
             .select_related("job")
         )
-        return Response(ApplicationSerializer(application, many=True).data)
+        return Response(ApplicationSerializer(applications, many=True).data)
 
     def post(self, request):
         serializer = ApplySerializer(data=request.data)
@@ -40,7 +40,7 @@ class ApplicationListView(APIView):
         return Response(
             {
                 "already_applied": not created,
-                "application": ApplySerializer(application).data,
+                "application": ApplicationSerializer(application).data,
             },
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
         )
@@ -56,15 +56,21 @@ class ApplicationDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 def _application_per_day(user, year=None):
-    row = Application.objects.filter(user=user)
-    if year is None:
+    """[(date, count), ...] for `user`, oldest first.
+
+    TruncDate converts to the current timezone (Asia/Kolkata), so a day
+    here is the user's day rather than a UTC one.
+    """
+    rows = Application.objects.filter(user=user)
+    if year is not None:
         rows = rows.filter(applied_at__year=year)
 
     return [
         (row["day"], row["count"])
-        for row in row.annotate(day=TruncDate("applied_at")
-                                .values("day")
-                                .order_by("day"))
+        for row in rows.annotate(day=TruncDate("applied_at"))
+        .values("day")
+        .annotate(count=Count("id"))
+        .order_by("day")
     ]
 
 def _streaks(days):

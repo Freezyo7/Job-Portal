@@ -30,6 +30,10 @@ class Application(models.Model):
     class Meta:
         ordering = ["-applied_at"]
         constraints = [
+            # Applying twice to the same job is the same application, not a
+            # second one. Enforced here so a race between two requests
+            # cannot create duplicates, which a view-level check alone
+            # would allow.
             models.UniqueConstraint(
                 fields=["user", "job"],
                 name="unique_user_job_application",

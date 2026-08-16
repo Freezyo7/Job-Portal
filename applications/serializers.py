@@ -16,7 +16,7 @@ class ApplicationJobSerializer(serializers.ModelSerializer):
             "url",
             "apply_url",
             "job_type",
-            "employement_type",
+            "employment_type",
         ]
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -24,10 +24,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ["id", "jobs", "applied_at"]
+        fields = ["id", "job", "applied_at"]
         read_only_fields = fields
 
-class ApplySerializer(serializers.ModelSerializer):
+class ApplySerializer(serializers.Serializer):
     job_id = serializers.IntegerField()
 
     def validate_job_id(self, value):
