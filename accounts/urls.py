@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views, profile_views
+from . import views, profile_views, settings_views
 
 app_name = "accounts"
 
@@ -23,4 +23,9 @@ urlpatterns = [
     path("profile/skills/", profile_views.SkillsView.as_view(), name="profile-skills"),
     path("profile/resume/", profile_views.ResumeUploadView.as_view(), name="profile-resume"),
     path("profile/resume/download/", profile_views.ResumeDownloadView.as_view(), name="profile-resume-download"),
+    # Settings
+    path("settings/", settings_views.SettingsOverviewView.as_view(), name="settings-overview"),
+    path("settings/profile/", settings_views.UpdateAccountView.as_view(), name="settings-profile"),
+    path("settings/password/", settings_views.ChangePasswordView.as_view(), name="settings-password"),
+    path("settings/account/", settings_views.DeleteAccountView.as_view(), name="settings-account"),
 ]

@@ -1200,6 +1200,198 @@ class ResumeUploadTests(TestCase):
         )
 
 
+@override_settings(REST_FRAMEWORK=NO_THROTTLE, EMAIL_BACKEND=MEMORY_MAIL)
+class SettingsFlowTests(TestCase):
+    SETTINGS = "/api/auth/settings/"
+    SETTINGS_PROFILE = "/api/auth/settings/profile/"
+    SETTINGS_PASSWORD = "/api/auth/settings/password/"
+    SETTINGS_ACCOUNT = "/api/auth/settings/account/"
+
+    def setUp(self):
+        cache.clear()
+
+    def sign_in(self, client=None, email=EMAIL, username="tester", password=PASSWORD):
+        client = client or self.client
+        client.post(
+            "/api/auth/register/",
+            {"username": username, "email": email, "password": password},
+            content_type="application/json",
+        )
+        code = re.search(r"\b(\d{6})\b", mail.outbox[-1].body).group(1)
+        client.post(
+            "/api/auth/verify/",
+            {"email": email, "code": code},
+            content_type="application/json",
+        )
+        return client
+
+    def patch_json(self, client, url, payload):
+        return client.patch(url, payload, content_type="application/json")
+
+    def delete_json(self, client, url, payload):
+        return client.delete(url, payload, content_type="application/json")
+
+    # --- Authentication check ---
+
+    def test_settings_routes_require_authentication(self):
+        routes = [
+            ("get", self.SETTINGS),
+            ("patch", self.SETTINGS_PROFILE),
+            ("patch", self.SETTINGS_PASSWORD),
+            ("delete", self.SETTINGS_ACCOUNT),
+        ]
+        for method, url in routes:
+            with self.subTest(method=method, url=url):
+                response = getattr(self.client, method)(
+                    url, content_type="application/json"
+                )
+                self.assertEqual(response.status_code, 401)
+
+    # --- Overview ---
+
+    def test_settings_overview_returns_user_details_and_zero_applied(self):
+        self.sign_in()
+        response = self.client.get(self.SETTINGS)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["username"], "tester")
+        self.assertEqual(data["email"], EMAIL)
+        self.assertEqual(data["total_applied"], 0)
+        self.assertIn("date_joined", data)
+
+    # --- Profile update (username & email) ---
+
+    def test_update_username_succeeds(self):
+        self.sign_in()
+        response = self.patch_json(
+            self.client, self.SETTINGS_PROFILE, {"username": "new_tester"}
+        )
+        self.assertEqual(response.status_code, 200)
+        user = User.objects.get(email=EMAIL)
+        self.assertEqual(user.username, "new_tester")
+
+    def test_update_username_rejects_duplicate(self):
+        self.sign_in(email="user1@example.com", username="user1")
+        other = self.sign_in(
+            self.client_class(), email="user2@example.com", username="user2"
+        )
+        response = self.patch_json(
+            other, self.SETTINGS_PROFILE, {"username": "user1"}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("already taken", response.json()["message"].lower())
+
+    def test_update_email_deactivates_account_and_sends_verification_code(self):
+        self.sign_in()
+        mail.outbox.clear()
+
+        new_email = "newemail@example.com"
+        response = self.patch_json(
+            self.client, self.SETTINGS_PROFILE, {"email": new_email}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json().get("email_changed"))
+
+        user = User.objects.get(username="tester")
+        self.assertEqual(user.email, new_email)
+        self.assertFalse(user.is_active, "User must be deactivated until new email is verified")
+
+        # Must have sent verification email to the new address
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [new_email])
+
+        # Session cookies must be cleared; subsequent request must be 401
+        me_response = self.client.get("/api/auth/me/")
+        self.assertEqual(me_response.status_code, 401)
+
+    def test_update_email_rejects_existing_email(self):
+        self.sign_in(email="user1@example.com", username="user1")
+        other = self.sign_in(
+            self.client_class(), email="user2@example.com", username="user2"
+        )
+        response = self.patch_json(
+            other, self.SETTINGS_PROFILE, {"email": "user1@example.com"}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("already registered", response.json()["message"].lower())
+
+    # --- Change password ---
+
+    def test_change_password_with_wrong_current_password_fails(self):
+        self.sign_in()
+        response = self.patch_json(
+            self.client,
+            self.SETTINGS_PASSWORD,
+            {"current_password": "WrongPassword123", "new_password": "NewStr0ngPass!123"},
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("incorrect", response.json()["message"].lower())
+
+    def test_change_password_with_same_password_fails(self):
+        self.sign_in()
+        response = self.patch_json(
+            self.client,
+            self.SETTINGS_PASSWORD,
+            {"current_password": PASSWORD, "new_password": PASSWORD},
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_change_password_succeeds_and_allows_login_with_new_password(self):
+        self.sign_in()
+        new_password = "BrandNew!Passw0rd123"
+        response = self.patch_json(
+            self.client,
+            self.SETTINGS_PASSWORD,
+            {"current_password": PASSWORD, "new_password": new_password},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # Login with old password fails
+        old_login = self.client.post(
+            "/api/auth/login/",
+            {"email": EMAIL, "password": PASSWORD},
+            content_type="application/json",
+        )
+        self.assertEqual(old_login.status_code, 401)
+
+        # Login with new password succeeds
+        new_login = self.client.post(
+            "/api/auth/login/",
+            {"email": EMAIL, "password": new_password},
+            content_type="application/json",
+        )
+        self.assertEqual(new_login.status_code, 200)
+
+    # --- Delete account ---
+
+    def test_delete_account_fails_with_wrong_password_and_preserves_user(self):
+        self.sign_in()
+        response = self.delete_json(
+            self.client, self.SETTINGS_ACCOUNT, {"password": "IncorrectPassword"}
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertTrue(
+            User.objects.filter(email=EMAIL).exists(),
+            "User must not be deleted on wrong password",
+        )
+
+    def test_delete_account_succeeds_with_correct_password(self):
+        self.sign_in()
+        response = self.delete_json(
+            self.client, self.SETTINGS_ACCOUNT, {"password": PASSWORD}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(email=EMAIL).exists())
+
+        # Cannot log in after deletion
+        login_response = self.client.post(
+            "/api/auth/login/",
+            {"email": EMAIL, "password": PASSWORD},
+            content_type="application/json",
+        )
+        self.assertEqual(login_response.status_code, 401)
+
+
 @override_settings(EMAIL_BACKEND=MEMORY_MAIL)
 class ThrottleTests(TestCase):
     """Rate limits use the real configured rates, so these run separately."""

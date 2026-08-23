@@ -9,6 +9,7 @@ class ApplicationJobSerializer(serializers.ModelSerializer):
         model = Job
         fields = [
             "id",
+            "source",
             "title",
             "company",
             "company_logo",
@@ -24,8 +25,20 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Application
-        fields = ["id", "job", "applied_at"]
-        read_only_fields = fields
+        fields = [
+            "id",
+            "job",
+            "contact_name",
+            "contact_email",
+            "contact_linkedin",
+            "applied_at",
+        ]
+        read_only_fields = ["id", "job", "applied_at"]
+
+class UpdateApplicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Application
+        fields = ["contact_name", "contact_email", "contact_linkedin"]
 
 class ApplySerializer(serializers.Serializer):
     job_id = serializers.IntegerField()

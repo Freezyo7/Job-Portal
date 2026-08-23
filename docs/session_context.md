@@ -94,15 +94,15 @@ before creating a new one.
 | 2 — Auth | Done | Register/verify/login/logout/refresh/me, throttled |
 | 3 — Profile | Done | Profile + Experience + Education + skills |
 | 3b — Resume | Done | Upload, store, parse via Groq, return for review |
-| 4 — Settings | **In progress** | Serializers partially written, views not started |
-| 5 — Applications | Done | Apply, list, delete, stats, activity calendar |
+| 4 — Settings | **Done** | GET/PATCH account info, PATCH password, DELETE account |
+| 5 — Applications | Done | Apply, list, delete, stats, activity calendar; contact fields added |
 | 6 — Interview AI | Not started | |
 | 7 — Cutover | Not started | |
 
 Phases 4 and 5 were done out of order because Phase 4's `total_applied`
 needs Phase 5's `Application` model.
 
-**Test suite: 139 passing** across `accounts` (100) and `applications` (39).
+**Test suite: 177 passing** across `accounts` (113) and `applications` (57) and `jobs` (7).
 
 > Running `manage.py test` with no app argument surfaces 6 pre-existing
 > `ModuleNotFoundError: bleach` errors from `scrapers`. `bleach` is in
@@ -139,9 +139,9 @@ PATCH  profile/skills/             replace the whole list
 POST   profile/resume/             upload + parse, returns parsed for review
 GET    profile/resume/download/    stream own resume
 
-# Phase 4, not yet wired:
 GET    settings/                   username, email, date_joined, total_applied
-PATCH  settings/profile/           username / email (email → re-verification)
+PATCH  settings/profile/           username / email (email → re-verification,
+                                   deactivates account & clears cookies)
 PATCH  settings/password/          verify current, set new, rotate session
 DELETE settings/account/           verify password, cascade delete
 ```
@@ -149,8 +149,9 @@ DELETE settings/account/           verify password, cascade delete
 ### `applications` — `/api/applications/`
 
 ```
-GET    ""                 caller's applications, job data nested
+GET    ""                 caller's applications, job data nested (includes source, contact fields)
 POST   ""                 body {"job_id": N} → confirm an application
+PATCH  <pk>/              update contact info (contact_name, contact_email, contact_linkedin)
 DELETE <pk>/              undo a mis-confirmation (own only)
 GET    activity/?year=    [{"date": "2026-08-16", "count": 3}, ...]
 GET    stats/             total_applied, streaks, week/month counts
@@ -190,9 +191,12 @@ row can be `current=True` *and* carry an `end_date`. Worth a serializer
 
 ### `applications.Application`
 ```python
-user  FK → AUTH_USER_MODEL, related_name="applications"
-job   FK → "jobs.Job",      related_name="applications"
-applied_at  DateTimeField(auto_now_add=True)
+user             FK → AUTH_USER_MODEL, related_name="applications"
+job              FK → "jobs.Job",      related_name="applications"
+contact_name     CharField(blank=True, default="")   # recruiter / referral name
+contact_email    EmailField(blank=True, default="")  # nullable recruiter email
+contact_linkedin URLField(blank=True, default="")    # nullable LinkedIn URL
+applied_at       DateTimeField(auto_now_add=True)
 ```
 - `UniqueConstraint(("user", "job"))` — DB-level, because a view-side
   `exists()` check loses a race between two simultaneous requests.
@@ -201,6 +205,9 @@ applied_at  DateTimeField(auto_now_add=True)
 - **No status field.** A row means "the user confirmed they applied." The
   flow is: click apply → redirect to the job → return → "did you apply?" →
   Yes creates the row, No records nothing.
+- **Contact fields** are optional (blank by default). The user can add a
+  recruiter name, email, or LinkedIn URL via `PATCH /api/applications/<pk>/`
+  after the application is confirmed.
 - Consequence of the unique constraint: the calendar shows *"jobs first
   applied to on this day"*, not *"confirmations on this day."* Re-confirming
   an old job does not add to today's count.
@@ -301,28 +308,7 @@ randomised (`resume_upload_path`) so they are not guessable.
 
 ## Remaining work
 
-### Phase 4 — Settings (in progress)
-
-`accounts/settings_serializers.py` exists but has **two bugs**:
-1. `User = get_user_model` — missing `()`, assigns the function not the class.
-2. `user.application.count()` — should be `user.applications` (plural), per
-   the `related_name`.
-
-Still to write: `accounts/settings_views.py`, the four routes in
-`accounts/urls.py`, and tests.
-
-Decisions already made:
-- Routes live under `/api/auth/settings/`.
-- Changing email **reuses the existing verification flow**: write the new
-  address immediately, set `is_active=False`, send a code, clear auth
-  cookies. There is no pending-email field, so the account is unusable until
-  verified — accepted deliberately to avoid model changes.
-- `role` from the migration guide is dropped; `User` has no role field.
-- Password change should rotate the session (reuse `set_auth_cookies`).
-- Delete account must `check_password` **before** `.delete()` — mutation-test
-  this one.
-
-### Phase 6 — Interview AI (not started)
+### Phase 6 — Interview AI (skipped for now)
 
 Guide says Gemini, but **this project already uses Groq** for resume
 parsing — worth asking the user whether to reuse Groq rather than adding a
@@ -348,21 +334,40 @@ second LLM provider and key. Prompts port from
 - Decommission `FE/server` only after browser verification, not just curl.
 - Cut over route-by-route rather than all at once.
 
+### Frontend UI updates needed
+
+The FE dashboard needs updating to consume the new Django API surface:
+
+- **Applications table**: Show `job.source` as a platform badge (Naukri, LinkedIn etc.),
+  and the new `contact_name` / `contact_email` / `contact_linkedin` columns
+  (with a "+ Add Contact" button when empty, opening a modal that calls
+  `PATCH /api/applications/<pk>/`).
+- **Activity heatmap**: Wire up `GET /api/applications/activity/?year=` for
+  a GitHub/LeetCode-style contribution calendar.
+- **Stats bar**: Wire `GET /api/applications/stats/` for total, streaks,
+  and weekly/monthly counts.
+- **Settings page**: Wire the four `/api/auth/settings/` routes (overview,
+  update profile, change password, delete account).
+
 ---
 
 ## Current working tree
 
-Uncommitted at time of writing:
-```
- M applications/models.py        (comments + related_name plural)
- M applications/serializers.py   (field-name fixes)
- M applications/tests.py         (the 39-test suite)
- M applications/views.py         (aggregation + serializer fixes)
-?? accounts/settings_serializers.py   (Phase 4, has the 2 bugs above)
-```
+All Phase 4 and Phase 5 work is committed and clean (`git status` clean as of
+2026-08-23). Files added or significantly modified since the original
+`b9bc78e` baseline:
 
-The last commit (`b9bc78e`) added the applications app but predates the
-review fixes and the test suite, so the committed version of
-`applications/views.py` still contains the broken `_application_per_day`
-aggregation. Commit the working tree before treating `b9bc78e` as a good
-baseline.
+```
+accounts/settings_serializers.py   — SettingsSerializer, UpdateAccountSerializer,
+                                     ChangePasswordSerializer, DeleteAccountSerializer
+accounts/settings_views.py         — SettingsOverviewView, UpdateAccountView,
+                                     ChangePasswordView, DeleteAccountView
+accounts/urls.py                   — wired settings/ routes
+accounts/tests.py                  — SettingsFlowTests (13 tests)
+applications/models.py             — contact_name, contact_email, contact_linkedin fields
+applications/migrations/0003_*     — migration for contact fields
+applications/serializers.py        — source in job serializer, contact fields, UpdateApplicationSerializer
+applications/views.py              — PATCH on ApplicationDetailView
+applications/tests.py              — ApplicationDetailTests (contact + ownership tests)
+docs/session_context.md            — this file
+```

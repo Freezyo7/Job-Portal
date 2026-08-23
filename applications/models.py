@@ -25,6 +25,11 @@ class Application(models.Model):
         related_name="applications",
     )
 
+    # Optional recruiter / referral / contact person info
+    contact_name = models.CharField(max_length=255, blank=True, default="")
+    contact_email = models.EmailField(blank=True, default="")
+    contact_linkedin = models.URLField(max_length=500, blank=True, default="")
+
     applied_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

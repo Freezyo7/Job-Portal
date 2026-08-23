@@ -11,7 +11,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Application
-from .serializers import ApplicationSerializer, ApplySerializer
+from .serializers import (
+    ApplicationSerializer,
+    ApplySerializer,
+    UpdateApplicationSerializer,
+)
 
 
 class ApplicationListView(APIView):
@@ -46,9 +50,20 @@ class ApplicationListView(APIView):
         )
 
 class ApplicationDetailView(APIView):
-    """Delete"""
+    """DELETE /api/applications/<pk>/ — undo an application.
+    PATCH  /api/applications/<pk>/ — update contact info.
+    """
 
     permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        application = get_object_or_404(Application, pk=pk, user=request.user)
+        serializer = UpdateApplicationSerializer(
+            application, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(ApplicationSerializer(application).data)
 
     def delete(self, request, pk):
         application = get_object_or_404(Application, pk=pk, user=request.user)

@@ -179,13 +179,16 @@ class ApplicationListTests(ApplicationsAPITestCase):
 
     def test_includes_nested_job_data(self):
         self.sign_in()
-        job = make_job(title="Senior Backend Engineer", company="Acme")
+        job = make_job(title="Senior Backend Engineer", company="Acme", source="naukri")
         self.apply(job)
 
         body = self.client.get(self.LIST).json()
 
         self.assertEqual(body[0]["job"]["title"], "Senior Backend Engineer")
         self.assertEqual(body[0]["job"]["company"], "Acme")
+        self.assertEqual(body[0]["job"]["source"], "naukri")
+        self.assertEqual(body[0]["contact_email"], "")
+        self.assertEqual(body[0]["contact_linkedin"], "")
 
     def test_most_recent_application_is_listed_first(self):
         self.sign_in()
@@ -212,10 +215,49 @@ class ApplicationListTests(ApplicationsAPITestCase):
             self.client.get(self.LIST)
 
 
-class ApplicationDeleteTests(ApplicationsAPITestCase):
+class ApplicationDetailTests(ApplicationsAPITestCase):
     def test_requires_authentication(self):
         job = make_job()
         self.assertEqual(self.client.delete("/api/applications/1/").status_code, 401)
+        self.assertEqual(self.client.patch("/api/applications/1/").status_code, 401)
+
+    def test_owner_can_update_contact_details(self):
+        self.sign_in()
+        job = make_job()
+        app_id = self.apply(job).json()["application"]["id"]
+
+        response = self.client.patch(
+            f"/api/applications/{app_id}/",
+            {
+                "contact_name": "Jane Recruiter",
+                "contact_email": "jane@acme.com",
+                "contact_linkedin": "https://linkedin.com/in/janerecruiter",
+            },
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["contact_name"], "Jane Recruiter")
+        self.assertEqual(data["contact_email"], "jane@acme.com")
+        self.assertEqual(data["contact_linkedin"], "https://linkedin.com/in/janerecruiter")
+
+        app = Application.objects.get(pk=app_id)
+        self.assertEqual(app.contact_email, "jane@acme.com")
+
+    def test_cannot_update_another_users_application(self):
+        job = make_job()
+        victim = self.sign_in(email="victim@example.com", username="victim")
+        app_id = self.apply(job, victim).json()["application"]["id"]
+
+        attacker = self.sign_in(
+            self.client_class(), email="attacker@example.com", username="attacker"
+        )
+        response = attacker.patch(
+            f"/api/applications/{app_id}/",
+            {"contact_email": "evil@example.com"},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 404)
 
     def test_owner_can_delete_their_application(self):
         self.sign_in()
@@ -238,6 +280,10 @@ class ApplicationDeleteTests(ApplicationsAPITestCase):
         response = attacker.delete(f"/api/applications/{app_id}/")
 
         self.assertEqual(response.status_code, 404, "must not confirm the row exists")
+        self.assertTrue(
+            Application.objects.filter(pk=app_id).exists(),
+            "Victim's application must survive an attacker's delete",
+        )
         self.assertTrue(
             Application.objects.filter(pk=app_id).exists(),
             "another user's application must survive the attempt",
