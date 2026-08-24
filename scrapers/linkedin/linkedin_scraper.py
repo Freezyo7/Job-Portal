@@ -15,19 +15,32 @@ LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME")
 LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD")
 
 
-SEARCH_URL_TEMP = "https://www.linkedin.com/jobs/search/?keywords={}&origin=JOB_SEARCH_PAGE_JOB_FILTER&refresh=true"
+# Base URL template — {keywords} is replaced with the URL-encoded keyword string.
+SEARCH_URL_TEMP = (
+    "https://www.linkedin.com/jobs/search/"
+    "?keywords={keywords}"
+    "&origin=JOB_SEARCH_PAGE_JOB_FILTER"
+    "&f_TPR=r86400"   # past 24 hours
+)
+# Appended to SEARCH_URL_TEMP to activate LinkedIn's remote-only filter.
+REMOTE_FILTER = "&f_WT=2"
+
+# Each tuple: (domain_label, url_encoded_keyword)
+# For every entry, the scraper will run:
+#   1. Normal search   (is_remote=False)
+#   2. Remote search   (is_remote=True, REMOTE_FILTER appended)
 DOMAINS = [
-    ("Software Engineer", "software%20engineer%20posted%20in%20the%20past%2024%20hours"),
-    ("Data Analyst", "data%20analyst%20posted%20in%20the%20past%2024%20hours"),
-    ("Cloud & Data Engineer", "cloud%20data%20engineer%20posted%20in%20the%20past%2024%20hours"),
-    ("Cyber Security", "cyber%20security%20posted%20in%20the%20past%2024%20hours"),
-    ("Data Scientist", "data%20scientist%20posted%20in%20the%20past%2024%20hours"),
-    ("AI & Machine Learning", "ai%20ml%20posted%20in%20the%20past%2024%20hours")
+    ("Software Engineer",     "software%20engineer"),
+    ("Data Analyst",          "data%20analyst"),
+    ("Cloud & Data Engineer", "cloud%20data%20engineer"),
+    ("Cyber Security",        "cyber%20security"),
+    ("Data Scientist",        "data%20scientist"),
+    ("AI & Machine Learning", "ai%20ml"),
 ]
 
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "linkedin_cred.json")
 OUTPUT_CSV = "linkedin_jobs2.csv"
-MAX_PAGES = 2
+MAX_PAGES = 1   # pages scraped per URL (normal + remote = 2 runs per keyword)
 
 def human_wait(min_s=1.0, max_s=3.0):
     time.sleep(random.uniform(min_s, max_s))
@@ -600,75 +613,88 @@ def main():
         # page = context.new_page()
 
         all_rows = []
+
+        # For each keyword, run normal search then remote-filtered search (1 page each).
         for domain_name, url_key in DOMAINS:
-            print(f"Scraping {domain_name}...")
+            base_url = SEARCH_URL_TEMP.format(keywords=url_key)
 
-            SEARCH_URL = SEARCH_URL_TEMP.format(url_key)
-            current_page = 1
+            scrape_runs = [
+                (False, base_url),                       # Normal jobs
+                (True,  base_url + REMOTE_FILTER),       # Remote jobs only
+            ]
 
-            print(f"🚀 Starting LinkedIn job scraping (max {MAX_PAGES} pages)...")
+            for is_remote_run, search_url in scrape_runs:
+                run_label = "remote" if is_remote_run else "non-remote"
+                print(f"\n{'='*60}")
+                print(f"🚀 [{domain_name}] {run_label} — scraping {MAX_PAGES} page(s)")
+                print(f"   🔗 {search_url}")
+                print(f"{'='*60}")
 
-            while current_page <= MAX_PAGES:
-                # Generate URL for current page
-                page_url = get_page_url(SEARCH_URL, current_page)
-                print(f"\n📄 Navigating to page {current_page}...")
-                print(f"   🔗 URL: {page_url}")
+                current_page = 1
+                while current_page <= MAX_PAGES:
+                    page_url = get_page_url(search_url, current_page)
+                    print(f"\n📄 Navigating to page {current_page}...")
+                    print(f"   🔗 URL: {page_url}")
 
-                try:
-                    page.goto(page_url, timeout=60000, wait_until="domcontentloaded")
-                except Exception as e:
-                    print(f"   ❌ Navigation to page {current_page} failed: {e}")
-                    break
-
-                # Check if this page has jobs
-                try:
-                    # Wait for either job results or no-results message
-                    page.wait_for_selector("li.scaffold-layout__list-item, div.jobs-search-no-results-banner", timeout=15000)
-                    
-                    # Check if we've reached the end
-                    no_results = page.query_selector("div.jobs-search-no-results-banner")
-                    if no_results:
-                        print(f"   ℹ️ No more jobs available (reached end at page {current_page})")
-                        break
-                        
-                except:
-                    print(f"   ⚠️ Page {current_page} failed to load properly")
-                    break
-
-                # Process jobs on this page
-                jobs_processed = process_single_page(page, current_page, all_rows, domain_name)
-                
-                if jobs_processed == 0:
-                    print(f"   ⚠️ No jobs processed on page {current_page}, stopping...")
-                    break
-
-                # Check if more pages are available
-                if current_page < MAX_PAGES:
-                    has_more_pages = check_pagination_available(page)
-                    if not has_more_pages:
-                        print(f"   ℹ️ No more pages available after page {current_page}")
+                    try:
+                        page.goto(page_url, timeout=60000, wait_until="domcontentloaded")
+                    except Exception as e:
+                        print(f"   ❌ Navigation to page {current_page} failed: {e}")
                         break
 
-                current_page += 1
-                human_wait(1, 2)  # Wait between pages-
+                    try:
+                        page.wait_for_selector(
+                            "li.scaffold-layout__list-item, div.jobs-search-no-results-banner",
+                            timeout=15000,
+                        )
+                        no_results = page.query_selector("div.jobs-search-no-results-banner")
+                        if no_results:
+                            print(f"   ℹ️ No jobs available for [{domain_name}] {run_label} (page {current_page})")
+                            break
+                    except Exception:
+                        print(f"   ⚠️ Page {current_page} failed to load properly")
+                        break
+
+                    before_count = len(all_rows)
+                    jobs_processed = process_single_page(page, current_page, all_rows, domain_name)
+
+                    # Mark is_remote on newly added rows:
+                    #   - DOM detection (detect_is_remote) already ran per-job inside extract_job_info.
+                    #   - URL flag acts as fallback guarantee for the remote batch.
+                    if is_remote_run:
+                        for row in all_rows[before_count:]:
+                            row["is_remote"] = True
+
+                    if jobs_processed == 0:
+                        print(f"   ⚠️ No jobs processed on page {current_page}, stopping...")
+                        break
+
+                    if current_page < MAX_PAGES:
+                        if not check_pagination_available(page):
+                            print(f"   ℹ️ No more pages after page {current_page}")
+                            break
+
+                    current_page += 1
+                    human_wait(1, 2)
+
+                human_wait(2, 4)  # pause between normal→remote switch
 
         # Save all collected data
         if all_rows:
             fieldnames = [
                 "company_name", "company_page_link", "company_logo", "job_title", "job_link",
                 "job_location", "posted_date", "applicants", "job_priority", "application_status",
-                "salary", "job_type", "job_working_des", "company_sector", "company_total_employee", 
-                "company_employee_on_linkedin","jd", "scrapped_at", "domain"
+                "salary", "job_type", "job_working_des", "company_sector", "company_total_employee",
+                "company_employee_on_linkedin", "jd", "is_remote", "scrapped_at", "domain",
             ]
 
             with open(output_csv_path, "w", newline="", encoding="utf-8") as f:
-                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
                 writer.writeheader()
                 writer.writerows(all_rows)
-            
+
             print(f"\n🎉 Scraping completed!")
             print(f"   📊 Total jobs scraped: {len(all_rows)}")
-            print(f"   📄 Pages processed: {current_page - 1}")
             print(f"   💾 Data saved to: {output_csv_path}")
         else:
             print("\n⚠️ No jobs were scraped!")

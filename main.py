@@ -33,6 +33,15 @@ DOMAINS = [
     "backend developer"
 ]
 
+LINKEDIN_DOMAINS = [
+    ("Software Engineer", "software%20engineer%20posted%20in%20the%20past%2024%20hours"),
+    ("Data Analyst", "data%20analyst%20posted%20in%20the%20past%2024%20hours"),
+    ("Cloud & Data Engineer", "cloud%20data%20engineer%20posted%20in%20the%20past%2024%20hours"),
+    ("Cyber Security", "cyber%20security%20posted%20in%20the%20past%2024%20hours"),
+    ("Data Scientist", "data%20scientist%20posted%20in%20the%20past%2024%20hours"),
+    ("AI & Machine Learning", "ai%20ml%20posted%20in%20the%20past%2024%20hours")
+]
+
 # Keep the test run small until the pipeline is proven end to end.
 TEST_DOMAINS = ["data engineering"]
 

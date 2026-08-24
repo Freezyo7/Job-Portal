@@ -28,6 +28,7 @@ class Job(models.Model):
     # needs a placeholder fallback.
     company_logo = models.URLField(max_length=500, blank=True)
     company_id = models.CharField(max_length=32, blank=True)
+    company_link = models.URLField(max_length=500, blank=True)  # e.g. https://www.linkedin.com/company/pwc-ac-india/
 
     # Classification — useful as filters and as card badges.
     industry = models.CharField(max_length=120, blank=True)
