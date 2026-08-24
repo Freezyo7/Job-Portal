@@ -34,6 +34,7 @@ class Job(models.Model):
     function = models.CharField(max_length=120, blank=True)
     job_type = models.CharField(max_length=60, blank=True)      # Permanent Job
     employment_type = models.CharField(max_length=60, blank=True)  # Full time
+    is_remote = models.BooleanField(default=False)
 
     # Experience (years)
     min_experience = models.PositiveSmallIntegerField(null=True, blank=True)

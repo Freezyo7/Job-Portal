@@ -43,6 +43,7 @@ class NaukriJob:
     skills: list[str] = field(default_factory=list)
     posted_at: datetime | None = None
     is_active: bool = True
+    is_remote: bool = False
     source: str = "naukri"
 
     def as_dict(self) -> dict:
@@ -68,9 +69,13 @@ class NaukriScraper:
     FRESHNESS_DAYS = 1
 
     # Raw keywords — requests handles the URL encoding.
-    DOMAIN = {"Software Developer": "software developer",
-              "Graduate Engineer": "graduate engineer",
-              "Cyber Security": "cyber security"}
+    DOMAIN ={
+                "Software Developer": "software developer",
+                "Graduate Engineer": "graduate engineer",
+                "Cyber Security": "cyber security",
+                "Python": "python",
+                "Backend": "backend",
+            }   
 
     def __init__(self):
         # NB: don't use USERNAME/PASSWORD — Windows sets USERNAME itself and it wins over .env
@@ -197,8 +202,8 @@ class NaukriScraper:
         self._page = None
     
 
-    def scrap_job(self, keyword="software developer", page_no=1,
-                  cities=None, freshness: int | None = None):
+    def scrap_job(self, keyword, page_no=1,
+                  cities=None, freshness: int | None = None, remote: bool = False):
 
         cities = self.CITIES if cities is None else cities
         freshness = self.FRESHNESS_DAYS if freshness is None else freshness
@@ -219,6 +224,8 @@ class NaukriScraper:
             params["cityTypeGid"] = gids
         if freshness:
             params["jobAge"] = freshness
+        if remote:
+            params["wfhType"] = 2
 
         # Without the app identity headers the API answers
         # 406 {"message": "recaptcha required"} even with a valid token.
@@ -388,14 +395,14 @@ class NaukriScraper:
     # ------------------------------------------------------------------
 
     def fetch_jobs(self, keyword: str, pages: int = 1, cities=None,
-                   freshness: int | None = None) -> list[NaukriJob]:
+                   freshness: int | None = None, remote: bool = False) -> list[NaukriJob]:
         """Search `keyword` across `pages` pages and return parsed listings."""
         jobs: list[NaukriJob] = []
         seen: set[str] = set()
 
         for page_no in range(1, pages + 1):
             data = self.scrap_job(keyword, page_no, cities=cities,
-                                  freshness=freshness)
+                                  freshness=freshness, remote=remote)
             if not data:
                 break
 
@@ -441,12 +448,26 @@ class NaukriScraper:
         results: dict[str, list[NaukriJob]] = {}
         try:
             for kw in keywords:
-                print(f"\n=== {kw} ===")
-                results[kw] = self.fetch_jobs(kw, pages=pages, cities=cities,
-                                              freshness=freshness)
-                for job in results[kw][:3]:
+                print(f"\n=== {kw} (remote) ===")
+                remote_jobs = self.fetch_jobs(kw, pages=pages, cities=cities,
+                                              freshness=freshness, remote=True)
+                for job in remote_jobs:
+                    job.is_remote = True
+                for job in remote_jobs[:3]:
                     print(f"     {job.title} | {job.company} | {job.location}")
                 time.sleep(1)
+
+                print(f"\n=== {kw} (all) ===")
+                all_jobs = self.fetch_jobs(kw, pages=pages, cities=cities,
+                                           freshness=freshness, remote=False)
+                for job in all_jobs[:3]:
+                    print(f"     {job.title} | {job.company} | {job.location}")
+                time.sleep(1)
+
+                # Merge, de-duping on source_job_id, remote-tagged copies win.
+                merged: dict[str, NaukriJob] = {j.source_job_id: j for j in all_jobs}
+                merged.update({j.source_job_id: j for j in remote_jobs})
+                results[kw] = list(merged.values())
         finally:
             self._teardown()
 

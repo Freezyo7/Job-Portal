@@ -1,4 +1,4 @@
-from scrapers.indeed.scraper import IndeedScraper
+from scrapers.indeed.indeed_scraper import IndeedScraper
 from scrapers.naukri.naukri_scraper import NaukriScraper
 
 
@@ -9,6 +9,10 @@ if __name__ == "__main__":
         print(job.title, "|", job.company, "|", job.location, "|", job.url)
 
     print("\nRunning Indeed scraper...")
-    indeed = IndeedScraper(headless=True)
-    for job in indeed.fetch_jobs("python developer")[:5]:
-        print(job.title, "|", job.company, "|", job.location, "|", job.url)
+    indeed = IndeedScraper()
+    if indeed.bootstrap():
+        try:
+            for job in indeed.fetch_jobs("python developer", city="Delhi")[:5]:
+                print(job.title, "|", job.company, "|", job.location, "|", job.url)
+        finally:
+            indeed._teardown()
