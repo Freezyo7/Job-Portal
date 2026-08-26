@@ -22,6 +22,7 @@ from django.db.models import Count  # noqa: E402  (must follow django.setup())
 from jobs.models import Job  # noqa: E402
 from scrapers.foundit import FounditScraper  # noqa: E402
 from scrapers.hirist import HiristScraper  # noqa: E402
+from scrapers.linkedin import LinkedInScraper  # noqa: E402
 from scrapers.naukri import NaukriScraper  # noqa: E402
 from scrapers.unstop import UnstopScraper  # noqa: E402
 
@@ -30,16 +31,18 @@ DOMAINS = [
     "software developer",
     "graduate engineer",
     "python developer",
-    "backend developer"
+    "backend developer",
+    "cyber security",
 ]
 
+# LinkedIn uses (domain_label, url_encoded_keyword) tuples instead of plain
+# text keywords — the URL key must be percent-encoded because it is embedded
+# directly into the search URL query string.
 LINKEDIN_DOMAINS = [
-    ("Software Engineer", "software%20engineer%20posted%20in%20the%20past%2024%20hours"),
-    ("Data Analyst", "data%20analyst%20posted%20in%20the%20past%2024%20hours"),
-    ("Cloud & Data Engineer", "cloud%20data%20engineer%20posted%20in%20the%20past%2024%20hours"),
-    ("Cyber Security", "cyber%20security%20posted%20in%20the%20past%2024%20hours"),
-    ("Data Scientist", "data%20scientist%20posted%20in%20the%20past%2024%20hours"),
-    ("AI & Machine Learning", "ai%20ml%20posted%20in%20the%20past%2024%20hours")
+    # ("Software Engineer",     "software%20engineer"),
+    ("Cloud & Data Engineer", "cloud%20data%20engineer"),
+    ("Cyber Security",        "cyber%20security"),
+    ("AI & Machine Learning", "ai%20ml"),
 ]
 
 # Keep the test run small until the pipeline is proven end to end.
@@ -67,10 +70,25 @@ def save_jobs(jobs) -> tuple[int, int]:
     re-running a scrape refreshes rows instead of duplicating them.
     """
     created = updated = 0
+    # Cache field max_lengths from the Job model for safe truncation
+    char_limits = {
+        f.name: f.max_length
+        for f in Job._meta.get_fields()
+        if hasattr(f, "max_length") and f.max_length is not None
+    }
+
     for job in jobs:
         data = job.as_dict()
         source = data.pop("source")
         source_job_id = data.pop("source_job_id")
+
+        # Defensively truncate any strings exceeding model limits
+        for k, v in data.items():
+            if isinstance(v, str) and k in char_limits:
+                limit = char_limits[k]
+                if len(v) > limit:
+                    data[k] = v[:limit]
+
         _, was_created = Job.objects.update_or_create(
             source=source,
             source_job_id=source_job_id,
@@ -146,11 +164,23 @@ def _unstop_source(keywords):
     }
 
 
+def _linkedin_source(_keywords):
+    """LinkedIn uses its own domain list of (label, url_key) tuples and
+    ignores the shared plain-text keyword list — filters live inside the
+    scraper constants (GEO_ID, EXPERIENCE_LEVELS, …)."""
+    label = ", ".join(label for label, _ in LINKEDIN_DOMAINS)
+    return LinkedInScraper, label, {
+        "keywords": LINKEDIN_DOMAINS,
+        "pages": 1,
+    }
+
+
 SOURCES = {
-    "foundit": _keyword_source(FounditScraper, FOUNDIT_CITIES),
-    "naukri": _keyword_source(NaukriScraper, NAUKRI_CITIES),
-    "hirist": _hirist_source,
-    "unstop": _unstop_source,
+    "foundit":  _keyword_source(FounditScraper, FOUNDIT_CITIES),
+    "naukri":   _keyword_source(NaukriScraper, NAUKRI_CITIES),
+    "hirist":   _hirist_source,
+    "unstop":   _unstop_source,
+    "linkedin": _linkedin_source,
 }
 
 

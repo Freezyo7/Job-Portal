@@ -17,24 +17,24 @@ class Job(models.Model):
     source_job_id = models.CharField(max_length=64)
 
     # Core
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=500)
     company = models.CharField(max_length=255)
-    location = models.CharField(max_length=255, blank=True)
-    url = models.URLField(max_length=500)
+    location = models.CharField(max_length=500, blank=True)
+    url = models.URLField(max_length=2000)
     # Where you actually apply — often an external site on aggregated posts.
-    apply_url = models.URLField(max_length=500, blank=True)
+    apply_url = models.URLField(max_length=2000, blank=True)
 
     # Company presentation. Roughly 1 in 5 listings has no logo, so any UI
     # needs a placeholder fallback.
-    company_logo = models.URLField(max_length=500, blank=True)
-    company_id = models.CharField(max_length=32, blank=True)
-    company_link = models.URLField(max_length=500, blank=True)  # e.g. https://www.linkedin.com/company/pwc-ac-india/
+    company_logo = models.URLField(max_length=2000, blank=True)
+    company_id = models.CharField(max_length=128, blank=True)
+    company_link = models.URLField(max_length=2000, blank=True)  # e.g. https://www.linkedin.com/company/pwc-ac-india/
 
     # Classification — useful as filters and as card badges.
-    industry = models.CharField(max_length=120, blank=True)
-    function = models.CharField(max_length=120, blank=True)
-    job_type = models.CharField(max_length=60, blank=True)      # Permanent Job
-    employment_type = models.CharField(max_length=60, blank=True)  # Full time
+    industry = models.CharField(max_length=500, blank=True)
+    function = models.CharField(max_length=500, blank=True)
+    job_type = models.CharField(max_length=255, blank=True)      # Permanent Job
+    employment_type = models.CharField(max_length=255, blank=True)  # Full time
     is_remote = models.BooleanField(default=False)
 
     # Experience (years)

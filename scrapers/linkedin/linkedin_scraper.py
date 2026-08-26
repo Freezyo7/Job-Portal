@@ -4,10 +4,13 @@ import time
 import random
 import json
 import re
-from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, unquote, quote
 import os
 
 from dotenv import load_dotenv
+from scrapers.common import to_text
 
 load_dotenv()
 
@@ -15,15 +18,36 @@ LINKEDIN_USERNAME = os.getenv("LINKEDIN_USERNAME")
 LINKEDIN_PASSWORD = os.getenv("LINKEDIN_PASSWORD")
 
 
-# Base URL template — {keywords} is replaced with the URL-encoded keyword string.
+# ── Search URL ────────────────────────────────────────────────────────────────
+# Base URL template — {keywords} is replaced with the URL-encoded keyword.
 SEARCH_URL_TEMP = (
     "https://www.linkedin.com/jobs/search/"
     "?keywords={keywords}"
     "&origin=JOB_SEARCH_PAGE_JOB_FILTER"
     "&f_TPR=r86400"   # past 24 hours
 )
+
 # Appended to SEARCH_URL_TEMP to activate LinkedIn's remote-only filter.
 REMOTE_FILTER = "&f_WT=2"
+
+# ── Location filter ────────────────────────────────────────────────────────────
+# LinkedIn geo IDs — common examples:
+#   India          : 102713980
+#   Delhi (NCR)    : 102713980  (city-level geoId)
+#   Noida          : 104869687
+#   Bengaluru      : 105214831
+#   Hyderabad      : 105556813
+#   Mumbai         : 103586894
+# Set GEO_ID = None to search globally (no location filter).
+GEO_ID   = 104869687   # India
+DISTANCE = 90          # km radius — None omits the &distance param
+
+# ── Experience level filter ────────────────────────────────────────────────────
+# LinkedIn f_E values (comma-separate multiple):
+#   1 = Internship   2 = Entry level   3 = Associate
+#   4 = Mid-Senior   5 = Director      6 = Executive
+# Set EXPERIENCE_LEVELS = None to skip the filter.
+EXPERIENCE_LEVELS = "2,3,4"   # Entry / Associate / Mid-Senior
 
 # Each tuple: (domain_label, url_encoded_keyword)
 # For every entry, the scraper will run:
@@ -31,16 +55,273 @@ REMOTE_FILTER = "&f_WT=2"
 #   2. Remote search   (is_remote=True, REMOTE_FILTER appended)
 DOMAINS = [
     ("Software Engineer",     "software%20engineer"),
-    ("Data Analyst",          "data%20analyst"),
-    ("Cloud & Data Engineer", "cloud%20data%20engineer"),
-    ("Cyber Security",        "cyber%20security"),
-    ("Data Scientist",        "data%20scientist"),
-    ("AI & Machine Learning", "ai%20ml"),
+    # ("Data Analyst",          "data%20analyst"),
+    # ("Cloud & Data Engineer", "cloud%20data%20engineer"),
+    # ("Cyber Security",        "cyber%20security"),
+    # ("Data Scientist",        "data%20scientist"),
+    # ("AI & Machine Learning", "ai%20ml"),
 ]
 
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "linkedin_cred.json")
 OUTPUT_CSV = "linkedin_jobs2.csv"
 MAX_PAGES = 1   # pages scraped per URL (normal + remote = 2 runs per keyword)
+
+
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _parse_source_job_id(job_link: str) -> str:
+    """Extract the numeric job ID from a LinkedIn job URL.
+
+    Handles both canonical forms:
+      https://www.linkedin.com/jobs/view/4457441946/...
+      https://www.linkedin.com/jobs/view/4457441946/?...
+    Returns an empty string when no ID is found.
+    """
+    m = re.search(r"/jobs/view/(\d+)", job_link or "")
+    return m.group(1) if m else ""
+
+
+def _parse_applicant_count(text: str) -> int | None:
+    """Parse applicant strings like 'Over 100 applicants', '23 applicants'."""
+    if not text:
+        return None
+    m = re.search(r"([\d,]+)", text.replace(",", ""))
+    return int(m.group(1)) if m else None
+
+
+def _parse_posted_at(text: str) -> datetime | None:
+    """Convert relative strings like '7 hours ago', '2 days ago' to datetime.
+
+    Returns None when the string cannot be parsed (e.g. empty or unknown).
+    """
+    if not text:
+        return None
+    now = datetime.now(tz=timezone.utc)
+    low = text.lower()
+    m = re.search(r"(\d+)", low)
+    n = int(m.group(1)) if m else 1
+    if "minute" in low:
+        return now - timedelta(minutes=n)
+    if "hour" in low:
+        return now - timedelta(hours=n)
+    if "day" in low:
+        return now - timedelta(days=n)
+    if "week" in low:
+        return now - timedelta(weeks=n)
+    if "month" in low:
+        return now - timedelta(days=n * 30)
+    return None
+
+
+def _row_to_linkedin_job(row: dict) -> "LinkedInJob":
+    """Convert a raw scraper row dict into a LinkedInJob dataclass."""
+    job_link = (row.get("job_link") or "").strip()
+    return LinkedInJob(
+        source_job_id=_parse_source_job_id(job_link),
+        title=row.get("job_title", "").strip(),
+        company=row.get("company_name", "").strip(),
+        location=row.get("job_location", "").strip(),
+        url=job_link,
+        apply_url=(row.get("apply_url") or "").strip(),
+        company_logo=(row.get("company_logo") or "").strip(),
+        company_link=(row.get("company_page_link") or "").strip(),
+        industry=(row.get("company_sector") or "").strip(),
+        # job_type on LinkedIn is the on-site/hybrid/remote work model;
+        # employment_type is the contract type (Full-time, Part-time, …).
+        job_type=(row.get("job_working_des") or "").strip(),
+        employment_type=(row.get("job_type") or "").strip(),
+        is_remote=bool(row.get("is_remote", False)),
+        description_text=to_text(row.get("jd") or ""),
+        description=(row.get("jd") or ""),
+        applicant_count=_parse_applicant_count(row.get("applicants") or ""),
+        posted_at=_parse_posted_at(row.get("posted_date") or ""),
+        domain=(row.get("domain") or ""),
+    )
+
+
+# ── Data class ────────────────────────────────────────────────────────────────
+
+@dataclass
+class LinkedInJob:
+    """One LinkedIn listing, normalized to the fields `jobs.models.Job` stores."""
+
+    source_job_id: str
+    title: str
+    company: str
+    url: str
+    apply_url: str = ""
+    company_logo: str = ""
+    company_link: str = ""          # maps to Job.company_link
+    location: str = ""
+    industry: str = ""              # maps to Job.industry
+    job_type: str = ""              # On-site / Hybrid / Remote (work model)
+    employment_type: str = ""       # Full-time / Part-time / Contract
+    is_remote: bool = False
+    description: str = ""           # raw/sanitized HTML
+    description_text: str = ""      # plain text for card previews
+    skills: list[str] = field(default_factory=list)
+    applicant_count: int | None = None
+    posted_at: datetime | None = None
+    is_active: bool = True
+    source: str = "linkedin"
+    domain: str = ""                # search keyword label (not stored in Job)
+
+    def as_dict(self) -> dict:
+        """Keyword args for Job.objects.update_or_create().
+
+        Strips fields that have no counterpart in jobs.models.Job so that
+        Django's update_or_create() doesn't see unknown keyword arguments.
+        """
+        d = self.__dict__.copy()
+        d.pop("domain", None)   # search label, not a Job field
+        return d
+
+
+# ── Scraper class ─────────────────────────────────────────────────────────────
+
+class LinkedInScraper:
+    """Playwright-based LinkedIn job scraper.
+
+    Follows the same interface as NaukriScraper / FounditScraper so that
+    main.py can drive it through the generic run_scraper() helper.
+
+    Usage (from main.py)::
+
+        scraper = LinkedInScraper()
+        results = scraper.run(
+            keywords=[("Software Engineer", "software%20engineer"), ...],
+            pages=1,
+        )
+        # results: {domain_label: [LinkedInJob, ...]}
+    """
+
+    def run(
+        self,
+        keywords=None,          # list of (domain_label, url_encoded_keyword)
+        pages: int = MAX_PAGES,
+        **_ignored,             # absorb cities / freshness passed by run_scraper()
+    ) -> dict[str, list[LinkedInJob]]:
+        """Scrape LinkedIn and return results keyed by domain label.
+
+        `keywords` is a list of *(label, url_key)* tuples matching the
+        shape of the module-level DOMAINS list.  If omitted, DOMAINS is used.
+        """
+        domains = keywords or DOMAINS
+        results: dict[str, list[LinkedInJob]] = {}
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(
+                headless=False,
+                args=["--disable-blink-features=AutomationControlled"],
+            )
+
+            # Reuse saved session if available, else log in fresh.
+            if os.path.exists(STATE_FILE):
+                print("✅ Found saved login state, loading...")
+                context = browser.new_context(storage_state=STATE_FILE)
+            else:
+                context = browser.new_context(
+                    user_agent=(
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/120.0.0.0 Safari/537.36"
+                    ),
+                    viewport={"width": 1200, "height": 850},
+                    java_script_enabled=True,
+                    ignore_https_errors=True,
+                    bypass_csp=True,
+                )
+                page = context.new_page()
+                login_with_credentials(page)
+                context.storage_state(path=STATE_FILE)
+                page.close()
+
+            page = context.new_page()
+
+            try:
+                for domain_name, url_key in domains:
+                    all_rows: list[dict] = []
+
+                    base_url = SEARCH_URL_TEMP.format(keywords=url_key)
+                    if GEO_ID is not None:
+                        base_url += f"&geoId={GEO_ID}"
+                        if DISTANCE is not None:
+                            base_url += f"&distance={DISTANCE}"
+                    if EXPERIENCE_LEVELS is not None:
+                        base_url += f"&f_E={EXPERIENCE_LEVELS}"
+
+                    scrape_runs = [
+                        (False, base_url),
+                        (True,  base_url + REMOTE_FILTER),
+                    ]
+
+                    for is_remote_run, search_url in scrape_runs:
+                        run_label = "remote" if is_remote_run else "non-remote"
+                        print(f"\n{'='*60}")
+                        print(f"🚀 [{domain_name}] {run_label} — scraping {pages} page(s)")
+                        print(f"   🔗 {search_url}")
+                        print(f"{'='*60}")
+
+                        current_page = 1
+                        while current_page <= pages:
+                            page_url = get_page_url(search_url, current_page)
+                            print(f"\n📄 Navigating to page {current_page}...")
+                            try:
+                                page.goto(page_url, timeout=60000, wait_until="domcontentloaded")
+                            except Exception as e:
+                                print(f"   ❌ Navigation failed: {e}")
+                                break
+
+                            try:
+                                page.wait_for_selector(
+                                    "li.scaffold-layout__list-item, div.jobs-search-no-results-banner",
+                                    timeout=15000,
+                                )
+                                if page.query_selector("div.jobs-search-no-results-banner"):
+                                    print(f"   ℹ️ No jobs for [{domain_name}] {run_label} (page {current_page})")
+                                    break
+                            except Exception:
+                                print(f"   ⚠️ Page {current_page} failed to load")
+                                break
+
+                            before = len(all_rows)
+                            jobs_processed = process_single_page(page, current_page, all_rows, domain_name)
+
+                            if is_remote_run:
+                                for row in all_rows[before:]:
+                                    row["is_remote"] = True
+
+                            if jobs_processed == 0:
+                                break
+
+                            if current_page < pages:
+                                if not check_pagination_available(page):
+                                    break
+
+                            current_page += 1
+                            human_wait(1, 2)
+
+                        human_wait(2, 4)
+
+                    # De-duplicate by source_job_id; remote-tagged rows win.
+                    seen: dict[str, LinkedInJob] = {}
+                    for row in all_rows:
+                        job = _row_to_linkedin_job(row)
+                        if not job.source_job_id:
+                            continue
+                        existing = seen.get(job.source_job_id)
+                        if existing is None or job.is_remote:
+                            seen[job.source_job_id] = job
+
+                    results[domain_name] = list(seen.values())
+                    print(f"\n[linkedin/{domain_name}] {len(results[domain_name])} unique jobs collected")
+
+            finally:
+                context.close()
+                browser.close()
+
+        return results
+
 
 def human_wait(min_s=1.0, max_s=3.0):
     time.sleep(random.uniform(min_s, max_s))
@@ -459,7 +740,62 @@ def extract_job_info(page):
         print(f"✗ Error extracting job description: {e}")
         job_info["jd"] = ""
 
+    # Apply URL — handles both Easy Apply and external company apply links.
+    job_info["apply_url"] = extract_apply_url(page)
+
     return job_info
+
+
+def extract_apply_url(page) -> str:
+    """Return the best apply URL available on the current job detail panel.
+
+    LinkedIn exposes two flavours of apply button:
+    • Easy Apply  — the href already points to the LinkedIn apply flow, so
+                    we use it as-is.
+    • External    — the href is LinkedIn's safety redirect:
+                    https://www.linkedin.com/safety/go/?url=<encoded-url>&…
+                    We extract and URL-decode the `url` query parameter to
+                    give the actual company careers page.
+
+    Returns an empty string when neither button is found.
+    """
+    try:
+        # ── 1. Easy Apply ──────────────────────────────────────────────────
+        # aria-label is the most stable selector across LinkedIn redesigns.
+        easy_apply_btn = page.query_selector("a[aria-label='Easy Apply to this job']")
+        if easy_apply_btn:
+            href = easy_apply_btn.get_attribute("href") or ""
+            if href:
+                # Make absolute if LinkedIn returns a relative path.
+                if href.startswith("/"):
+                    href = "https://www.linkedin.com" + href
+                print(f"   🔗 Easy Apply URL found")
+                return href
+
+        # ── 2. External / company website apply ────────────────────────────
+        external_apply_btn = page.query_selector("a[aria-label='Apply on company website']")
+        if external_apply_btn:
+            href = external_apply_btn.get_attribute("href") or ""
+            if href:
+                # LinkedIn wraps the real URL in a safety redirect:
+                # https://www.linkedin.com/safety/go/?url=<percent-encoded>&…
+                # Parse the `url` query param and decode it.
+                parsed = urlparse(href)
+                qs = parse_qs(parsed.query)
+                if "url" in qs:
+                    decoded = unquote(qs["url"][0])
+                    print(f"   🔗 External apply URL decoded: {decoded[:80]}…")
+                    return decoded
+                # Fallback: the href itself is already a direct URL.
+                print(f"   🔗 External apply URL (raw): {href[:80]}…")
+                return href
+
+        print("   ⚠️ No apply button found")
+        return ""
+
+    except Exception as e:
+        print(f"   ❌ Error extracting apply URL: {e}")
+        return ""
 
 def process_single_page(page, page_num, all_rows, domain_name):
     """Process all jobs on a single page"""
@@ -578,7 +914,8 @@ def login_with_credentials(page):
 
 def main():
 
-    OUTPUT_DIRECTORY = r"C:\Users\gis28\.webscrap\dags\output"
+    # OUTPUT_DIRECTORY = r"C:\Users\gis28\.webscrap\dags\output"
+    OUTPUT_DIRECTORY = r"C:\Users\gis28\Downloads\Me\Job Portal\BE\scrapers\linkedin\data"
 
     os.makedirs(OUTPUT_DIRECTORY, exist_ok=True)
 
@@ -617,6 +954,16 @@ def main():
         # For each keyword, run normal search then remote-filtered search (1 page each).
         for domain_name, url_key in DOMAINS:
             base_url = SEARCH_URL_TEMP.format(keywords=url_key)
+
+            # ── Append optional location filter ───────────────────────────
+            if GEO_ID is not None:
+                base_url += f"&geoId={GEO_ID}"
+                if DISTANCE is not None:
+                    base_url += f"&distance={DISTANCE}"
+
+            # ── Append optional experience-level filter ───────────────────
+            if EXPERIENCE_LEVELS is not None:
+                base_url += f"&f_E={EXPERIENCE_LEVELS}"
 
             scrape_runs = [
                 (False, base_url),                       # Normal jobs
@@ -683,6 +1030,7 @@ def main():
         if all_rows:
             fieldnames = [
                 "company_name", "company_page_link", "company_logo", "job_title", "job_link",
+                "apply_url",
                 "job_location", "posted_date", "applicants", "job_priority", "application_status",
                 "salary", "job_type", "job_working_des", "company_sector", "company_total_employee",
                 "company_employee_on_linkedin", "jd", "is_remote", "scrapped_at", "domain",
