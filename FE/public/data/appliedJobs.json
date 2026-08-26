@@ -1,0 +1,14 @@
+[
+  { "month": 1, "count": 120 },
+  { "month": 2, "count": 90 },
+  { "month": 3, "count": 150 },
+  { "month": 4, "count": 110 },
+  { "month": 5, "count": 130 },
+  { "month": 6, "count": 95 },
+  { "month": 7, "count": 180 },
+  { "month": 8, "count": 105 },
+  { "month": 9, "count": 160 },
+  { "month": 10, "count": 140 },
+  { "month": 11, "count": 115 },
+  { "month": 12, "count": 175 }
+]
