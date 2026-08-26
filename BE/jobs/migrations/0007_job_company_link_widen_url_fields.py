@@ -19,8 +19,8 @@ class Migration(migrations.Migration):
             ],
             database_operations=[
                 migrations.RunSQL(
-                    sql='ALTER TABLE jobs_job ALTER COLUMN company_link TYPE varchar(2000);',
-                    reverse_sql='ALTER TABLE jobs_job ALTER COLUMN company_link TYPE varchar(500);',
+                    sql='ALTER TABLE jobs_job ADD COLUMN company_link varchar(2000) NOT NULL DEFAULT \'\';',
+                    reverse_sql='ALTER TABLE jobs_job DROP COLUMN company_link;',
                 ),
             ],
         ),
