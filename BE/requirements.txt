@@ -8,10 +8,12 @@ curl_cffi==0.16.0
 Django==6.0.7
 django-cors-headers==4.9.0
 django-environ==0.14.0
+dj-database-url==3.0.1
 django-filter==26.1
 djangorestframework==3.18.0
 djangorestframework_simplejwt==5.5.1
 greenlet==3.5.3
+gunicorn==23.0.0
 idna==3.18
 playwright==1.61.0
 psycopg==3.3.4

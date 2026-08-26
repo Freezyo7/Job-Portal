@@ -39,7 +39,7 @@ DOMAINS = [
 # text keywords — the URL key must be percent-encoded because it is embedded
 # directly into the search URL query string.
 LINKEDIN_DOMAINS = [
-    # ("Software Engineer",     "software%20engineer"),
+    ("Software Engineer",     "software%20engineer"),
     ("Cloud & Data Engineer", "cloud%20data%20engineer"),
     ("Cyber Security",        "cyber%20security"),
     ("AI & Machine Learning", "ai%20ml"),

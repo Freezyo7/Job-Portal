@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -93,14 +94,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # }
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "job_db",
-        "USER": "postgres",
-        "PASSWORD": env("POSTGRES_PASSWORD"),
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
+    "default": dj_database_url.parse(env("DATABASE_URL")),
 }
 
 AUTH_USER_MODEL = "accounts.User"
@@ -154,9 +148,10 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024  # 5 MB
 RESUME_MAX_BYTES = 5 * 1024 * 1024
 
 # CORS configuration
-# Allow local FE dev server and add deployed FE origin when available
+# Allow local FE dev server and add deployed FE origin(s) via env.
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
+    *env.list("CORS_ALLOWED_ORIGINS", default=[]),
 ]
 
 # Allow cookies to be sent cross-site (use cookies for authentication)
