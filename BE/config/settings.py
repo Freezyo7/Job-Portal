@@ -153,11 +153,12 @@ CORS_ALLOWED_ORIGINS = [
     *env.list("CORS_ALLOWED_ORIGINS", default=[]),
 ]
 
-# Keep the deployed Render hostname allowed even if an older ALLOWED_HOSTS
-# value is still present in the service environment.
+# Keep the deployed hostnames allowed even if an older ALLOWED_HOSTS value
+# is still present in the service environment.
 ALLOWED_HOSTS = list(dict.fromkeys([
     *env.list("ALLOWED_HOSTS", default=[]),
-    "job-portal.onrender.com",
+    "my-job-portal.duckdns.org",
+    "job-portal-06xy.onrender.com",
     "localhost",
     "127.0.0.1",
 ]))

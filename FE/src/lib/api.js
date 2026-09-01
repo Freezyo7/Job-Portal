@@ -8,7 +8,7 @@ export const getApiBaseUrl = () => {
   // Production uses the deployed Render backend when VITE_API_URL is absent.
   return import.meta.env.DEV
     ? "/api"
-    : "https://job-portal-06xy.onrender.com/api";
+    : "https://my-job-portal.duckdns.org/api";
 };
 
 const api = axios.create({
