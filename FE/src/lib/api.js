@@ -5,7 +5,10 @@ export const getApiBaseUrl = () => {
   if (envBase) return envBase.replace(/\/$/, "");
 
   // In dev, Vite proxies /api to the Django server (see vite.config.js).
-  return "/api";
+  // Production uses the deployed Render backend when VITE_API_URL is absent.
+  return import.meta.env.DEV
+    ? "/api"
+    : "https://job-portal-06xy.onrender.com/api";
 };
 
 const api = axios.create({
