@@ -30,8 +30,6 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
-
 
 # Application definition
 
@@ -151,9 +149,18 @@ RESUME_MAX_BYTES = 5 * 1024 * 1024
 # Allow local FE dev server and add deployed FE origin(s) via env.
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    "https://job-portal-tau-wine-21.vercel.app",
+    'https://job-portal-tau-wine-21.vercel.app',
     *env.list("CORS_ALLOWED_ORIGINS", default=[]),
 ]
+
+# Keep the deployed Render hostname allowed even if an older ALLOWED_HOSTS
+# value is still present in the service environment.
+ALLOWED_HOSTS = list(dict.fromkeys([
+    *env.list("ALLOWED_HOSTS", default=[]),
+    "job-portal.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]))
 
 # Allow cookies to be sent cross-site (use cookies for authentication)
 CORS_ALLOW_CREDENTIALS = True
