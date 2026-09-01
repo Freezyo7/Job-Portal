@@ -151,6 +151,7 @@ RESUME_MAX_BYTES = 5 * 1024 * 1024
 # Allow local FE dev server and add deployed FE origin(s) via env.
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
+    "https://job-portal-tau-wine-21.vercel.app",
     *env.list("CORS_ALLOWED_ORIGINS", default=[]),
 ]
 
