@@ -153,6 +153,14 @@ CORS_ALLOWED_ORIGINS = [
     *env.list("CORS_ALLOWED_ORIGINS", default=[]),
 ]
 
+# Vercel gives every preview deploy its own subdomain (e.g.
+# job-portal-2o3g7verq-freezyo7.vercel.app), so the production origin above
+# isn't enough while testing a preview build. Scoped to this project/account
+# only — not every *.vercel.app site.
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://job-portal-[a-z0-9]+-freezyo7\.vercel\.app$",
+]
+
 # Keep the deployed hostnames allowed even if an older ALLOWED_HOSTS value
 # is still present in the service environment.
 ALLOWED_HOSTS = list(dict.fromkeys([
