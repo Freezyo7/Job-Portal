@@ -14,8 +14,21 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       return data;
     } catch {
-      setUser(null);
-      return null;
+      // A 401 here is ambiguous: either nobody is logged in, or the access
+      // token expired (60m) while the refresh cookie is still good (7d). The
+      // interceptor deliberately skips /auth/me/, so try the refresh once
+      // ourselves. If there is no refresh cookie this 401s and we settle on
+      // logged-out — without the interceptor's redirect to /login, which would
+      // otherwise eject visitors browsing public pages.
+      try {
+        await api.post("/auth/refresh/");
+        const { data } = await api.get("/auth/me/");
+        setUser(data);
+        return data;
+      } catch {
+        setUser(null);
+        return null;
+      }
     }
   }, []);
 

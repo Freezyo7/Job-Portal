@@ -19,7 +19,16 @@ const api = axios.create({
 
 // Endpoints that legitimately 401 for a logged-out user. Trying to refresh
 // after these would be pointless, and retrying login would loop.
-const NO_REFRESH = ["/auth/login/", "/auth/register/", "/auth/refresh/", "/auth/verify/"];
+// /auth/me/ is the session probe on every page load: a 401 there usually just
+// means "never logged in", so refreshing would burn a request and bounce a
+// visitor browsing public pages over to /login.
+const NO_REFRESH = [
+  "/auth/login/",
+  "/auth/register/",
+  "/auth/refresh/",
+  "/auth/verify/",
+  "/auth/me/",
+];
 
 // While a refresh is in flight, queue other 401s instead of firing a refresh
 // per request — otherwise ten parallel calls trigger ten refreshes, and token
