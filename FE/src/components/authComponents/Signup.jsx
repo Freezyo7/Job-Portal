@@ -21,8 +21,8 @@ const Signup = () => {
     setLoading(true);
     try {
       await api.post("/auth/register/", form);
-      // The account exists but is inactive until the emailed code is entered.
-      navigate("/verify", { state: { email: form.email } });
+      // Email verification is temporarily disabled; continue to the normal login flow.
+      navigate("/login", { replace: true, state: { registered: true, email: form.email } });
     } catch (err) {
       setError(
         err.response?.status === 429

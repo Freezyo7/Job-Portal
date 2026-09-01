@@ -60,14 +60,14 @@ class RegisterView(APIView):
             )
 
         user = serializer.save()
-        # Unverified until they prove they own the inbox.
-        user.is_active = False
+        # Email verification is temporarily disabled. Keep the verification
+        # endpoints below intact so the API contract remains backwards compatible.
+        user.is_active = True
         user.save(update_fields=["is_active"])
-        send_verification_code(user)
 
         return Response(
             {
-                "message": "Account created. Check your email for a verification code.",
+                "message": "Account created successfully. You can now sign in.",
                 "email": user.email,
             },
             status=status.HTTP_201_CREATED,
