@@ -236,14 +236,13 @@ AUTH_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
 
 # Email
 RESEND_API_KEY = env("RESEND_API_KEY", default="")
-EMAIL_BACKEND = env(
-    "EMAIL_BACKEND",
-    default=(
-        "config.email_backend.ResendEmailBackend"
-        if RESEND_API_KEY
-        else "django.core.mail.backends.console.EmailBackend"
-    ),
-)
+_configured_backend = env("EMAIL_BACKEND", default="")
+if RESEND_API_KEY and (_configured_backend == "" or "smtp.EmailBackend" in _configured_backend):
+    EMAIL_BACKEND = "config.email_backend.ResendEmailBackend"
+elif _configured_backend:
+    EMAIL_BACKEND = _configured_backend
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
