@@ -1,0 +1,45 @@
+name: Daily Job Scraper
+
+on:
+  schedule:
+    # 5:40 AM IST is 00:10 UTC (5:40 - 05:30 = 00:10 UTC)
+    - cron: '10 0 * * *'
+  # Allows manual triggers anytime from GitHub Actions UI tab
+  workflow_dispatch:
+
+jobs:
+  scrape-and-update:
+    name: Run Scrapers and Update Database
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright Chromium with OS dependencies
+        run: |
+          playwright install chromium --with-deps
+
+      - name: Execute Scrapers
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          LINKEDIN_USERNAME: ${{ secrets.LINKEDIN_USERNAME }}
+          LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
+          NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
+          NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+        run: |
+          python main.py --all
