@@ -60,14 +60,14 @@ class RegisterView(APIView):
             )
 
         user = serializer.save()
-        # Email verification is temporarily disabled. Keep the verification
-        # endpoints below intact so the API contract remains backwards compatible.
-        user.is_active = True
+        user.is_active = False
         user.save(update_fields=["is_active"])
+
+        send_verification_code(user)
 
         return Response(
             {
-                "message": "Account created successfully. You can now sign in.",
+                "message": "Account created successfully. Please check your email for the verification code.",
                 "email": user.email,
             },
             status=status.HTTP_201_CREATED,
@@ -151,7 +151,7 @@ class LoginView(APIView):
     permission_classes = [AllowAny]  # chicken-and-egg exception
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "login"
-    
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
@@ -201,6 +201,7 @@ def first_error(serializer) -> str:
         if isinstance(messages, list) and messages:
             return str(messages[0])
     return "Invalid input"
+
 
 class RefreshView(APIView):
     """POST /api/auth/refresh/ — mint a new access token from the refresh cookie."""

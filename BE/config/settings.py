@@ -235,17 +235,21 @@ AUTH_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
 
 
 # Email
-# Dev prints messages to the console; production needs real SMTP creds.
+RESEND_API_KEY = env("RESEND_API_KEY", default="")
 EMAIL_BACKEND = env(
     "EMAIL_BACKEND",
-    default="django.core.mail.backends.console.EmailBackend",
+    default=(
+        "config.email_backend.ResendEmailBackend"
+        if RESEND_API_KEY
+        else "django.core.mail.backends.console.EmailBackend"
+    ),
 )
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
 EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="no-reply@careerhub.local")
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Career Hub <onboarding@resend.dev>")
 
 # Shown in verification emails.
 SITE_NAME = env("SITE_NAME", default="Career Hub")

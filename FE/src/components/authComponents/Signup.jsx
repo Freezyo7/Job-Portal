@@ -21,8 +21,7 @@ const Signup = () => {
     setLoading(true);
     try {
       await api.post("/auth/register/", form);
-      // Email verification is temporarily disabled; continue to the normal login flow.
-      navigate("/login", { replace: true, state: { registered: true, email: form.email } });
+      navigate("/verify", { replace: true, state: { email: form.email } });
     } catch (err) {
       setError(
         err.response?.status === 429
