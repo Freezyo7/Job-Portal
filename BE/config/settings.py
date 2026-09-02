@@ -237,12 +237,15 @@ AUTH_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
 # Email
 RESEND_API_KEY = env("RESEND_API_KEY", default="")
 _configured_backend = env("EMAIL_BACKEND", default="")
-if RESEND_API_KEY and (_configured_backend == "" or "smtp.EmailBackend" in _configured_backend):
-    EMAIL_BACKEND = "config.email_backend.ResendEmailBackend"
-elif _configured_backend:
-    EMAIL_BACKEND = _configured_backend
+
+# Never allow SMTP backend (smtp.EmailBackend) as SMTP port 587 is blocked on Render.
+if "smtp" in _configured_backend.lower() or not _configured_backend:
+    if RESEND_API_KEY or not DEBUG:
+        EMAIL_BACKEND = "config.email_backend.ResendEmailBackend"
+    else:
+        EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 else:
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    EMAIL_BACKEND = _configured_backend
 EMAIL_HOST = env("EMAIL_HOST", default="")
 EMAIL_PORT = env.int("EMAIL_PORT", default=587)
 EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
