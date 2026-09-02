@@ -41,5 +41,7 @@ jobs:
           LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
+          FOUNDIT_MSSOAT: ${{ secrets.FOUNDIT_MSSOAT }}
+          FOUNDIT_MSSOCLIENT: ${{ secrets.FOUNDIT_MSSOCLIENT }}
         run: |
           python main.py --all
