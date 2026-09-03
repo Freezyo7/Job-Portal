@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import MyApplication from "./components/MyApplication";
 import SavedJobs from "./components/SavedJobs";
@@ -13,20 +13,38 @@ import VerifyEmail from "./components/authComponents/VerifyEmail";
 import ProtectedRoute from "./components/authComponents/ProtectedRoute";
 import CareerTips from "./components/CareerTips";
 import Settings from "./components/Settings";
+import LandingPage from "./components/LandingPage";
+import { useAuth } from "./lib/useAuth";
 
 /** Wraps a page so it can only be reached with a valid session. */
 const guarded = (element) => <ProtectedRoute>{element}</ProtectedRoute>;
+
+/** Displays Dashboard for logged-in users and LandingPage for visitors. */
+const HomeRoute = () => {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-[#5B42F3]" />
+      </div>
+    );
+  }
+  return user ? <Dashboard /> : <LandingPage />;
+};
 
 const Router = () => {
   return (
     <Routes>
       {/* Public — reachable while logged out by necessity. */}
+      <Route path="/landing" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/verify" element={<VerifyEmail />} />
 
+      {/* Root route adapts based on auth state */}
+      <Route path="/" element={<HomeRoute />} />
+
       {/* Everything else requires a session. */}
-      <Route path="/" element={guarded(<Dashboard />)} />
       <Route path="/dashboard" element={guarded(<Dashboard />)} />
       <Route path="/applications" element={guarded(<MyApplication />)} />
       <Route path="/saved-jobs" element={guarded(<SavedJobs />)} />
@@ -41,3 +59,4 @@ const Router = () => {
 };
 
 export default Router;
+

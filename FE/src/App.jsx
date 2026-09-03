@@ -2,25 +2,40 @@ import Sidebar from "./components/Sidebar";
 import Router from "./Router";
 import { useLocation } from "react-router-dom";
 import { AuthProvider } from "./lib/AuthContext";
+import { useAuth } from "./lib/useAuth";
 
-const AUTH_PAGES = ["/login", "/signup", "/verify"];
+// Pages that never show the Sidebar (public / full-screen pages)
+const NO_SIDEBAR_PAGES = ["/login", "/signup", "/verify", "/landing"];
 
-function App() {
+function AppShell() {
   const { pathname } = useLocation();
-  const isAuthPage = AUTH_PAGES.includes(pathname);
+  const { user, loading } = useAuth();
+
+  // Don't show sidebar on explicit no-sidebar pages,
+  // on the root "/" when the user is NOT logged in (landing page),
+  // or while the auth state is still resolving.
+  const isLandingRoot = pathname === "/" && !user && !loading;
+  const isNoSidebarPage = NO_SIDEBAR_PAGES.includes(pathname);
+  const showSidebar = !isNoSidebarPage && !isLandingRoot && !!user;
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen flex">
-        {!isAuthPage && (
-          <div>
-            <Sidebar />
-          </div>
-        )}
-        <div className={isAuthPage ? "flex-1" : "lg:ml-64 flex-1"}>
-          <Router />
+    <div className="min-h-screen flex">
+      {showSidebar && (
+        <div>
+          <Sidebar />
         </div>
+      )}
+      <div className={showSidebar ? "lg:ml-64 flex-1" : "flex-1"}>
+        <Router />
       </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppShell />
     </AuthProvider>
   );
 }
