@@ -11,6 +11,7 @@ class Job(models.Model):
         UNSTOP = "unstop", "Unstop"
         INDEED = "indeed", "Indeed"
         LINKEDIN = "linkedin", "LinkedIn"
+        INSTAHYRE = "instahyre", "Instahyre"
 
     # Identity — source + source_job_id is what makes a listing unique.
     source = models.CharField(max_length=20, choices=Source.choices)

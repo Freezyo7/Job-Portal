@@ -46,5 +46,7 @@ jobs:
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
           FOUNDIT_MSSOAT: ${{ secrets.FOUNDIT_MSSOAT }}
           FOUNDIT_MSSOCLIENT: ${{ secrets.FOUNDIT_MSSOCLIENT }}
+          INSTAHYRE_EMAIL: ${{ secrets.INSTAHYRE_EMAIL }}
+          INSTAHYRE_PASSWORD: ${{ secrets.INSTAHYRE_PASSWORD }}
         run: |
           python main.py --all

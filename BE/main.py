@@ -22,13 +22,13 @@ from django.db.models import Count  # noqa: E402  (must follow django.setup())
 from jobs.models import Job  # noqa: E402
 from scrapers.foundit import FounditScraper  # noqa: E402
 from scrapers.hirist import HiristScraper  # noqa: E402
+from scrapers.instahyre import InstahyreScraper  # noqa: E402
 from scrapers.linkedin import LinkedInScraper  # noqa: E402
 from scrapers.naukri import NaukriScraper  # noqa: E402
 from scrapers.unstop import UnstopScraper  # noqa: E402
 
 # Every keyword we search for, across all sources.
 DOMAINS = [
-    "software developer",
     "graduate engineer",
     "python developer",
     "backend developer",
@@ -39,7 +39,7 @@ DOMAINS = [
 # text keywords — the URL key must be percent-encoded because it is embedded
 # directly into the search URL query string.
 LINKEDIN_DOMAINS = [
-    ("Software Engineer",     "software%20engineer"),
+    ("Python",     "python"),
     ("Cloud & Data Engineer", "cloud%20data%20engineer"),
     ("Cyber Security",        "cyber%20security"),
     ("AI & Machine Learning", "ai%20ml"),
@@ -52,6 +52,7 @@ TEST_DOMAINS = ["data engineering"]
 # Naukri takes names this scraper maps to numeric gids.
 FOUNDIT_CITIES = ["gurgaon / gurugram", "noida", "greater noida"]
 NAUKRI_CITIES = ["noida", "greater noida", "delhi / ncr"]
+INSTAHYRE_CITIES = ["noida", "greater noida", "delhi / ncr"]
 
 # Hirist searches DOMAINS by keyword like the others, and is nationwide so
 # it takes no city list. These categories are browsed *in addition* to the
@@ -164,6 +165,16 @@ def _unstop_source(keywords):
     }
 
 
+def _instahyre_source(keywords):
+    """Instahyre runs a 2-pass search: local (INSTAHYRE_CITIES) and remote (Work From Home)."""
+    return InstahyreScraper, ", ".join(keywords), {
+        "domains": keywords,
+        "max_jobs_per_pass": 15,
+        "enrich": True,
+        "save_csv": False,
+    }
+
+
 def _linkedin_source(_keywords):
     """LinkedIn uses its own domain list of (label, url_key) tuples and
     ignores the shared plain-text keyword list — filters live inside the
@@ -176,11 +187,12 @@ def _linkedin_source(_keywords):
 
 
 SOURCES = {
-    "foundit":  _keyword_source(FounditScraper, FOUNDIT_CITIES),
-    "naukri":   _keyword_source(NaukriScraper, NAUKRI_CITIES),
-    "hirist":   _hirist_source,
-    "unstop":   _unstop_source,
-    "linkedin": _linkedin_source,
+    "foundit":   _keyword_source(FounditScraper, FOUNDIT_CITIES),
+    "naukri":    _keyword_source(NaukriScraper, NAUKRI_CITIES),
+    "instahyre": _instahyre_source,
+    "hirist":    _hirist_source,
+    "unstop":    _unstop_source,
+    "linkedin":  _linkedin_source,
 }
 
 
