@@ -180,8 +180,14 @@ class LogoutView(APIView):
             except TokenError:
                 pass
         response = Response({"message": "Logged out successfully"})
-        response.delete_cookie(settings.AUTH_COOKIE)
-        response.delete_cookie(settings.AUTH_COOKIE_REFRESH)
+        cookie_attrs = {
+            "path": "/",
+            "secure": settings.AUTH_COOKIE_SECURE,
+            "samesite": settings.AUTH_COOKIE_SAMESITE,
+        }
+        response.delete_cookie(settings.AUTH_COOKIE, **cookie_attrs)
+
+        response.delete_cookie(settings.AUTH_COOKIE_REFRESH, **cookie_attrs)
         return response
 
 
@@ -224,8 +230,13 @@ class RefreshView(APIView):
                 {"message": "Session expired, please log in again"},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
-            response.delete_cookie(settings.AUTH_COOKIE)
-            response.delete_cookie(settings.AUTH_COOKIE_REFRESH)
+            cookie_attrs = {
+                "path": "/",
+                "secure": settings.AUTH_COOKIE_SECURE,
+                "samesite": settings.AUTH_COOKIE_SAMESITE,
+            }
+            response.delete_cookie(settings.AUTH_COOKIE, **cookie_attrs)
+            response.delete_cookie(settings.AUTH_COOKIE_REFRESH, **cookie_attrs)
             return response
 
         response = Response({"message": "Token refreshed"})
