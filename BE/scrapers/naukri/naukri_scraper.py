@@ -135,7 +135,7 @@ class NaukriScraper:
 
         #-----browser setup----#
         self._pw = sync_playwright().start()
-        self._browser = self._pw.chromium.launch(headless=False)
+        self._browser = self._pw.chromium.launch(headless=True)
 
         ctx_args = {
             "user_agent": self.session.headers["User-Agent"],
