@@ -1,3 +1,4 @@
+import mimetypes
 from urllib.parse import urlparse
 
 import requests
@@ -84,6 +85,29 @@ class JobDetailView(generics.RetrieveAPIView):
     serializer_class = JobSerializer
 
 
+# Magic-byte signatures for the formats logo CDNs actually serve. Checked
+# only when both the response header and the URL extension are unhelpful.
+_IMAGE_SIGNATURES = [
+    (b"\xff\xd8\xff", "image/jpeg"),
+    (b"\x89PNG\r\n\x1a\n", "image/png"),
+    (b"GIF87a", "image/gif"),
+    (b"GIF89a", "image/gif"),
+    (b"RIFF", "image/webp"),          # WebP: 'RIFF'....'WEBP' — checked below
+    (b"<svg", "image/svg+xml"),
+    (b"<?xml", "image/svg+xml"),
+]
+
+
+def _sniff_image_type(content: bytes) -> str | None:
+    for signature, mime in _IMAGE_SIGNATURES:
+        if not content.startswith(signature):
+            continue
+        if signature == b"RIFF":
+            return mime if content[8:12] == b"WEBP" else None
+        return mime
+    return None
+
+
 def job_logo_proxy(request):
     """GET /api/jobs/logo/?url=… — fetch a remote company logo server-side.
 
@@ -119,7 +143,16 @@ def job_logo_proxy(request):
 
     content_type = upstream.headers.get("content-type", "")
     if not content_type.startswith("image/"):
-        return JsonResponse({"error": "Remote file is not an image"}, status=415)
+        # Some CDNs (seen on Instahyre's S3/CloudFront-hosted logos) serve a
+        # perfectly good image with a generic application/octet-stream
+        # content-type because the object's metadata was never set. Don't
+        # take the header's word for it — guess from the URL extension, or
+        # from the file's own magic bytes, before giving up.
+        guessed = mimetypes.guess_type(parsed.path)[0]
+        content_type = guessed if guessed and guessed.startswith("image/") else None
+        content_type = content_type or _sniff_image_type(upstream.content)
+        if not content_type:
+            return JsonResponse({"error": "Remote file is not an image"}, status=415)
 
     response = HttpResponse(upstream.content, content_type=content_type)
     # Logos essentially never change; cache hard so we stop re-proxying them.
