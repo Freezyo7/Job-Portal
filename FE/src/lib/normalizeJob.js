@@ -1,5 +1,20 @@
 import { resolveLogoUrl, toDisplayLogoUrl } from "./jobLogos";
 
+// Matches jobs.models.Job.Source's display labels — plain capitalize() would
+// render "linkedin" as "Linkedin" instead of "LinkedIn".
+const SOURCE_LABELS = {
+  naukri: "Naukri",
+  foundit: "Foundit",
+  hirist: "Hirist",
+  unstop: "Unstop",
+  indeed: "Indeed",
+  linkedin: "LinkedIn",
+  instahyre: "Instahyre",
+};
+
+export const sourceLabel = (source) =>
+  SOURCE_LABELS[source] || (source ? source[0].toUpperCase() + source.slice(1) : "");
+
 /**
  * Adapts a job row from the Django API into the camelCase shape the
  * components render.
@@ -25,6 +40,10 @@ export const normalizeJob = (job = {}) => ({
   url: job.url || job.job_link || "#",
   applyUrl: job.apply_url || job.url || job.job_link || "#",
   postedDate: job.posted_at || job.posted_date || "",
+  fetchedAt: job.updated_at || "",
+  source: job.source || "",
+  sourceLabel: sourceLabel(job.source),
+  isRemote: job.is_remote ?? false,
   domain: job.function || job.domain || job.industry || "",
   applicants: job.applicant_count ?? job.applicants ?? "",
   sector: job.industry || job.company_sector || "",

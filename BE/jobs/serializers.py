@@ -25,7 +25,9 @@ class JobSerializer(serializers.ModelSerializer):
             "description",
             "skills",
             "applicant_count",
+            "is_remote",
             "posted_at",
+            "updated_at",
         ]
 
 class JobListSerializer(serializers.ModelSerializer):
@@ -52,5 +54,7 @@ class JobListSerializer(serializers.ModelSerializer):
             "description_text",
             "skills",
             "applicant_count",
+            "is_remote",
             "posted_at",
+            "updated_at",
         ]

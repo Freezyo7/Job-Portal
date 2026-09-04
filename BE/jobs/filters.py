@@ -1,4 +1,6 @@
 import django_filters
+from django.utils import timezone
+
 from .models import Job
 
 class JobFilter(django_filters.FilterSet):
@@ -22,6 +24,18 @@ class JobFilter(django_filters.FilterSet):
     posted_after = django_filters.DateFilter(
         field_name="posted_at", lookup_expr="gte"
     )
+
+    is_remote = django_filters.BooleanFilter(field_name="is_remote")
+
+    fetched_today = django_filters.BooleanFilter(method="filter_fetched_today")
+
+    def filter_fetched_today(self, queryset, name, value):
+        if not value:
+            return queryset
+        today_start = timezone.localtime().replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        return queryset.filter(updated_at__gte=today_start)
 
     class Meta:
         model = Job

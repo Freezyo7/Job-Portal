@@ -1,9 +1,13 @@
 from urllib.parse import urlparse
 
 import requests
+from django.db.models import Count, F
 from django.http import HttpResponse, JsonResponse
+from django.utils import timezone
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .filters import JobFilter
 from .models import Job
@@ -43,7 +47,35 @@ class JobListView(generics.ListAPIView):
         if search:
             return search_jobs(queryset, search)
 
-        return queryset.order_by("-posted_at")
+        # nulls_last: a missing posted_at (e.g. every Instahyre listing)
+        # would otherwise sort first in Postgres and dominate page 1.
+        return queryset.order_by(F("posted_at").desc(nulls_last=True), "-created_at")
+
+class JobStatsView(APIView):
+    """GET /api/jobs/stats/ — counts for the source-filter pills and the
+    "fetched today" live badge. Cheap aggregate query, not paginated data."""
+
+    def get(self, request):
+        queryset = Job.objects.filter(is_active=True)
+        today_start = timezone.localtime().replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+
+        by_source = dict(
+            queryset.values_list("source")
+            .annotate(n=Count("id"))
+            .values_list("source", "n")
+        )
+
+        return Response({
+            "total": queryset.count(),
+            "by_source": by_source,
+            # "Fetched today" — a scrape run touching an existing row still
+            # bumps updated_at, so this reflects today's scraper activity
+            # regardless of how old the listing's posted_at is.
+            "fetched_today": queryset.filter(updated_at__gte=today_start).count(),
+        })
+
 
 class JobDetailView(generics.RetrieveAPIView):
     """GET /api/jobs/<id>/ — one job, including full HTML description."""

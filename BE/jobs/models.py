@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import F
 
 
 class Job(models.Model):
@@ -77,7 +78,11 @@ class Job(models.Model):
             models.Index(fields=["source", "-posted_at"]),
             models.Index(fields=["-created_at"]),
         ]
-        ordering = ["-posted_at", "-created_at"]
+        # Postgres sorts NULL as greater than any value, so a plain
+        # "-posted_at" would put every listing with an unknown posted date
+        # (e.g. Instahyre, which never gets one from the source) at the very
+        # top instead of the bottom. nulls_last treats "unknown" as oldest.
+        ordering = [F("posted_at").desc(nulls_last=True), "-created_at"]
 
     def __str__(self) -> str:
         return f"{self.title} @ {self.company} ({self.source})"

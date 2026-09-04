@@ -1,11 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { CiLocationOn, CiCalendarDate, CiSearch } from "react-icons/ci";
-import { BsBriefcase, BsPeople } from "react-icons/bs";
+import { BsBriefcase, BsPeople, BsClock } from "react-icons/bs";
 import { HiArrowRight, HiCheck, HiX } from "react-icons/hi";
 import api from "../lib/api";
 import CoverLetterModal from "./CoverLetterModal";
 import { getInitials } from "../lib/jobLogos";
-import { normalizeJob, unwrapList } from "../lib/normalizeJob";
+import { normalizeJob, unwrapList, sourceLabel } from "../lib/normalizeJob";
+import { timeAgo } from "../lib/timeAgo";
+
+// Stable per-source color instead of the round-robin tagColors used for
+// job-type chips — so the same platform always reads the same color.
+const sourceColors = {
+  naukri: "bg-sky-50 text-sky-700",
+  foundit: "bg-violet-50 text-violet-700",
+  hirist: "bg-rose-50 text-rose-600",
+  unstop: "bg-amber-50 text-amber-700",
+  linkedin: "bg-blue-50 text-blue-700",
+  instahyre: "bg-emerald-50 text-emerald-700",
+  indeed: "bg-indigo-50 text-indigo-700",
+};
+const sourceColor = (source) => sourceColors[source] || "bg-slate-100 text-slate-600";
 
 
 const tagColors = [
@@ -66,6 +80,20 @@ const FindJobs = () => {
   const [applyStatus, setApplyStatus] = useState(null);
   const [coverLetterJob, setCoverLetterJob] = useState(null);
 
+  // Source pills + live counts. { total, by_source: {naukri: 113, ...}, fetched_today }
+  const [stats, setStats] = useState(null);
+  const [sourceFilter, setSourceFilter]         = useState("");    // "" = All
+  const [remoteOnly, setRemoteOnly]             = useState(false);
+  const [fetchedTodayOnly, setFetchedTodayOnly] = useState(false);
+
+  // Counts are DB-wide and don't depend on the currently active filters —
+  // fetched once, same pattern as any other "unread counts" style badge.
+  useEffect(() => {
+    api.get("/jobs/stats/")
+      .then((res) => setStats(res.data))
+      .catch(() => setStats(null));
+  }, []);
+
   // Opens the external URL then shows the confirmation modal
   const handleApplyClick = (job) => {
     // Send the user where they can actually apply, not just read the posting.
@@ -98,7 +126,11 @@ const FindJobs = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(true);
-      const params = searchQuery.trim() ? { search: searchQuery.trim() } : {};
+      const params = {};
+      if (searchQuery.trim()) params.search = searchQuery.trim();
+      if (sourceFilter) params.source = sourceFilter;
+      if (remoteOnly) params.is_remote = true;
+      if (fetchedTodayOnly) params.fetched_today = true;
 
       api.get("/jobs/", { params })
         .then((res) => {
@@ -110,7 +142,7 @@ const FindJobs = () => {
           setLoadError(
             jobs.length
               ? ""
-              : searchQuery.trim()
+              : searchQuery.trim() || sourceFilter || remoteOnly || fetchedTodayOnly
                 ? ""
                 : "No jobs found. Run the scrapers to load listings."
           );
@@ -132,7 +164,7 @@ const FindJobs = () => {
     }, searchQuery ? 350 : 0);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, sourceFilter, remoteOnly, fetchedTodayOnly]);
 
   const handleLoadMore = () => {
     if (!nextUrl || loadingMore) return;
@@ -165,9 +197,15 @@ const FindJobs = () => {
                   {totalCount === 1 ? "job" : "jobs"}
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eef2ff] px-3 py-1 text-xs font-medium text-[#4f46e5]">
-                <BsBriefcase size={11} /> Jobs
-              </span>
+              {stats && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  </span>
+                  {stats.fetched_today} fetched today
+                </span>
+              )}
             </div>
             {/* Search */}
             <div className="relative">
@@ -179,6 +217,57 @@ const FindJobs = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white/80 text-xs text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10 transition-all"
               />
+            </div>
+
+            {/* Source pills */}
+            {stats && (
+              <div className="flex items-center gap-1.5 mt-3 overflow-x-auto pb-0.5">
+                <button
+                  type="button"
+                  onClick={() => setSourceFilter("")}
+                  className={`flex-shrink-0 rounded-full px-2.5 py-1 text-[10px] font-medium transition-colors ${
+                    sourceFilter === "" ? "bg-[#4f46e5] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  All ({stats.total})
+                </button>
+                {Object.entries(stats.by_source)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([src, count]) => (
+                    <button
+                      key={src}
+                      type="button"
+                      onClick={() => setSourceFilter(sourceFilter === src ? "" : src)}
+                      className={`flex-shrink-0 rounded-full px-2.5 py-1 text-[10px] font-medium transition-colors ${
+                        sourceFilter === src ? "bg-[#4f46e5] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      {sourceLabel(src)} ({count})
+                    </button>
+                  ))}
+              </div>
+            )}
+
+            {/* Quick toggles */}
+            <div className="flex items-center gap-4 mt-3">
+              <label className="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={remoteOnly}
+                  onChange={(e) => setRemoteOnly(e.target.checked)}
+                  className="h-3.5 w-3.5 rounded border-slate-300 text-[#4f46e5] focus:ring-[#4f46e5]/30"
+                />
+                Remote only
+              </label>
+              <label className="flex items-center gap-1.5 text-[11px] text-slate-500 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={fetchedTodayOnly}
+                  onChange={(e) => setFetchedTodayOnly(e.target.checked)}
+                  className="h-3.5 w-3.5 rounded border-slate-300 text-[#4f46e5] focus:ring-[#4f46e5]/30"
+                />
+                Fetched today only
+              </label>
             </div>
           </div>
 
@@ -228,6 +317,23 @@ const FindJobs = () => {
                           {job.jobType}
                         </span>
                       </div>
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        {job.sourceLabel && (
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${sourceColor(job.source)}`}>
+                            {job.sourceLabel}
+                          </span>
+                        )}
+                        {job.isRemote && (
+                          <span className="rounded-full bg-teal-50 px-2 py-0.5 text-[10px] font-medium text-teal-700">
+                            Remote
+                          </span>
+                        )}
+                        {job.fetchedAt && (
+                          <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
+                            <BsClock size={9} />{timeAgo(job.fetchedAt)}
+                          </span>
+                        )}
+                      </div>
                     </div>
                     {active && (
                       <HiArrowRight size={14} className="text-[#4f46e5] flex-shrink-0" />
@@ -262,6 +368,11 @@ const FindJobs = () => {
                 <div className="absolute -bottom-7 left-6">
                   <LogoOrInitials logo={selectedJob.companyLogo} name={selectedJob.companyName} size="h-14 w-14" />
                 </div>
+                {selectedJob.sourceLabel && (
+                  <span className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[11px] font-medium shadow-sm ${sourceColor(selectedJob.source)}`}>
+                    {selectedJob.sourceLabel}
+                  </span>
+                )}
               </div>
 
               {/* Title row */}
@@ -280,6 +391,11 @@ const FindJobs = () => {
                   <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
                     {selectedJob.jobLevel}
                   </span>
+                  {selectedJob.isRemote && (
+                    <span className="rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-medium text-teal-700">
+                      Remote
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -290,6 +406,9 @@ const FindJobs = () => {
                 <div className="grid grid-cols-2 gap-2">
                   <DetailChip icon={<CiLocationOn size={16} />}  label="Location"  value={selectedJob.jobGeo} />
                   <DetailChip icon={<BsBriefcase size={14} />}   label="Job Type"  value={selectedJob.jobType} />
+                  {selectedJob.fetchedAt && (
+                    <DetailChip icon={<BsClock size={13} />} label="Fetched" value={timeAgo(selectedJob.fetchedAt)} />
+                  )}
                   {selectedJob.postedDate && (
                     <DetailChip icon={<CiCalendarDate size={16} />} label="Posted" value={selectedJob.postedDate} />
                   )}
