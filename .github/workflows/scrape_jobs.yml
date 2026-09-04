@@ -62,7 +62,7 @@ jobs:
         # trusted machine instead. Seed it from base64-encoded secrets.
         env:
           NAUKRI_SESSION_B64: ${{ secrets.NAUKRI_SESSION_B64 }}
-          LINKEDIN_SESSION_B64: ${{ secrets.LINKEDIN_SESSION_B64 }}
+          # LINKEDIN_SESSION_B64: ${{ secrets.LINKEDIN_SESSION_B64 }}
         run: |
           mkdir -p scrapers/cred
           if [ -n "$NAUKRI_SESSION_B64" ]; then
@@ -71,12 +71,13 @@ jobs:
           else
             echo "[warn] NAUKRI_SESSION_B64 secret not set; Naukri will try a fresh login (expect OTP)"
           fi
-          if [ -n "$LINKEDIN_SESSION_B64" ]; then
-            echo "$LINKEDIN_SESSION_B64" | base64 -d > scrapers/linkedin/linkedin_cred.json
-            echo "[ok] restored LinkedIn session"
-          else
-            echo "[warn] LINKEDIN_SESSION_B64 secret not set; LinkedIn will try a fresh login (expect checkpoint)"
-          fi
+          # LinkedIn disabled in CI (see Execute Scrapers).
+          # if [ -n "$LINKEDIN_SESSION_B64" ]; then
+          #   echo "$LINKEDIN_SESSION_B64" | base64 -d > scrapers/linkedin/linkedin_cred.json
+          #   echo "[ok] restored LinkedIn session"
+          # else
+          #   echo "[warn] LINKEDIN_SESSION_B64 secret not set; LinkedIn will try a fresh login (expect checkpoint)"
+          # fi
 
       - name: Execute Scrapers
         env:
@@ -86,8 +87,8 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          LINKEDIN_USERNAME: ${{ secrets.LINKEDIN_USERNAME }}
-          LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
+          # LINKEDIN_USERNAME: ${{ secrets.LINKEDIN_USERNAME }}
+          # LINKEDIN_PASSWORD: ${{ secrets.LINKEDIN_PASSWORD }}
           NAUKRI_USERNAME: ${{ secrets.NAUKRI_USERNAME }}
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
           FOUNDIT_MSSOAT: ${{ secrets.FOUNDIT_MSSOAT }}
@@ -96,9 +97,10 @@ jobs:
           INSTAHYRE_PASSWORD: ${{ secrets.INSTAHYRE_PASSWORD }}
         run: |
           echo "DISPLAY is $DISPLAY"
-          # TEMP: LinkedIn only while debugging its CI page loads. Restore:
-          # python main.py --all
-          python main.py --all --source linkedin
+          # LinkedIn is excluded: it revokes sessions used from GitHub's
+          # datacenter IPs, so it has to run from a trusted machine instead.
+          # To include it again: python main.py --all
+          python main.py --all --source foundit --source naukri --source instahyre --source hirist --source unstop
 
       - name: Upload scraper debug snapshots
         if: always()
