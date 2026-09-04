@@ -12,6 +12,9 @@ wheels/
 
 # Saved browser sessions / captured credentials
 scrapers/cred/
+
+# Screenshot/HTML dumps from failed browser-driven scrapes (CI artifact)
+debug_output/
 search_job.txt
 foundit.txt
 wellfound.txt

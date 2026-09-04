@@ -10,7 +10,7 @@ from urllib.parse import urlparse, parse_qs, urlencode, urlunparse, unquote, quo
 import os
 
 from dotenv import load_dotenv
-from scrapers.common import to_text
+from scrapers.common import dump_debug_snapshot, to_text
 
 load_dotenv()
 
@@ -318,6 +318,9 @@ class LinkedInScraper:
                     results[domain_name] = list(seen.values())
                     print(f"\n[linkedin/{domain_name}] {len(results[domain_name])} unique jobs collected")
 
+            except Exception:
+                dump_debug_snapshot(page, "linkedin", "run_exception")
+                raise
             finally:
                 context.close()
                 browser.close()
@@ -903,6 +906,19 @@ def login_with_credentials(page):
         page.wait_for_url(lambda url: "checkpoint" in url or "/feed" in url, timeout=20000)
     except Exception:
         pass
+
+    if "checkpoint" in page.url:
+        # LinkedIn puts fresh/automated logins through a security checkpoint
+        # (CAPTCHA, "verify it's you", 2FA) far more readily from datacenter
+        # IPs like CI runners than from a residential IP. There's no form
+        # fill that gets past this — surface it clearly instead of silently
+        # scraping the checkpoint page and returning nothing.
+        dump_debug_snapshot(page, "linkedin", "login_checkpoint")
+        raise RuntimeError(
+            f"LinkedIn showed a login checkpoint instead of the feed ({page.url}). "
+            "This is usually LinkedIn challenging the login as suspicious "
+            "(new IP, automation, etc.) and can't be scripted past."
+        )
 
     if "checkpoint" in page.url:
         input("🔐 LinkedIn is asking for extra verification — complete it in the "

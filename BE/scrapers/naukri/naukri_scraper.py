@@ -7,7 +7,7 @@ from pathlib import Path
 from urllib.parse import quote
 import json, time
 
-from scrapers.common import clean_html, to_text
+from scrapers.common import clean_html, dump_debug_snapshot, to_text
 
 #load the env file
 load_dotenv()
@@ -106,11 +106,13 @@ class NaukriScraper:
 
             if not self._is_logged_in(page):
                 print("[x] Login did not take — check the window for a captcha")
+                dump_debug_snapshot(page, "naukri", "login_not_taken")
                 return False
             print("[ok] Logged in")
             return True
         except Exception as e:
             print(f"[x] Login failed: {e}")
+            dump_debug_snapshot(page, "naukri", "login_exception")
             return False
 
     @staticmethod
@@ -177,6 +179,7 @@ class NaukriScraper:
 
         if not captured.get("nkparam"):
             print("[x] Could not capture nkparam")
+            dump_debug_snapshot(page, "naukri", "no_nkparam")
             self._teardown()
             return False
         

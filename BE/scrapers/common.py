@@ -1,7 +1,32 @@
 """Helpers shared by every scraper."""
 
+from datetime import datetime, timezone
+from pathlib import Path
+
 import bleach
 from bs4 import BeautifulSoup
+
+# Where a failing browser-driven scraper dumps a screenshot + HTML snapshot
+# so CI failures are diagnosable instead of a bare stack trace. CI uploads
+# this whole directory as a build artifact (see scrape_jobs.yml).
+DEBUG_DIR = Path(__file__).resolve().parent.parent / "debug_output"
+
+
+def dump_debug_snapshot(page, source: str, label: str) -> None:
+    """Best-effort screenshot + HTML dump of `page`, tagged `source_label`.
+
+    Called from a failure path, so this must never itself raise — a broken
+    page (closed, mid-navigation, checkpoint) shouldn't mask the real error.
+    """
+    try:
+        DEBUG_DIR.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        stem = DEBUG_DIR / f"{source}_{label}_{stamp}"
+        page.screenshot(path=str(stem.with_suffix(".png")), full_page=True)
+        stem.with_suffix(".html").write_text(page.content(), encoding="utf-8")
+        print(f"[debug] saved {stem.name}.{{png,html}} (url: {page.url})")
+    except Exception as e:
+        print(f"[debug] snapshot failed: {type(e).__name__}: {e}")
 
 # Tags worth keeping for display. Everything else is unwrapped, and no
 # attributes survive at all — that kills href/onclick/style injection.
