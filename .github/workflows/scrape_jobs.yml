@@ -40,34 +40,43 @@ jobs:
           sudo apt-get install -y xvfb x11-utils
 
       - name: Start Xvfb
-<<<<<<< HEAD
         # Start Xvfb ourselves rather than via xvfb-run: export DISPLAY for
         # every later step through $GITHUB_ENV, and block until the server
         # really accepts connections before Python ever launches a browser.
-=======
-        # xvfb-run's own readiness check (poll a lock file, then just go) has
-        # proven unreliable on this runner image: Chromium still hit "Missing
-        # X server or $DISPLAY" with it in front of the command. Start Xvfb
-        # ourselves, export DISPLAY for every later step via $GITHUB_ENV, and
-        # block until the socket really accepts connections before Python
-        # ever launches a browser.
->>>>>>> 0e1fd3eff04580d16df45562762cb16c1d2772a5
         run: |
           Xvfb :99 -screen 0 1920x1080x24 -ac +extension GLX +render -noreset &
           echo "DISPLAY=:99" >> "$GITHUB_ENV"
           for i in $(seq 1 30); do
             if xdpyinfo -display :99 >/dev/null 2>&1; then
-<<<<<<< HEAD
               echo "[ok] Xvfb is accepting connections on :99"
-=======
-              echo "[ok] Xvfb is accepting connections on :99 (waited ${i}00ms)"
->>>>>>> 0e1fd3eff04580d16df45562762cb16c1d2772a5
               exit 0
             fi
             sleep 0.5
           done
           echo "[x] Xvfb never came up on :99" >&2
           exit 1
+
+      - name: Restore saved browser sessions
+        # Naukri and LinkedIn OTP/checkpoint any fresh credential login from a
+        # datacenter IP, so CI must reuse a session that was logged in from a
+        # trusted machine instead. Seed it from base64-encoded secrets.
+        env:
+          NAUKRI_SESSION_B64: ${{ secrets.NAUKRI_SESSION_B64 }}
+          LINKEDIN_SESSION_B64: ${{ secrets.LINKEDIN_SESSION_B64 }}
+        run: |
+          mkdir -p scrapers/cred
+          if [ -n "$NAUKRI_SESSION_B64" ]; then
+            echo "$NAUKRI_SESSION_B64" | base64 -d > scrapers/cred/naukri_session.json
+            echo "[ok] restored Naukri session"
+          else
+            echo "[warn] NAUKRI_SESSION_B64 secret not set; Naukri will try a fresh login (expect OTP)"
+          fi
+          if [ -n "$LINKEDIN_SESSION_B64" ]; then
+            echo "$LINKEDIN_SESSION_B64" | base64 -d > scrapers/linkedin/linkedin_cred.json
+            echo "[ok] restored LinkedIn session"
+          else
+            echo "[warn] LINKEDIN_SESSION_B64 secret not set; LinkedIn will try a fresh login (expect checkpoint)"
+          fi
 
       - name: Execute Scrapers
         env:
@@ -97,7 +106,3 @@ jobs:
           path: BE/debug_output/
           if-no-files-found: ignore
           retention-days: 5
-<<<<<<< HEAD
-=======
-
->>>>>>> 0e1fd3eff04580d16df45562762cb16c1d2772a5

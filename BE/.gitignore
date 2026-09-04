@@ -12,6 +12,7 @@ wheels/
 
 # Saved browser sessions / captured credentials
 scrapers/cred/
+scrapers/linkedin/linkedin_cred.json
 
 # Screenshot/HTML dumps from failed browser-driven scrapes (CI artifact)
 debug_output/
