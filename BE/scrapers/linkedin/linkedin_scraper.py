@@ -288,13 +288,15 @@ class LinkedInScraper:
                             try:
                                 page.wait_for_selector(
                                     "li.scaffold-layout__list-item, div.jobs-search-no-results-banner",
-                                    timeout=15000,
+                                    timeout=30000,
                                 )
                                 if page.query_selector("div.jobs-search-no-results-banner"):
                                     print(f"   ℹ️ No jobs for [{domain_name}] {run_label} (page {current_page})")
                                     break
                             except Exception:
-                                print(f"   ⚠️ Page {current_page} failed to load")
+                                print(f"   ⚠️ Page {current_page} failed to load (url: {page.url})")
+                                slug = re.sub(r"\W+", "_", f"{domain_name}_{run_label}").strip("_").lower()
+                                dump_debug_snapshot(page, "linkedin", f"page_failed_{slug}")
                                 break
 
                             before = len(all_rows)
@@ -499,6 +501,11 @@ def get_total_job_count(page):
     except:
         return None
 
+# Snapshot the first empty details pane per run only; one is enough to see
+# what LinkedIn served, and every card would otherwise dump a copy.
+_SNAPPED = {"empty_topcard": False}
+
+
 def extract_job_info(page):
     human_wait(2,4)
     job_info = {}
@@ -546,6 +553,10 @@ def extract_job_info(page):
         
         job_info["job_title"] = job_title
         job_info["job_link"] = job_link
+        if not job_title and not _SNAPPED["empty_topcard"]:
+            _SNAPPED["empty_topcard"] = True
+            print("   ❌ Details pane rendered without a job title — snapshotting")
+            dump_debug_snapshot(page, "linkedin", "empty_details_pane")
     except:
         job_info["job_title"] = ""
         job_info["job_link"] = ""

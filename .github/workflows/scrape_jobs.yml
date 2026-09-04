@@ -96,7 +96,9 @@ jobs:
           INSTAHYRE_PASSWORD: ${{ secrets.INSTAHYRE_PASSWORD }}
         run: |
           echo "DISPLAY is $DISPLAY"
-          python main.py --all
+          # TEMP: LinkedIn only while debugging its CI page loads. Restore:
+          # python main.py --all
+          python main.py --all --source linkedin
 
       - name: Upload scraper debug snapshots
         if: always()
