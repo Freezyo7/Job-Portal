@@ -134,8 +134,12 @@ class NaukriScraper:
                 captured.update(req.headers)
 
         #-----browser setup----#
+        is_headless = os.getenv("HEADLESS", "false").lower() in ("true", "1", "yes")
         self._pw = sync_playwright().start()
-        self._browser = self._pw.chromium.launch(headless=True)
+        self._browser = self._pw.chromium.launch(
+            headless=is_headless,
+            args=["--disable-blink-features=AutomationControlled"],
+        )
 
         ctx_args = {
             "user_agent": self.session.headers["User-Agent"],
@@ -147,6 +151,7 @@ class NaukriScraper:
             ctx_args["storage_state"] = str(SESSION_FILE)
 
         ctx = self._browser.new_context(**ctx_args)
+        ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', { get: () => undefined });")
         page = ctx.new_page()
         page.on("request", on_request)
 

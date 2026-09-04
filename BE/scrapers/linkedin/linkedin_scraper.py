@@ -209,9 +209,10 @@ class LinkedInScraper:
         domains = keywords or DOMAINS
         results: dict[str, list[LinkedInJob]] = {}
 
+        is_headless = os.getenv("HEADLESS", "false").lower() in ("true", "1", "yes")
         with sync_playwright() as p:
             browser = p.chromium.launch(
-                headless=True,
+                headless=is_headless,
                 args=["--disable-blink-features=AutomationControlled"],
             )
 
@@ -236,6 +237,7 @@ class LinkedInScraper:
                 context.storage_state(path=STATE_FILE)
                 page.close()
 
+            context.add_init_script("Object.defineProperty(navigator, 'webdriver', { get: () => undefined });")
             page = context.new_page()
 
             try:
