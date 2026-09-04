@@ -24,6 +24,7 @@ const api = axios.create({
 // visitor browsing public pages over to /login.
 const NO_REFRESH = [
   "/auth/login/",
+  "/auth/google/",
   "/auth/register/",
   "/auth/refresh/",
   "/auth/verify/",

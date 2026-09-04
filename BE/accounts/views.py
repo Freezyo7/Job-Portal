@@ -1,6 +1,10 @@
+import re
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token as google_id_token
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -161,6 +165,86 @@ class LoginView(APIView):
             )
 
         user = serializer.validated_data["user"]
+        response = Response(
+            {"message": "Logged in successfully", "user": UserSerializer(user).data}
+        )
+        return set_auth_cookies(response, user)
+
+
+def _unique_username(email: str) -> str:
+    """Derive a username from an email's local part for a Google sign-up.
+
+    AbstractUser's default validator only allows letters/digits/@/./+/-/_,
+    so anything else in the local part (rare, but legal in an email address)
+    is stripped rather than rejected.
+    """
+    base = re.sub(r"[^\w.@+-]", "", email.split("@", 1)[0]) or "user"
+    username = base
+    suffix = 1
+    while User.objects.filter(username__iexact=username).exists():
+        suffix += 1
+        username = f"{base}{suffix}"
+    return username
+
+
+class GoogleAuthView(APIView):
+    """POST /api/auth/google/ — exchange a Google ID token for auth cookies.
+
+    Accepts the `credential` Google Identity Services hands back to the
+    frontend, verifies it was actually issued by Google for our client ID,
+    then signs the matching (or newly created) user in exactly like
+    LoginView does.
+    """
+
+    permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "login"
+
+    def post(self, request):
+        if not settings.GOOGLE_CLIENT_ID:
+            return Response(
+                {"message": "Google sign-in is not configured"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+
+        credential = request.data.get("credential")
+        if not credential:
+            return Response(
+                {"message": "Missing Google credential"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            payload = google_id_token.verify_oauth2_token(
+                credential, google_requests.Request(), settings.GOOGLE_CLIENT_ID
+            )
+        except ValueError:
+            return Response(
+                {"message": "Invalid or expired Google credential"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        if not payload.get("email_verified"):
+            return Response(
+                {"message": "Google account email is not verified"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        email = payload["email"].lower().strip()
+        user = User.objects.filter(email__iexact=email).first()
+        if user is None:
+            user = User.objects.create_user(
+                username=_unique_username(email),
+                email=email,
+                first_name=payload.get("given_name", ""),
+                last_name=payload.get("family_name", ""),
+            )
+        elif not user.is_active:
+            # A prior email/password signup that never verified — Google
+            # already vouches for the address, so unblock it here.
+            user.is_active = True
+            user.save(update_fields=["is_active"])
+
         response = Response(
             {"message": "Logged in successfully", "user": UserSerializer(user).data}
         )

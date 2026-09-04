@@ -150,6 +150,7 @@ RESUME_MAX_BYTES = 5 * 1024 * 1024
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'https://job-portal-tau-wine-21.vercel.app',
+    'https://job-portal-freezyo7.vercel.app',
     *env.list("CORS_ALLOWED_ORIGINS", default=[]),
 ]
 
@@ -255,6 +256,11 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="Career Hub <onboarding@r
 
 # Shown in verification emails.
 SITE_NAME = env("SITE_NAME", default="Career Hub")
+
+# Google Sign-In: the OAuth client ID from Google Cloud Console. Blank by
+# default so the project still boots without it; the endpoint reports the
+# feature as unavailable rather than crashing.
+GOOGLE_CLIENT_ID = env("GOOGLE_CLIENT_ID", default="")
 
 
 # Resume parsing (Groq)

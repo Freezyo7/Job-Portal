@@ -44,6 +44,12 @@ export const AuthProvider = ({ children }) => {
     return data.user;
   }, []);
 
+  const loginWithGoogle = useCallback(async (credential) => {
+    const { data } = await api.post("/auth/google/", { credential });
+    setUser(data.user);
+    return data.user;
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await api.post("/auth/logout/");
@@ -54,8 +60,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, logout, refreshUser, setUser }),
-    [user, loading, login, logout, refreshUser]
+    () => ({ user, loading, login, loginWithGoogle, logout, refreshUser, setUser }),
+    [user, loading, login, loginWithGoogle, logout, refreshUser]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

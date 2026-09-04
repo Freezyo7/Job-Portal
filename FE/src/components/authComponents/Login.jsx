@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../lib/useAuth";
+import GoogleSignInButton from "./GoogleSignInButton";
 
 const Login = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [form, setForm]       = useState({ email: state?.email ?? "", password: "" });
   const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.id]: e.target.value }));
+
+  const handleGoogleCredential = useCallback(
+    async (credential) => {
+      setError("");
+      try {
+        await loginWithGoogle(credential);
+        navigate(state?.from?.pathname ?? "/", { replace: true });
+      } catch (err) {
+        setError(err.response?.data?.message || "Google sign-in failed. Try again.");
+      }
+    },
+    [loginWithGoogle, navigate, state]
+  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -109,6 +123,17 @@ const Login = () => {
                 ) : "Sign In"}
               </button>
             </form>
+
+            {/* Google sign-in */}
+            <div className="my-6 flex items-center gap-3">
+              <div className="h-px flex-1 bg-slate-200" />
+              <span className="text-xs text-slate-400">or</span>
+              <div className="h-px flex-1 bg-slate-200" />
+            </div>
+            <GoogleSignInButton
+              onCredential={handleGoogleCredential}
+              onError={() => setError("Google sign-in failed. Try again.")}
+            />
 
             {/* Footer */}
             <p className="mt-6 text-center text-xs text-slate-400">
