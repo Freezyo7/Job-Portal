@@ -1,0 +1,895 @@
+2026-09-04T08:32:09.0667808Z Current runner version: '2.337.0'
+2026-09-04T08:32:09.0695792Z ##[group]Runner Image Provisioner
+2026-09-04T08:32:09.0696972Z Hosted Compute Agent
+2026-09-04T08:32:09.0697726Z Version: 20260819.586
+2026-09-04T08:32:09.0698588Z Commit: 3cc4a88dfa507ef76119ad1bb3eccc6378bb2b76
+2026-09-04T08:32:09.0699472Z Build Date: 2026-08-18T23:20:18Z
+2026-09-04T08:32:09.0700416Z Worker ID: {d2a4ac64-d96d-4d50-9d10-266663694ea8}
+2026-09-04T08:32:09.0701642Z Azure Region: centralus
+2026-09-04T08:32:09.0702808Z ##[endgroup]
+2026-09-04T08:32:09.0704422Z ##[group]Operating System
+2026-09-04T08:32:09.0705259Z Ubuntu
+2026-09-04T08:32:09.0705957Z 24.04.4
+2026-09-04T08:32:09.0706565Z LTS
+2026-09-04T08:32:09.0707335Z ##[endgroup]
+2026-09-04T08:32:09.0708033Z ##[group]Runner Image
+2026-09-04T08:32:09.0708858Z Image: ubuntu-24.04
+2026-09-04T08:32:09.0709539Z Version: 20260823.283.1
+2026-09-04T08:32:09.0711287Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260823.283/images/ubuntu/Ubuntu2404-Readme.md
+2026-09-04T08:32:09.0713039Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260823.283
+2026-09-04T08:32:09.0714098Z ##[endgroup]
+2026-09-04T08:32:09.0715607Z ##[group]GITHUB_TOKEN Permissions
+2026-09-04T08:32:09.0717905Z Contents: read
+2026-09-04T08:32:09.0718755Z Metadata: read
+2026-09-04T08:32:09.0719433Z Packages: read
+2026-09-04T08:32:09.0720199Z ##[endgroup]
+2026-09-04T08:32:09.0723534Z Secret source: Actions
+2026-09-04T08:32:09.0725097Z Prepare workflow directory
+2026-09-04T08:32:09.1128821Z Prepare all required actions
+2026-09-04T08:32:09.1176846Z Getting action download info
+2026-09-04T08:32:09.3917508Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-04T08:32:09.5405068Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+2026-09-04T08:32:09.7230971Z Complete job name: Run Scrapers and Update Database
+2026-09-04T08:32:09.7977833Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-04T08:32:09.7987282Z ##[group]Run actions/checkout@v4
+2026-09-04T08:32:09.7988071Z with:
+2026-09-04T08:32:09.7988592Z   repository: Freezyo7/Job-Portal
+2026-09-04T08:32:09.7993061Z   token: ***
+2026-09-04T08:32:09.7993573Z   ssh-strict: true
+2026-09-04T08:32:09.7994086Z   ssh-user: git
+2026-09-04T08:32:09.7994607Z   persist-credentials: true
+2026-09-04T08:32:09.7995150Z   clean: true
+2026-09-04T08:32:09.7995661Z   sparse-checkout-cone-mode: true
+2026-09-04T08:32:09.7996238Z   fetch-depth: 1
+2026-09-04T08:32:09.7996734Z   fetch-tags: false
+2026-09-04T08:32:09.7997235Z   show-progress: true
+2026-09-04T08:32:09.7997739Z   lfs: false
+2026-09-04T08:32:09.7998254Z   submodules: false
+2026-09-04T08:32:09.7998761Z   set-safe-directory: true
+2026-09-04T08:32:09.7999332Z   allow-unsafe-pr-checkout: false
+2026-09-04T08:32:09.8000124Z ##[endgroup]
+2026-09-04T08:32:09.9018408Z Syncing repository: Freezyo7/Job-Portal
+2026-09-04T08:32:09.9020377Z ##[group]Getting Git version info
+2026-09-04T08:32:09.9021467Z Working directory is '/home/runner/work/Job-Portal/Job-Portal'
+2026-09-04T08:32:09.9022668Z [command]/usr/bin/git version
+2026-09-04T08:32:09.9071887Z git version 2.55.0
+2026-09-04T08:32:09.9091618Z ##[endgroup]
+2026-09-04T08:32:09.9107791Z Temporarily overriding HOME='/home/runner/work/_temp/239f555f-5d9c-468d-8ac6-b97f97ba2b8c' before making global git config changes
+2026-09-04T08:32:09.9110184Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-04T08:32:09.9113900Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Job-Portal/Job-Portal
+2026-09-04T08:32:09.9172042Z Deleting the contents of '/home/runner/work/Job-Portal/Job-Portal'
+2026-09-04T08:32:09.9176119Z ##[group]Initializing the repository
+2026-09-04T08:32:09.9181873Z [command]/usr/bin/git init /home/runner/work/Job-Portal/Job-Portal
+2026-09-04T08:32:09.9264073Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-04T08:32:09.9265881Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-04T08:32:09.9267735Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-04T08:32:09.9269069Z hint: call:
+2026-09-04T08:32:09.9269827Z hint:
+2026-09-04T08:32:09.9270954Z hint: 	git config --global init.defaultBranch <name>
+2026-09-04T08:32:09.9272022Z hint:
+2026-09-04T08:32:09.9273084Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-04T08:32:09.9274710Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-04T08:32:09.9276037Z hint:
+2026-09-04T08:32:09.9276816Z hint: 	git branch -m <name>
+2026-09-04T08:32:09.9277684Z hint:
+2026-09-04T08:32:09.9278778Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-04T08:32:09.9280503Z Initialized empty Git repository in /home/runner/work/Job-Portal/Job-Portal/.git/
+2026-09-04T08:32:09.9283598Z [command]/usr/bin/git remote add origin https://github.com/Freezyo7/Job-Portal
+2026-09-04T08:32:09.9323310Z ##[endgroup]
+2026-09-04T08:32:09.9324211Z ##[group]Disabling automatic garbage collection
+2026-09-04T08:32:09.9327925Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-04T08:32:09.9359721Z ##[endgroup]
+2026-09-04T08:32:09.9360835Z ##[group]Setting up auth
+2026-09-04T08:32:09.9366773Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-04T08:32:09.9402493Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-04T08:32:09.9741635Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-04T08:32:09.9781434Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-04T08:32:10.0071473Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-04T08:32:10.0109748Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-04T08:32:10.0354111Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-04T08:32:10.0399247Z ##[endgroup]
+2026-09-04T08:32:10.0400827Z ##[group]Fetching the repository
+2026-09-04T08:32:10.0411456Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1056a0fa5932d0b7410e687fb21a0be0e7cad6e0:refs/remotes/origin/main
+2026-09-04T08:32:10.5098930Z From https://github.com/Freezyo7/Job-Portal
+2026-09-04T08:32:10.5100017Z  * [new ref]         1056a0fa5932d0b7410e687fb21a0be0e7cad6e0 -> origin/main
+2026-09-04T08:32:10.5112508Z ##[endgroup]
+2026-09-04T08:32:10.5113521Z ##[group]Determining the checkout info
+2026-09-04T08:32:10.5122198Z ##[endgroup]
+2026-09-04T08:32:10.5123069Z [command]/usr/bin/git sparse-checkout disable
+2026-09-04T08:32:10.5162971Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-04T08:32:10.5197357Z ##[group]Checking out the ref
+2026-09-04T08:32:10.5201768Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-09-04T08:32:10.5367412Z Switched to a new branch 'main'
+2026-09-04T08:32:10.5372472Z branch 'main' set up to track 'origin/main'.
+2026-09-04T08:32:10.5466371Z ##[endgroup]
+2026-09-04T08:32:10.5468732Z [command]/usr/bin/git log -1 --format=%H
+2026-09-04T08:32:10.5470053Z 1056a0fa5932d0b7410e687fb21a0be0e7cad6e0
+2026-09-04T08:32:10.5756479Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-04T08:32:10.5759599Z ##[group]Run actions/setup-python@v5
+2026-09-04T08:32:10.5760281Z with:
+2026-09-04T08:32:10.5830019Z   python-version: 3.12
+2026-09-04T08:32:10.5830970Z   cache: pip
+2026-09-04T08:32:10.5831673Z   cache-dependency-path: ./BE/requirements.txt
+2026-09-04T08:32:10.5832435Z   check-latest: false
+2026-09-04T08:32:10.5837195Z   token: ***
+2026-09-04T08:32:10.5837754Z   update-environment: true
+2026-09-04T08:32:10.5838387Z   allow-prereleases: false
+2026-09-04T08:32:10.5838987Z   freethreaded: false
+2026-09-04T08:32:10.5839557Z ##[endgroup]
+2026-09-04T08:32:10.7185173Z ##[group]Installed versions
+2026-09-04T08:32:10.7264156Z (node:2235) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-04T08:32:10.7266233Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-04T08:32:10.7267248Z Successfully set up CPython (3.12.14)
+2026-09-04T08:32:10.7268372Z ##[endgroup]
+2026-09-04T08:32:10.7552392Z [command]/opt/hostedtoolcache/Python/3.12.14/x64/bin/pip cache dir
+2026-09-04T08:32:11.4424802Z /home/runner/.cache/pip
+2026-09-04T08:32:11.6187965Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.14-pip-5657c042a6438ab46de26f1d2859faf1f99f3108f5e53f4fea2088baf555b95c
+2026-09-04T08:32:11.6284206Z (node:2235) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-04T08:32:12.7935812Z Received 75497472 of 79665661 (94.8%), 71.9 MBs/sec
+2026-09-04T08:32:12.8730890Z Received 79665661 of 79665661 (100.0%), 70.3 MBs/sec
+2026-09-04T08:32:12.8745022Z Cache Size: ~76 MB (79665661 B)
+2026-09-04T08:32:12.8772422Z [command]/usr/bin/tar -xf /home/runner/work/_temp/ad77b2e0-7cd6-4a23-8f69-713444717bfb/cache.tzst -P -C /home/runner/work/Job-Portal/Job-Portal --use-compress-program unzstd
+2026-09-04T08:32:13.0057409Z Cache restored successfully
+2026-09-04T08:32:13.0119155Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.12.14-pip-5657c042a6438ab46de26f1d2859faf1f99f3108f5e53f4fea2088baf555b95c
+2026-09-04T08:32:13.0319764Z ##[group]Run python -m pip install --upgrade pip
+2026-09-04T08:32:13.0320264Z [36;1mpython -m pip install --upgrade pip[0m
+2026-09-04T08:32:13.0320917Z [36;1mpip install -r requirements.txt[0m
+2026-09-04T08:32:13.0370075Z shell: /usr/bin/bash -e {0}
+2026-09-04T08:32:13.0370403Z env:
+2026-09-04T08:32:13.0370947Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:13.0371469Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-04T08:32:13.0371945Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:13.0372406Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:13.0372833Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:13.0373249Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-04T08:32:13.0373609Z ##[endgroup]
+2026-09-04T08:32:13.9272733Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages (26.2.1)
+2026-09-04T08:32:14.6101505Z Collecting asgiref==3.12.1 (from -r requirements.txt (line 1))
+2026-09-04T08:32:14.6115138Z   Using cached asgiref-3.12.1-py3-none-any.whl.metadata (9.4 kB)
+2026-09-04T08:32:14.6368633Z Collecting beautifulsoup4==4.15.0 (from -r requirements.txt (line 2))
+2026-09-04T08:32:14.6381139Z   Using cached beautifulsoup4-4.15.0-py3-none-any.whl.metadata (3.8 kB)
+2026-09-04T08:32:14.6613227Z Collecting bleach==6.4.0 (from -r requirements.txt (line 3))
+2026-09-04T08:32:14.6625127Z   Using cached bleach-6.4.0-py3-none-any.whl.metadata (32 kB)
+2026-09-04T08:32:14.6894456Z Collecting certifi==2026.7.22 (from -r requirements.txt (line 4))
+2026-09-04T08:32:14.6906721Z   Using cached certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+2026-09-04T08:32:14.8015606Z Collecting cffi==2.1.1 (from -r requirements.txt (line 5))
+2026-09-04T08:32:14.8029043Z   Using cached cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+2026-09-04T08:32:14.9143873Z Collecting charset-normalizer==3.4.9 (from -r requirements.txt (line 6))
+2026-09-04T08:32:14.9158462Z   Using cached charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+2026-09-04T08:32:14.9799007Z Collecting curl_cffi==0.16.0 (from -r requirements.txt (line 7))
+2026-09-04T08:32:14.9812793Z   Using cached curl_cffi-0.16.0-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (17 kB)
+2026-09-04T08:32:15.0315654Z Collecting Django==6.0.7 (from -r requirements.txt (line 8))
+2026-09-04T08:32:15.0329017Z   Using cached django-6.0.7-py3-none-any.whl.metadata (3.9 kB)
+2026-09-04T08:32:15.0580896Z Collecting django-cors-headers==4.9.0 (from -r requirements.txt (line 9))
+2026-09-04T08:32:15.0592320Z   Using cached django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+2026-09-04T08:32:15.0826511Z Collecting django-environ==0.14.0 (from -r requirements.txt (line 10))
+2026-09-04T08:32:15.0838263Z   Using cached django_environ-0.14.0-py3-none-any.whl.metadata (12 kB)
+2026-09-04T08:32:15.1074558Z Collecting dj-database-url==3.0.1 (from -r requirements.txt (line 11))
+2026-09-04T08:32:15.1086154Z   Using cached dj_database_url-3.0.1-py3-none-any.whl.metadata (14 kB)
+2026-09-04T08:32:15.1331708Z Collecting django-filter==26.1 (from -r requirements.txt (line 12))
+2026-09-04T08:32:15.1343902Z   Using cached django_filter-26.1-py3-none-any.whl.metadata (5.2 kB)
+2026-09-04T08:32:15.1634249Z Collecting djangorestframework==3.18.0 (from -r requirements.txt (line 13))
+2026-09-04T08:32:15.1646406Z   Using cached djangorestframework-3.18.0-py3-none-any.whl.metadata (7.8 kB)
+2026-09-04T08:32:15.1885572Z Collecting djangorestframework_simplejwt==5.5.1 (from -r requirements.txt (line 14))
+2026-09-04T08:32:15.1899252Z   Using cached djangorestframework_simplejwt-5.5.1-py3-none-any.whl.metadata (4.6 kB)
+2026-09-04T08:32:15.3250191Z Collecting greenlet==3.5.3 (from -r requirements.txt (line 15))
+2026-09-04T08:32:15.3265170Z   Using cached greenlet-3.5.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)
+2026-09-04T08:32:15.3515371Z Collecting gunicorn==23.0.0 (from -r requirements.txt (line 16))
+2026-09-04T08:32:15.3527861Z   Using cached gunicorn-23.0.0-py3-none-any.whl.metadata (4.4 kB)
+2026-09-04T08:32:15.3754034Z Collecting idna==3.18 (from -r requirements.txt (line 17))
+2026-09-04T08:32:15.3766291Z   Using cached idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+2026-09-04T08:32:15.4165838Z Collecting playwright==1.61.0 (from -r requirements.txt (line 18))
+2026-09-04T08:32:15.4178536Z   Using cached playwright-1.61.0-py3-none-manylinux1_x86_64.whl.metadata (3.3 kB)
+2026-09-04T08:32:15.4413984Z Collecting psycopg==3.3.4 (from -r requirements.txt (line 19))
+2026-09-04T08:32:15.4426478Z   Using cached psycopg-3.3.4-py3-none-any.whl.metadata (4.3 kB)
+2026-09-04T08:32:15.5835306Z Collecting psycopg-binary==3.3.4 (from -r requirements.txt (line 20))
+2026-09-04T08:32:15.5850429Z   Using cached psycopg_binary-3.3.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.7 kB)
+2026-09-04T08:32:15.6059373Z Collecting pycparser==3.0 (from -r requirements.txt (line 21))
+2026-09-04T08:32:15.6071386Z   Using cached pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+2026-09-04T08:32:15.6338869Z Collecting pypdf==6.6.0 (from -r requirements.txt (line 22))
+2026-09-04T08:32:15.6351305Z   Using cached pypdf-6.6.0-py3-none-any.whl.metadata (7.1 kB)
+2026-09-04T08:32:15.6586905Z Collecting pyee==13.0.1 (from -r requirements.txt (line 23))
+2026-09-04T08:32:15.6599027Z   Using cached pyee-13.0.1-py3-none-any.whl.metadata (3.0 kB)
+2026-09-04T08:32:15.6845987Z Collecting PyJWT==2.13.0 (from -r requirements.txt (line 24))
+2026-09-04T08:32:15.6857902Z   Using cached pyjwt-2.13.0-py3-none-any.whl.metadata (3.4 kB)
+2026-09-04T08:32:15.7089038Z Collecting python-dotenv==1.2.2 (from -r requirements.txt (line 25))
+2026-09-04T08:32:15.7101323Z   Using cached python_dotenv-1.2.2-py3-none-any.whl.metadata (27 kB)
+2026-09-04T08:32:15.7558640Z Collecting requests==2.34.2 (from -r requirements.txt (line 26))
+2026-09-04T08:32:15.7571821Z   Using cached requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+2026-09-04T08:32:15.7846031Z Collecting resend>=2.0.0 (from -r requirements.txt (line 27))
+2026-09-04T08:32:15.7858718Z   Using cached resend-2.42.0-py2.py3-none-any.whl.metadata (3.7 kB)
+2026-09-04T08:32:15.8097072Z Collecting soupsieve==2.9.1 (from -r requirements.txt (line 28))
+2026-09-04T08:32:15.8109648Z   Using cached soupsieve-2.9.1-py3-none-any.whl.metadata (4.6 kB)
+2026-09-04T08:32:15.8321280Z Collecting sqlparse==0.5.5 (from -r requirements.txt (line 29))
+2026-09-04T08:32:15.8334609Z   Using cached sqlparse-0.5.5-py3-none-any.whl.metadata (4.7 kB)
+2026-09-04T08:32:15.8570568Z Collecting typing_extensions==4.16.0 (from -r requirements.txt (line 30))
+2026-09-04T08:32:15.8583321Z   Using cached typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+2026-09-04T08:32:15.8800305Z Collecting tzdata==2026.3 (from -r requirements.txt (line 31))
+2026-09-04T08:32:15.8813853Z   Using cached tzdata-2026.3-py2.py3-none-any.whl.metadata (1.4 kB)
+2026-09-04T08:32:15.9081072Z Collecting urllib3==2.7.0 (from -r requirements.txt (line 32))
+2026-09-04T08:32:15.9093617Z   Using cached urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+2026-09-04T08:32:15.9297695Z Collecting webencodings==0.5.1 (from -r requirements.txt (line 33))
+2026-09-04T08:32:15.9309463Z   Using cached webencodings-0.5.1-py2.py3-none-any.whl.metadata (2.1 kB)
+2026-09-04T08:32:15.9726283Z Collecting packaging (from gunicorn==23.0.0->-r requirements.txt (line 16))
+2026-09-04T08:32:15.9738702Z   Using cached packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+2026-09-04T08:32:15.9895654Z Using cached asgiref-3.12.1-py3-none-any.whl (25 kB)
+2026-09-04T08:32:15.9907322Z Using cached beautifulsoup4-4.15.0-py3-none-any.whl (109 kB)
+2026-09-04T08:32:15.9919123Z Using cached bleach-6.4.0-py3-none-any.whl (165 kB)
+2026-09-04T08:32:15.9931233Z Using cached certifi-2026.7.22-py3-none-any.whl (136 kB)
+2026-09-04T08:32:15.9943681Z Using cached cffi-2.1.1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (221 kB)
+2026-09-04T08:32:15.9956202Z Using cached charset_normalizer-3.4.9-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (224 kB)
+2026-09-04T08:32:15.9968338Z Using cached curl_cffi-0.16.0-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (13.5 MB)
+2026-09-04T08:32:16.0023873Z Using cached django-6.0.7-py3-none-any.whl (8.4 MB)
+2026-09-04T08:32:16.0063908Z Using cached django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+2026-09-04T08:32:16.0075233Z Using cached django_environ-0.14.0-py3-none-any.whl (20 kB)
+2026-09-04T08:32:16.0086556Z Using cached dj_database_url-3.0.1-py3-none-any.whl (8.8 kB)
+2026-09-04T08:32:16.0097634Z Using cached django_filter-26.1-py3-none-any.whl (94 kB)
+2026-09-04T08:32:16.0109201Z Using cached djangorestframework-3.18.0-py3-none-any.whl (900 kB)
+2026-09-04T08:32:16.0124182Z Using cached djangorestframework_simplejwt-5.5.1-py3-none-any.whl (107 kB)
+2026-09-04T08:32:16.0136183Z Using cached greenlet-3.5.3-cp312-cp312-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (614 kB)
+2026-09-04T08:32:16.0149468Z Using cached gunicorn-23.0.0-py3-none-any.whl (85 kB)
+2026-09-04T08:32:16.0160978Z Using cached idna-3.18-py3-none-any.whl (65 kB)
+2026-09-04T08:32:16.0172595Z Using cached playwright-1.61.0-py3-none-manylinux1_x86_64.whl (47.4 MB)
+2026-09-04T08:32:16.0341304Z Using cached pyee-13.0.1-py3-none-any.whl (15 kB)
+2026-09-04T08:32:16.0352591Z Using cached psycopg-3.3.4-py3-none-any.whl (213 kB)
+2026-09-04T08:32:16.0365280Z Using cached psycopg_binary-3.3.4-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (5.2 MB)
+2026-09-04T08:32:16.0396080Z Using cached pycparser-3.0-py3-none-any.whl (48 kB)
+2026-09-04T08:32:16.0407662Z Using cached pypdf-6.6.0-py3-none-any.whl (328 kB)
+2026-09-04T08:32:16.0419992Z Using cached pyjwt-2.13.0-py3-none-any.whl (31 kB)
+2026-09-04T08:32:16.0431357Z Using cached python_dotenv-1.2.2-py3-none-any.whl (22 kB)
+2026-09-04T08:32:16.0442929Z Using cached requests-2.34.2-py3-none-any.whl (73 kB)
+2026-09-04T08:32:16.0454366Z Using cached urllib3-2.7.0-py3-none-any.whl (131 kB)
+2026-09-04T08:32:16.0465844Z Using cached soupsieve-2.9.1-py3-none-any.whl (37 kB)
+2026-09-04T08:32:16.0477644Z Using cached sqlparse-0.5.5-py3-none-any.whl (46 kB)
+2026-09-04T08:32:16.0489072Z Using cached typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+2026-09-04T08:32:16.0500547Z Using cached tzdata-2026.3-py2.py3-none-any.whl (348 kB)
+2026-09-04T08:32:16.0513336Z Using cached webencodings-0.5.1-py2.py3-none-any.whl (11 kB)
+2026-09-04T08:32:16.0524573Z Using cached resend-2.42.0-py2.py3-none-any.whl (92 kB)
+2026-09-04T08:32:16.0536008Z Using cached packaging-26.3-py3-none-any.whl (129 kB)
+2026-09-04T08:32:16.3021530Z Installing collected packages: webencodings, urllib3, tzdata, typing_extensions, sqlparse, soupsieve, python-dotenv, pypdf, PyJWT, pycparser, psycopg-binary, packaging, idna, greenlet, django-environ, charset-normalizer, certifi, bleach, asgiref, requests, pyee, psycopg, gunicorn, Django, cffi, beautifulsoup4, resend, playwright, djangorestframework, django-filter, django-cors-headers, dj-database-url, curl_cffi, djangorestframework_simplejwt
+2026-09-04T08:32:20.9423747Z 
+2026-09-04T08:32:20.9456732Z Successfully installed Django-6.0.7 PyJWT-2.13.0 asgiref-3.12.1 beautifulsoup4-4.15.0 bleach-6.4.0 certifi-2026.7.22 cffi-2.1.1 charset-normalizer-3.4.9 curl_cffi-0.16.0 dj-database-url-3.0.1 django-cors-headers-4.9.0 django-environ-0.14.0 django-filter-26.1 djangorestframework-3.18.0 djangorestframework_simplejwt-5.5.1 greenlet-3.5.3 gunicorn-23.0.0 idna-3.18 packaging-26.3 playwright-1.61.0 psycopg-3.3.4 psycopg-binary-3.3.4 pycparser-3.0 pyee-13.0.1 pypdf-6.6.0 python-dotenv-1.2.2 requests-2.34.2 resend-2.42.0 soupsieve-2.9.1 sqlparse-0.5.5 typing_extensions-4.16.0 tzdata-2026.3 urllib3-2.7.0 webencodings-0.5.1
+2026-09-04T08:32:21.0401460Z ##[group]Run playwright install chromium --with-deps
+2026-09-04T08:32:21.0401948Z [36;1mplaywright install chromium --with-deps[0m
+2026-09-04T08:32:21.0445476Z shell: /usr/bin/bash -e {0}
+2026-09-04T08:32:21.0445774Z env:
+2026-09-04T08:32:21.0446091Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:21.0446584Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-04T08:32:21.0447053Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:21.0447477Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:21.0447884Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:21.0448294Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-04T08:32:21.0448668Z ##[endgroup]
+2026-09-04T08:32:21.4076473Z Installing dependencies...
+2026-09-04T08:32:21.4168412Z Switching to root user to install dependencies...
+2026-09-04T08:32:21.4973303Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-09-04T08:32:21.5388256Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2026-09-04T08:32:21.5391155Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2026-09-04T08:32:21.5434162Z Get:6 https://packages.microsoft.com/repos/azure-cli noble InRelease [3564 B]
+2026-09-04T08:32:21.5468011Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2026-09-04T08:32:21.5498269Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2026-09-04T08:32:21.5511819Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2026-09-04T08:32:21.6591689Z Get:8 https://dl.google.com/linux/chrome-stable/deb stable InRelease [2548 B]
+2026-09-04T08:32:21.6730756Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1260 kB]
+2026-09-04T08:32:21.7209040Z Get:18 https://packages.microsoft.com/repos/azure-cli noble/main amd64 Packages [2515 B]
+2026-09-04T08:32:21.7302561Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [292 kB]
+2026-09-04T08:32:21.7368621Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [180 kB]
+2026-09-04T08:32:21.7434003Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1690 kB]
+2026-09-04T08:32:21.7744094Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [339 kB]
+2026-09-04T08:32:21.7809112Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [388 kB]
+2026-09-04T08:32:21.7938434Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [1536 kB]
+2026-09-04T08:32:21.8151698Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [352 kB]
+2026-09-04T08:32:21.8178380Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2026-09-04T08:32:21.8188261Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [5764 B]
+2026-09-04T08:32:21.8260194Z Get:21 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [394 kB]
+2026-09-04T08:32:21.8330033Z Get:22 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [12.5 kB]
+2026-09-04T08:32:21.8373025Z Get:23 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [441 kB]
+2026-09-04T08:32:21.8624353Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [12.6 kB]
+2026-09-04T08:32:21.8859494Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Packages [982 kB]
+2026-09-04T08:32:21.8969127Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [210 kB]
+2026-09-04T08:32:21.9032451Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [46.4 kB]
+2026-09-04T08:32:21.9053920Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1206 kB]
+2026-09-04T08:32:21.9223781Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-security/universe Translation-en [241 kB]
+2026-09-04T08:32:21.9264281Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [76.2 kB]
+2026-09-04T08:32:21.9541113Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [1392 kB]
+2026-09-04T08:32:21.9811731Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted Translation-en [321 kB]
+2026-09-04T08:32:21.9855547Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse Translation-en [11.1 kB]
+2026-09-04T08:32:21.9936250Z Get:33 https://dl.google.com/linux/chrome-stable/deb stable/main amd64 Packages [1400 B]
+2026-09-04T08:32:26.1466145Z Fetched 11.8 MB in 1s (8380 kB/s)
+2026-09-04T08:32:26.9293734Z Reading package lists...
+2026-09-04T08:32:26.9552838Z Reading package lists...
+2026-09-04T08:32:27.1452109Z Building dependency tree...
+2026-09-04T08:32:27.1459535Z Reading state information...
+2026-09-04T08:32:27.3038900Z libasound2t64 is already the newest version (1.2.11-1ubuntu0.3).
+2026-09-04T08:32:27.3039606Z libasound2t64 set to manually installed.
+2026-09-04T08:32:27.3040169Z libatk-bridge2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-09-04T08:32:27.3041021Z libatk-bridge2.0-0t64 set to manually installed.
+2026-09-04T08:32:27.3041575Z libatk1.0-0t64 is already the newest version (2.52.0-1build1).
+2026-09-04T08:32:27.3042103Z libatk1.0-0t64 set to manually installed.
+2026-09-04T08:32:27.3042635Z libatspi2.0-0t64 is already the newest version (2.52.0-1build1).
+2026-09-04T08:32:27.3043167Z libatspi2.0-0t64 set to manually installed.
+2026-09-04T08:32:27.3043713Z libcairo2 is already the newest version (1.18.0-3build1).
+2026-09-04T08:32:27.3044600Z libcairo2 set to manually installed.
+2026-09-04T08:32:27.3044990Z libcups2t64 is already the newest version (2.4.7-1.2ubuntu7.14).
+2026-09-04T08:32:27.3045374Z libcups2t64 set to manually installed.
+2026-09-04T08:32:27.3045909Z libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+2026-09-04T08:32:27.3046313Z libdbus-1-3 set to manually installed.
+2026-09-04T08:32:27.3046696Z libdrm2 is already the newest version (2.4.125-1ubuntu0.1~24.04.2).
+2026-09-04T08:32:27.3047087Z libdrm2 set to manually installed.
+2026-09-04T08:32:27.3047441Z libgbm1 is already the newest version (25.2.8-0ubuntu0.24.04.2).
+2026-09-04T08:32:27.3047806Z libgbm1 set to manually installed.
+2026-09-04T08:32:27.3048272Z libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.8).
+2026-09-04T08:32:27.3048673Z libglib2.0-0t64 set to manually installed.
+2026-09-04T08:32:27.3049039Z libnspr4 is already the newest version (2:4.35-1.1build1).
+2026-09-04T08:32:27.3049418Z libnspr4 set to manually installed.
+2026-09-04T08:32:27.3049872Z libnss3 is already the newest version (2:3.98-1ubuntu0.2).
+2026-09-04T08:32:27.3050229Z libnss3 set to manually installed.
+2026-09-04T08:32:27.3050819Z libpango-1.0-0 is already the newest version (1.52.1+ds-1build1).
+2026-09-04T08:32:27.3051221Z libpango-1.0-0 set to manually installed.
+2026-09-04T08:32:27.3051575Z libx11-6 is already the newest version (2:1.8.7-1build1).
+2026-09-04T08:32:27.3051927Z libx11-6 set to manually installed.
+2026-09-04T08:32:27.3052263Z libxcb1 is already the newest version (1.15-1ubuntu2).
+2026-09-04T08:32:27.3052600Z libxcb1 set to manually installed.
+2026-09-04T08:32:27.3052965Z libxcomposite1 is already the newest version (1:0.4.5-1build3).
+2026-09-04T08:32:27.3053420Z libxcomposite1 set to manually installed.
+2026-09-04T08:32:27.3053848Z libxdamage1 is already the newest version (1:1.1.6-1build1).
+2026-09-04T08:32:27.3054226Z libxdamage1 set to manually installed.
+2026-09-04T08:32:27.3054572Z libxext6 is already the newest version (2:1.3.4-1build2).
+2026-09-04T08:32:27.3054928Z libxext6 set to manually installed.
+2026-09-04T08:32:27.3055273Z libxfixes3 is already the newest version (1:6.0.0-2build1).
+2026-09-04T08:32:27.3055643Z libxfixes3 set to manually installed.
+2026-09-04T08:32:27.3056246Z libxkbcommon0 is already the newest version (1.6.0-1build1).
+2026-09-04T08:32:27.3056689Z libxkbcommon0 set to manually installed.
+2026-09-04T08:32:27.3057064Z libxrandr2 is already the newest version (2:1.5.2-2build1).
+2026-09-04T08:32:27.3057439Z libxrandr2 set to manually installed.
+2026-09-04T08:32:27.3057800Z xvfb is already the newest version (2:21.1.12-1ubuntu1.6).
+2026-09-04T08:32:27.3058274Z fonts-noto-color-emoji is already the newest version (2.047-0ubuntu0.24.04.1).
+2026-09-04T08:32:27.3058787Z libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+2026-09-04T08:32:27.3059183Z libfontconfig1 set to manually installed.
+2026-09-04T08:32:27.3059583Z libfreetype6 is already the newest version (2.13.2+dfsg-1ubuntu0.1).
+2026-09-04T08:32:27.3059996Z libfreetype6 set to manually installed.
+2026-09-04T08:32:27.3060369Z fonts-liberation is already the newest version (1:2.1.5-3).
+2026-09-04T08:32:27.3060870Z fonts-liberation set to manually installed.
+2026-09-04T08:32:27.3061263Z The following additional packages will be installed:
+2026-09-04T08:32:27.3061638Z   xfonts-encodings xfonts-utils
+2026-09-04T08:32:27.3061947Z Recommended packages:
+2026-09-04T08:32:27.3062234Z   fonts-ipafont-mincho fonts-tlwg-loma
+2026-09-04T08:32:27.3227494Z The following NEW packages will be installed:
+2026-09-04T08:32:27.3228263Z   fonts-freefont-ttf fonts-ipafont-gothic fonts-tlwg-loma-otf fonts-unifont
+2026-09-04T08:32:27.3233540Z   fonts-wqy-zenhei xfonts-cyrillic xfonts-encodings xfonts-scalable
+2026-09-04T08:32:27.3234150Z   xfonts-utils
+2026-09-04T08:32:27.3413540Z 0 upgraded, 9 newly installed, 0 to remove and 110 not upgraded.
+2026-09-04T08:32:27.3414195Z Need to get 21.1 MB of archives.
+2026-09-04T08:32:27.3414617Z After this operation, 79.5 MB of additional disk space will be used.
+2026-09-04T08:32:27.3415418Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2026-09-04T08:32:27.3895084Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+2026-09-04T08:32:27.4462246Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+2026-09-04T08:32:27.5221791Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+2026-09-04T08:32:27.5510873Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+2026-09-04T08:32:27.6094031Z Get:6 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+2026-09-04T08:32:27.7081856Z Get:7 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+2026-09-04T08:32:27.7399485Z Get:8 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+2026-09-04T08:32:27.7687464Z Get:9 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+2026-09-04T08:32:27.7994980Z Get:10 http://azure.archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+2026-09-04T08:32:28.0585106Z Fetched 21.1 MB in 0s (44.8 MB/s)
+2026-09-04T08:32:28.0801399Z Selecting previously unselected package fonts-ipafont-gothic.
+2026-09-04T08:32:28.1012945Z (Reading database ... 
+2026-09-04T08:32:28.1013749Z (Reading database ... 5%
+2026-09-04T08:32:28.1014105Z (Reading database ... 10%
+2026-09-04T08:32:28.1014404Z (Reading database ... 15%
+2026-09-04T08:32:28.1014690Z (Reading database ... 20%
+2026-09-04T08:32:28.1014957Z (Reading database ... 25%
+2026-09-04T08:32:28.1015203Z (Reading database ... 30%
+2026-09-04T08:32:28.1015466Z (Reading database ... 35%
+2026-09-04T08:32:28.1015915Z (Reading database ... 40%
+2026-09-04T08:32:28.1016367Z (Reading database ... 45%
+2026-09-04T08:32:28.1017465Z (Reading database ... 50%
+2026-09-04T08:32:28.1053946Z (Reading database ... 55%
+2026-09-04T08:32:28.1349398Z (Reading database ... 60%
+2026-09-04T08:32:28.3395451Z (Reading database ... 65%
+2026-09-04T08:32:28.5299696Z (Reading database ... 70%
+2026-09-04T08:32:28.7371549Z (Reading database ... 75%
+2026-09-04T08:32:28.8883092Z (Reading database ... 80%
+2026-09-04T08:32:29.1294982Z (Reading database ... 85%
+2026-09-04T08:32:29.3355937Z (Reading database ... 90%
+2026-09-04T08:32:29.5448795Z (Reading database ... 95%
+2026-09-04T08:32:29.5449300Z (Reading database ... 100%
+2026-09-04T08:32:29.5467833Z (Reading database ... 203385 files and directories currently installed.)
+2026-09-04T08:32:29.5498638Z Preparing to unpack .../0-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+2026-09-04T08:32:29.5594830Z Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-09-04T08:32:29.7991602Z Selecting previously unselected package fonts-freefont-ttf.
+2026-09-04T08:32:29.8127680Z Preparing to unpack .../1-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+2026-09-04T08:32:29.8135513Z Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-09-04T08:32:29.8985995Z Selecting previously unselected package fonts-tlwg-loma-otf.
+2026-09-04T08:32:29.9121759Z Preparing to unpack .../2-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+2026-09-04T08:32:29.9128521Z Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-09-04T08:32:29.9341398Z Selecting previously unselected package fonts-unifont.
+2026-09-04T08:32:29.9475177Z Preparing to unpack .../3-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+2026-09-04T08:32:29.9482586Z Unpacking fonts-unifont (1:15.1.01-1build1) ...
+2026-09-04T08:32:30.0581576Z Selecting previously unselected package fonts-wqy-zenhei.
+2026-09-04T08:32:30.0718673Z Preparing to unpack .../4-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+2026-09-04T08:32:30.0829693Z Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+2026-09-04T08:32:30.5555586Z Selecting previously unselected package xfonts-encodings.
+2026-09-04T08:32:30.5692416Z Preparing to unpack .../5-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+2026-09-04T08:32:30.5698692Z Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-09-04T08:32:30.5990800Z Selecting previously unselected package xfonts-utils.
+2026-09-04T08:32:30.6125061Z Preparing to unpack .../6-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+2026-09-04T08:32:30.6132118Z Unpacking xfonts-utils (1:7.7+6build3) ...
+2026-09-04T08:32:30.6603883Z Selecting previously unselected package xfonts-cyrillic.
+2026-09-04T08:32:30.6736819Z Preparing to unpack .../7-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+2026-09-04T08:32:30.6745338Z Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-09-04T08:32:30.7090564Z Selecting previously unselected package xfonts-scalable.
+2026-09-04T08:32:30.7220453Z Preparing to unpack .../8-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+2026-09-04T08:32:30.7227887Z Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+2026-09-04T08:32:30.7646327Z Setting up fonts-wqy-zenhei (0.9.45-8) ...
+2026-09-04T08:32:30.7762535Z Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+2026-09-04T08:32:30.7779585Z Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+2026-09-04T08:32:30.7797513Z Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+2026-09-04T08:32:30.7814379Z Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+2026-09-04T08:32:30.7883329Z update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+2026-09-04T08:32:30.7899149Z Setting up fonts-unifont (1:15.1.01-1build1) ...
+2026-09-04T08:32:30.7915225Z Setting up xfonts-utils (1:7.7+6build3) ...
+2026-09-04T08:32:30.7954437Z Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+2026-09-04T08:32:30.8300026Z Setting up xfonts-scalable (1:1.0.3-1.3) ...
+2026-09-04T08:32:30.8643019Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-09-04T08:32:30.8662489Z Not building database; man-db/auto-update is not 'true'.
+2026-09-04T08:32:30.8675571Z Processing triggers for fontconfig (2.15.0-1.1ubuntu2) ...
+2026-09-04T08:32:31.6065124Z 
+2026-09-04T08:32:31.6065750Z Running kernel seems to be up-to-date.
+2026-09-04T08:32:31.6066160Z 
+2026-09-04T08:32:31.6066354Z No services need to be restarted.
+2026-09-04T08:32:31.6067086Z 
+2026-09-04T08:32:31.6067274Z No containers need to be restarted.
+2026-09-04T08:32:31.6067578Z 
+2026-09-04T08:32:31.6067798Z No user sessions are running outdated binaries.
+2026-09-04T08:32:31.6068156Z 
+2026-09-04T08:32:31.6068496Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-09-04T08:32:32.5497900Z Downloading Chrome for Testing 149.0.7827.55 (playwright chromium v1228) from https://cdn.playwright.dev/builds/cft/149.0.7827.55/linux64/chrome-linux64.zip
+2026-09-04T08:32:33.6267929Z |                                                                                |   0% of 177 MiB
+2026-09-04T08:32:34.1418989Z |■■■■■■■■                                                                        |  10% of 177 MiB
+2026-09-04T08:32:34.2874672Z |■■■■■■■■■■■■■■■■                                                                |  20% of 177 MiB
+2026-09-04T08:32:34.3589717Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 177 MiB
+2026-09-04T08:32:34.4597735Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 177 MiB
+2026-09-04T08:32:34.5363857Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 177 MiB
+2026-09-04T08:32:34.6041559Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 177 MiB
+2026-09-04T08:32:34.7293955Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 177 MiB
+2026-09-04T08:32:34.8083150Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 177 MiB
+2026-09-04T08:32:34.9218872Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 177 MiB
+2026-09-04T08:32:35.0019166Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 177 MiB
+2026-09-04T08:32:38.0228584Z Chrome for Testing 149.0.7827.55 (playwright chromium v1228) downloaded to /home/runner/.cache/ms-playwright/chromium-1228
+2026-09-04T08:32:38.0232918Z Downloading FFmpeg (playwright ffmpeg v1011) from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+2026-09-04T08:32:39.0167636Z |                                                                                |   0% of 2.3 MiB
+2026-09-04T08:32:39.0561547Z |■■■■■■■■                                                                        |  10% of 2.3 MiB
+2026-09-04T08:32:39.0712073Z |■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+2026-09-04T08:32:39.0847728Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+2026-09-04T08:32:39.0973785Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+2026-09-04T08:32:39.1013297Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+2026-09-04T08:32:39.1117939Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+2026-09-04T08:32:39.1135550Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+2026-09-04T08:32:39.1242809Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+2026-09-04T08:32:39.1258387Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+2026-09-04T08:32:39.1274515Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+2026-09-04T08:32:39.1886286Z FFmpeg (playwright ffmpeg v1011) downloaded to /home/runner/.cache/ms-playwright/ffmpeg-1011
+2026-09-04T08:32:39.1889787Z Downloading Chrome Headless Shell 149.0.7827.55 (playwright chromium-headless-shell v1228) from https://cdn.playwright.dev/builds/cft/149.0.7827.55/linux64/chrome-headless-shell-linux64.zip
+2026-09-04T08:32:40.2344992Z |                                                                                |   0% of 114.2 MiB
+2026-09-04T08:32:40.5836906Z |■■■■■■■■                                                                        |  10% of 114.2 MiB
+2026-09-04T08:32:40.6417571Z |■■■■■■■■■■■■■■■■                                                                |  20% of 114.2 MiB
+2026-09-04T08:32:40.6985303Z |■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 114.2 MiB
+2026-09-04T08:32:40.7661770Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 114.2 MiB
+2026-09-04T08:32:40.8118375Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 114.2 MiB
+2026-09-04T08:32:40.8571694Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 114.2 MiB
+2026-09-04T08:32:40.9186301Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 114.2 MiB
+2026-09-04T08:32:40.9579642Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 114.2 MiB
+2026-09-04T08:32:40.9938121Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 114.2 MiB
+2026-09-04T08:32:41.0481003Z |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 114.2 MiB
+2026-09-04T08:32:43.2513860Z Chrome Headless Shell 149.0.7827.55 (playwright chromium-headless-shell v1228) downloaded to /home/runner/.cache/ms-playwright/chromium_headless_shell-1228
+2026-09-04T08:32:43.2792723Z ##[group]Run python main.py --all
+2026-09-04T08:32:43.2793102Z [36;1mpython main.py --all[0m
+2026-09-04T08:32:43.2834197Z shell: /usr/bin/bash -e {0}
+2026-09-04T08:32:43.2834493Z env:
+2026-09-04T08:32:43.2834802Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:43.2835325Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib/pkgconfig
+2026-09-04T08:32:43.2835798Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:43.2836256Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:43.2836685Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.14/x64
+2026-09-04T08:32:43.2837107Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.14/x64/lib
+2026-09-04T08:32:43.2838337Z   DATABASE_URL: ***
+2026-09-04T08:32:43.2838765Z   SECRET_KEY: ***
+2026-09-04T08:32:43.2839022Z   GROQ_API_KEY: 
+2026-09-04T08:32:43.2839268Z   RESEND_API_KEY: 
+2026-09-04T08:32:43.2839553Z   LINKEDIN_USERNAME: ***
+2026-09-04T08:32:43.2839905Z   LINKEDIN_PASSWORD: ***
+2026-09-04T08:32:43.2840217Z   NAUKRI_USERNAME: ***
+2026-09-04T08:32:43.2840496Z   NAUKRI_PASSWORD: ***
+2026-09-04T08:32:43.2867824Z   FOUNDIT_MSSOAT: ***
+2026-09-04T08:32:43.2868164Z   FOUNDIT_MSSOCLIENT: ***
+2026-09-04T08:32:43.2868441Z ##[endgroup]
+2026-09-04T08:33:43.2008094Z Keywords : graduate engineer, python developer, backend developer, cyber security
+2026-09-04T08:33:43.2008881Z Sources  : foundit, naukri, instahyre, hirist, unstop, linkedin
+2026-09-04T08:33:43.2009305Z Freshness: last 2 day(s) | up to 3 page(s)
+2026-09-04T08:33:43.2009518Z 
+2026-09-04T08:33:43.2009659Z ============================================================
+2026-09-04T08:33:43.2010140Z FOUNDIT | graduate engineer, python developer, backend developer, cyber security
+2026-09-04T08:33:43.2010838Z ============================================================
+2026-09-04T08:33:43.2011397Z [ok] Authenticated as SEEKER | token valid until 2027-08-08
+2026-09-04T08:33:43.2011790Z 
+2026-09-04T08:33:43.2011985Z === graduate engineer ===
+2026-09-04T08:33:43.2012397Z [ok] page 1: 20 cards (20 unique of 95 total)
+2026-09-04T08:33:43.2012734Z [ok] page 2: 20 cards (40 unique of 95 total)
+2026-09-04T08:33:43.2013182Z [ok] page 3: 20 cards (59 unique of 95 total)
+2026-09-04T08:33:43.2014181Z      Data Engineer | Fidelity International | Gurgaon / Gurugram
+2026-09-04T08:33:43.2014650Z      NOC Engineer | 2 to 4 yrs | Hyerabad | Capgemini | Gurgaon / Gurugram
+2026-09-04T08:33:43.2015120Z      Software Engineer Associate | Siemens PLM Software | Noida
+2026-09-04T08:33:43.2015394Z 
+2026-09-04T08:33:43.2015512Z === python developer ===
+2026-09-04T08:33:43.2015801Z [ok] page 1: 4 cards (4 unique of 4 total)
+2026-09-04T08:33:43.2016221Z      Senior Python Developer | azuro technologies - iso certified | Gurugram
+2026-09-04T08:33:43.2016669Z      Python Developer in Noida | InstaAstro | Noida
+2026-09-04T08:33:43.2017121Z      Full Stack Developer Python+Javascript | Srijan | Gurgaon / Gurugram
+2026-09-04T08:33:43.2017427Z 
+2026-09-04T08:33:43.2017544Z === backend developer ===
+2026-09-04T08:33:43.2017838Z [ok] page 1: 20 cards (20 unique of 27 total)
+2026-09-04T08:33:43.2018163Z [ok] page 2: 7 cards (26 unique of 27 total)
+2026-09-04T08:33:43.2018560Z      Java NodeJS Backend Developer | Relevance Lab | Gurgaon / Gurugram
+2026-09-04T08:33:43.2019046Z      Java Backend Developer | 3 5 Years Experience | | Visa2Fly | Gurugram
+2026-09-04T08:33:43.2019482Z      Back End Developer | BIG Language Solutions | Noida
+2026-09-04T08:33:43.2019719Z 
+2026-09-04T08:33:43.2019824Z === cyber security ===
+2026-09-04T08:33:43.2020100Z [ok] page 1: 20 cards (20 unique of 27 total)
+2026-09-04T08:33:43.2020422Z [ok] page 2: 7 cards (27 unique of 27 total)
+2026-09-04T08:33:43.2021159Z      Deputy General Manager - Information Technology | sentiss pharma pvt. ltd. | Gurugram
+2026-09-04T08:33:43.2021827Z      RSA Archer Developer | Aegan Technologies Private Limited | Chennai, Gurgaon / Gurugram, Mumbai
+2026-09-04T08:33:43.2022713Z      GDS Cyber - CAOE - Staff - AI IT OT Network and Infrastructure Security | EY | Noida
+2026-09-04T08:33:43.2023054Z 
+2026-09-04T08:33:43.2023175Z [ok] 116 jobs across 4 keywords
+2026-09-04T08:33:43.2023351Z 
+2026-09-04T08:33:43.2023533Z [db] foundit/graduate engineer: 0 new, 59 updated (59 scraped)
+2026-09-04T08:33:43.2023963Z [db] foundit/python developer: 0 new, 4 updated (4 scraped)
+2026-09-04T08:33:43.2024368Z [db] foundit/backend developer: 0 new, 26 updated (26 scraped)
+2026-09-04T08:33:43.2024780Z [db] foundit/cyber security: 0 new, 27 updated (27 scraped)
+2026-09-04T08:33:43.2025011Z 
+2026-09-04T08:33:43.2025139Z ============================================================
+2026-09-04T08:33:43.2025589Z NAUKRI | graduate engineer, python developer, backend developer, cyber security
+2026-09-04T08:33:43.2026032Z ============================================================
+2026-09-04T08:33:43.2026558Z [x] naukri failed: TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+2026-09-04T08:33:43.2027075Z Browser logs:
+2026-09-04T08:33:43.2027220Z 
+2026-09-04T08:33:43.2027789Z ╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+2026-09-04T08:33:43.2028466Z ║ Looks like you launched a headed browser without having a XServer running.                     ║
+2026-09-04T08:33:43.2029196Z ║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+2026-09-04T08:33:43.2029797Z ║                                                                                                ║
+2026-09-04T08:33:43.2030316Z ║ <3 Playwright Team                                                                             ║
+2026-09-04T08:33:43.2031190Z ╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+2026-09-04T08:33:43.2031571Z Call log:
+2026-09-04T08:33:43.2038860Z   - <launching> /home/runner/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --disable-blink-features=AutomationControlled --user-data-dir=/tmp/playwright_chromiumdev_profile-1waaps --remote-debugging-pipe --no-startup-window
+2026-09-04T08:33:43.2046664Z   - <launched> pid=3021
+2026-09-04T08:33:43.2047217Z   - [pid=3021][err] [3021:3021:0904/140322.575036:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:257] Missing X server or $DISPLAY
+2026-09-04T08:33:43.2048003Z   - [pid=3021][err] [3021:3021:0904/140322.575107:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+2026-09-04T08:33:43.2048526Z   - [pid=3021] <gracefully close start>
+2026-09-04T08:33:43.2048827Z   - [pid=3021] <kill>
+2026-09-04T08:33:43.2049089Z   - [pid=3021] <will force kill>
+2026-09-04T08:33:43.2049595Z   - [pid=3021] <process did exit: exitCode=1, signal=null>
+2026-09-04T08:33:43.2049985Z   - [pid=3021] starting temporary directories cleanup
+2026-09-04T08:33:43.2050347Z   - [pid=3021] finished temporary directories cleanup
+2026-09-04T08:33:43.2050858Z   - [pid=3021] <gracefully close end>
+2026-09-04T08:33:43.2051054Z 
+2026-09-04T08:33:43.2051059Z 
+2026-09-04T08:33:43.2051194Z ============================================================
+2026-09-04T08:33:43.2051663Z INSTAHYRE | graduate engineer, python developer, backend developer, cyber security
+2026-09-04T08:33:43.2052116Z ============================================================
+2026-09-04T08:33:43.2052324Z 
+2026-09-04T08:33:43.2052435Z ==========================================
+2026-09-04T08:33:43.2052747Z   Scraping Instahyre: graduate engineer
+2026-09-04T08:33:43.2053047Z ==========================================
+2026-09-04T08:33:43.2053248Z 
+2026-09-04T08:33:43.2053391Z --- Pass 1: Local (Noida, Greater Noida) ---
+2026-09-04T08:33:43.2054009Z [->] Searching Instahyre for 'graduate engineer' | Locations: [Noida, Greater Noida] | Remote=False
+2026-09-04T08:33:43.2054576Z   + [441907] Data Engineer @ Loco (Bangalore, Noida) [remote=False]
+2026-09-04T08:33:43.2055099Z   + [431655] AI Engineer @ Deutsche Telekom Digital Labs (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:33:43.2055617Z   + [421498] Software Engineer @ Lumiq.ai (Noida) [remote=False]
+2026-09-04T08:33:43.2056097Z   + [428229] Support Engineer @ GreyOrange (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:33:43.2056599Z   + [419729] ML Engineer @ OneShot AI (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:33:43.2057080Z   + [438995] QA Engineer @ AblyWorks (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:33:43.2057551Z   + [421086] ML Engineer @ OneShot AI (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:33:43.2057996Z   + [436455] Platform Engineer @ TestMu AI (Noida) [remote=False]
+2026-09-04T08:33:43.2058433Z   + [434944] DevOps Engineer @ SixHats (Delhi, Noida) [remote=False]
+2026-09-04T08:33:43.2058863Z   + [421037] Solution Engineer @ CorEdge (Noida) [remote=False]
+2026-09-04T08:33:43.2059271Z   + [400476] Frontend Engineer @ Adobe (Noida) [remote=False]
+2026-09-04T08:33:43.2059704Z   + [417803] GenAI Engineer @ Toadster Technologies (Noida) [remote=False]
+2026-09-04T08:33:43.2060316Z   + [394829] QA Engineer @ BlockOn Ventures (Noida) [remote=False]
+2026-09-04T08:33:43.2060986Z   + [435862] Computer Vision Engineer @ Goldcast (Noida) [remote=False]
+2026-09-04T08:33:43.2061563Z   + [428039] Fullstack Engineer (AI) @ Deutsche Telekom Digital Labs (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:33:43.2062146Z [ok] Total fetched 15 jobs for 'graduate engineer' [Noida, Greater Noida].
+2026-09-04T08:33:43.2062438Z 
+2026-09-04T08:33:43.2062566Z --- Pass 2: Remote (Work From Home) ---
+2026-09-04T08:33:43.2063050Z [->] Searching Instahyre for 'graduate engineer' | Locations: [Remote (Work From Home)] | Remote=True
+2026-09-04T08:33:43.2063608Z   + [390614] AI Engineer @ Zero to 1 (Work From Home) [remote=True]
+2026-09-04T08:33:43.2064071Z   + [430192] AI Engineer - Backend @ Meraki Labs (Work From Home) [remote=True]
+2026-09-04T08:33:43.2064568Z   + [438340] Technical SEO Expert @ Klimb.io (Work From Home) [remote=True]
+2026-09-04T08:33:43.2065074Z   + [414310] Forward Deployed Engineer @ Commotion (Work From Home) [remote=True]
+2026-09-04T08:33:43.2065568Z   + [433074] Frontend Engineer @ VectorShift (Work From Home) [remote=True]
+2026-09-04T08:33:43.2066055Z   + [441499] Frontend Engineer @ Soulside AI (Work From Home) [remote=True]
+2026-09-04T08:33:43.2066506Z   + [433792] AI Engineer @ Nablon AI (Work From Home) [remote=True]
+2026-09-04T08:33:43.2067013Z   + [428048] Software Engineer @ Divisions Maintenance Group (Work From Home) [remote=True]
+2026-09-04T08:33:43.2067525Z   + [357200] AI Engineer @ Opsly (Work From Home) [remote=True]
+2026-09-04T08:34:54.0215014Z   + [359541] Backend Engineer @ TheraDriver (Work From Home) [remote=True]
+2026-09-04T08:34:54.0216362Z   + [439964] Software Engineer @ privado.ai (Work From Home) [remote=True]
+2026-09-04T08:34:54.0217170Z   + [414320] Founding Engineer @ Alchemic (Work From Home) [remote=True]
+2026-09-04T08:34:54.0217885Z   + [440630] QA Engineer @ Zero to 1 (Work From Home) [remote=True]
+2026-09-04T08:34:54.0218391Z   + [440615] QA Engineer @ Zero to 1 (Work From Home) [remote=True]
+2026-09-04T08:34:54.0218837Z   + [435445] Fullstack Engineer @ Wedecode (Work From Home) [remote=True]
+2026-09-04T08:34:54.0219345Z [ok] Total fetched 15 jobs for 'graduate engineer' [Remote (Work From Home)].
+2026-09-04T08:34:54.0219651Z 
+2026-09-04T08:34:54.0219769Z ==========================================
+2026-09-04T08:34:54.0220097Z   Scraping Instahyre: python developer
+2026-09-04T08:34:54.0220419Z ==========================================
+2026-09-04T08:34:54.0220809Z 
+2026-09-04T08:34:54.0220959Z --- Pass 1: Local (Noida, Greater Noida) ---
+2026-09-04T08:34:54.0221492Z [->] Searching Instahyre for 'python developer' | Locations: [Noida, Greater Noida] | Remote=False
+2026-09-04T08:34:54.0222044Z   + [410823] Python Developer @ BeFiSc (Noida) [remote=False]
+2026-09-04T08:34:54.0222486Z   + [414077] Python Developer @ University Living (Noida) [remote=False]
+2026-09-04T08:34:54.0223079Z   + [439081] Customer Support Executive - HR Support @ Great Developers Info Tech (Noida) [remote=False]
+2026-09-04T08:34:54.0223677Z   + [423997] Fullstack Developer - AI @ Adobe (Noida) [remote=False]
+2026-09-04T08:34:54.0224206Z   + [415204] Senior Business Development Associate @ Newton School (Noida) [remote=False]
+2026-09-04T08:34:54.0224798Z   + [419689] Senior Business Development Associate @ Jaro Education (Noida) [remote=False]
+2026-09-04T08:34:54.0225372Z   + [419259] Senior Business Development Associate @ AlmaBetter (Noida) [remote=False]
+2026-09-04T08:34:54.0225953Z   + [410650] Senior Business Development Associate @ Simplilearn (Noida) [remote=False]
+2026-09-04T08:34:54.0226518Z   + [417327] Senior Business Development Associate @ Coursera (Noida) [remote=False]
+2026-09-04T08:34:54.0227060Z   + [409437] Senior Business Development Associate @ upGrad (Noida) [remote=False]
+2026-09-04T08:34:54.0227597Z   + [414387] Senior Business Development Associate @ Crio.Do (Noida) [remote=False]
+2026-09-04T08:34:54.0228316Z   + [436251] Business Development Manager @ Big Assets Infra (Noida) [remote=False]
+2026-09-04T08:34:54.0228844Z   + [421246] Senior Business Development Associate @ Udacity (Noida) [remote=False]
+2026-09-04T08:34:54.0229358Z   + [433397] Senior Admission Counsellor @ upGrad (Noida) [remote=False]
+2026-09-04T08:34:54.0229844Z   + [404618] Inside Sales Executive @ UNext Learning (Noida) [remote=False]
+2026-09-04T08:34:54.0230335Z [ok] Total fetched 15 jobs for 'python developer' [Noida, Greater Noida].
+2026-09-04T08:34:54.0230747Z 
+2026-09-04T08:34:54.0230882Z --- Pass 2: Remote (Work From Home) ---
+2026-09-04T08:34:54.0231372Z [->] Searching Instahyre for 'python developer' | Locations: [Remote (Work From Home)] | Remote=True
+2026-09-04T08:34:54.0232042Z   + [411828] Backend Engineer (Python / FastAPI) @ Mahant Solutions (Work From Home) [remote=True]
+2026-09-04T08:34:54.0232705Z   + [435683] Business Development Representative (Nected) @ Nected (Work From Home) [remote=True]
+2026-09-04T08:34:54.0233377Z   + [434863] Business Development Representative - SaaS @ Nected (Work From Home) [remote=True]
+2026-09-04T08:34:54.0233943Z   + [440152] Frontend Developer @ Heymarket (Work From Home) [remote=True]
+2026-09-04T08:34:54.0234436Z   + [440531] Fullstack Developer @ Skills Cafe (Work From Home) [remote=True]
+2026-09-04T08:34:54.0234914Z   + [359636] Golang Developer @ Swiggy (Work From Home) [remote=True]
+2026-09-04T08:34:54.0235406Z   + [427021] Android Developer @ Branch International (Work From Home) [remote=True]
+2026-09-04T08:34:54.0235915Z   + [414105] Fullstack Developer @ Alchemic (Work From Home) [remote=True]
+2026-09-04T08:34:54.0236377Z   + [411980] Backend Developer @ AiPrise (Work From Home) [remote=True]
+2026-09-04T08:34:54.0236981Z   + [441744] Appian Developer @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:34:54.0237477Z   + [441740] Guidewire Developer @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:34:54.0237973Z   + [440188] Informatica Developer @ Wipro (Work From Home) [remote=True]
+2026-09-04T08:34:54.0238464Z   + [440175] MicroStrategy Developer @ EY (Work From Home) [remote=True]
+2026-09-04T08:34:54.0239113Z   + [437926] MicroStrategy Developer @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:34:54.0239806Z   + [437921] TIBCO Developer @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:34:54.0240298Z [ok] Total fetched 15 jobs for 'python developer' [Remote (Work From Home)].
+2026-09-04T08:34:54.0240716Z 
+2026-09-04T08:34:54.0240834Z ==========================================
+2026-09-04T08:34:54.0241145Z   Scraping Instahyre: backend developer
+2026-09-04T08:34:54.0241472Z ==========================================
+2026-09-04T08:34:54.0241655Z 
+2026-09-04T08:34:54.0241799Z --- Pass 1: Local (Noida, Greater Noida) ---
+2026-09-04T08:34:54.0242302Z [->] Searching Instahyre for 'backend developer' | Locations: [Noida, Greater Noida] | Remote=False
+2026-09-04T08:34:54.0242904Z   + [427655] SDE 2 - Data & Reporting @ Nykaa (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:34:54.0243459Z   + [419015] Junior Backend Engineer @ Hawk MarTech (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:34:54.0244011Z   + [417907] Sr. Backend Engineer @ SentiLink (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:34:54.0244604Z   + [439081] Customer Support Executive - HR Support @ Great Developers Info Tech (Noida) [remote=False]
+2026-09-04T08:34:54.0245232Z   + [415204] Senior Business Development Associate @ Newton School (Noida) [remote=False]
+2026-09-04T08:34:54.0245806Z   + [419689] Senior Business Development Associate @ Jaro Education (Noida) [remote=False]
+2026-09-04T08:34:54.0246365Z   + [419259] Senior Business Development Associate @ AlmaBetter (Noida) [remote=False]
+2026-09-04T08:34:54.0246931Z   + [410650] Senior Business Development Associate @ Simplilearn (Noida) [remote=False]
+2026-09-04T08:34:54.0247477Z   + [417327] Senior Business Development Associate @ Coursera (Noida) [remote=False]
+2026-09-04T08:34:54.0248004Z   + [409437] Senior Business Development Associate @ upGrad (Noida) [remote=False]
+2026-09-04T08:34:54.0248718Z   + [414387] Senior Business Development Associate @ Crio.Do (Noida) [remote=False]
+2026-09-04T08:34:54.0249265Z   + [436251] Business Development Manager @ Big Assets Infra (Noida) [remote=False]
+2026-09-04T08:34:54.0249792Z   + [421246] Senior Business Development Associate @ Udacity (Noida) [remote=False]
+2026-09-04T08:34:54.0250285Z   + [433397] Senior Admission Counsellor @ upGrad (Noida) [remote=False]
+2026-09-04T08:34:54.0250889Z   + [404618] Inside Sales Executive @ UNext Learning (Noida) [remote=False]
+2026-09-04T08:34:54.0251374Z [ok] Total fetched 15 jobs for 'backend developer' [Noida, Greater Noida].
+2026-09-04T08:34:54.0251662Z 
+2026-09-04T08:34:54.0251794Z --- Pass 2: Remote (Work From Home) ---
+2026-09-04T08:34:54.0252276Z [->] Searching Instahyre for 'backend developer' | Locations: [Remote (Work From Home)] | Remote=True
+2026-09-04T08:34:54.0252833Z   + [411980] Backend Developer @ AiPrise (Work From Home) [remote=True]
+2026-09-04T08:34:54.0253330Z   + [415442] Backend Developer - C++ @ DRIMCO GmbH (Work From Home) [remote=True]
+2026-09-04T08:34:54.0253816Z   + [359541] Backend Engineer @ TheraDriver (Work From Home) [remote=True]
+2026-09-04T08:34:54.0254294Z   + [421635] Backend Engineer @ Everest Fleet (Work From Home) [remote=True]
+2026-09-04T08:34:54.0254821Z   + [441490] Forward Deployed Software Engineer @ HDFC Bank (Work From Home) [remote=True]
+2026-09-04T08:34:54.0255346Z   + [199766] Backend Engineer (Java) @ Zingg (Work From Home) [remote=True]
+2026-09-04T08:34:54.0255816Z   + [420471] Sr. .Backend Engineer @ Superlaw (Work From Home) [remote=True]
+2026-09-04T08:34:54.0256435Z   + [430192] AI Engineer - Backend @ Meraki Labs (Work From Home) [remote=True]
+2026-09-04T08:34:54.0256959Z   + [430194] AI Engineer - Backend @ Meraki Labs (Mumbai, Work From Home) [remote=True]
+2026-09-04T08:34:54.0257451Z   + [360571] SDE 1 (Backend) @ Swiggy (Work From Home) [remote=True]
+2026-09-04T08:34:54.0257952Z   + [421950] Senior Backend Engineer @ Superlaw (Bangalore, Work From Home) [remote=True]
+2026-09-04T08:34:54.0258484Z   + [439062] Backend and AI Engineer @ Meraki Labs (Work From Home) [remote=True]
+2026-09-04T08:34:54.0258975Z   + [433939] Backend + AI Engineer @ Meraki Labs (Work From Home) [remote=True]
+2026-09-04T08:34:54.0259537Z   + [411828] Backend Engineer (Python / FastAPI) @ Mahant Solutions (Work From Home) [remote=True]
+2026-09-04T08:34:54.0260172Z   + [435683] Business Development Representative (Nected) @ Nected (Work From Home) [remote=True]
+2026-09-04T08:34:54.0260871Z [ok] Total fetched 15 jobs for 'backend developer' [Remote (Work From Home)].
+2026-09-04T08:34:54.0261173Z 
+2026-09-04T08:34:54.0261294Z ==========================================
+2026-09-04T08:34:54.0261608Z   Scraping Instahyre: cyber security
+2026-09-04T08:34:54.0261903Z ==========================================
+2026-09-04T08:34:54.0262092Z 
+2026-09-04T08:34:54.0262228Z --- Pass 1: Local (Noida, Greater Noida) ---
+2026-09-04T08:34:54.0262705Z [->] Searching Instahyre for 'cyber security' | Locations: [Noida, Greater Noida] | Remote=False
+2026-09-04T08:34:54.0263298Z   + [379112] Software Development Engineer 2 (Security) @ Adobe (Noida) [remote=False]
+2026-09-04T08:34:54.0263805Z   + [420036] SDET @ Zyla Health (Lucknow, Noida, Patna) [remote=False]
+2026-09-04T08:34:54.0264256Z   + [409349] MTS - 1 @ Voereir AB (Noida, Work From Home) [remote=True]
+2026-09-04T08:34:54.0264721Z   + [417000] Salesforce Developer @ Big Assets Infra (Noida) [remote=False]
+2026-09-04T08:34:54.0265260Z   + [439813] DevOps Engineer (Cloud - Native | on - Premise) @ Apeiro (Noida) [remote=False]
+2026-09-04T08:34:54.0265814Z   + [432253] Software Engineer 1 @ Airtel (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:34:54.0266286Z   + [434944] DevOps Engineer @ SixHats (Delhi, Noida) [remote=False]
+2026-09-04T08:34:54.0266710Z   + [410823] Python Developer @ BeFiSc (Noida) [remote=False]
+2026-09-04T08:34:54.0267132Z   + [436003] Travel Consultant @ TOURjunket (Noida) [remote=False]
+2026-09-04T08:34:54.0267795Z   + [437151] Salesforce Administrator @ Cloudzzure Technologies (Noida) [remote=False]
+2026-09-04T08:34:54.0268320Z   + [323812] Business Development Executive @ Traviyo (Noida) [remote=False]
+2026-09-04T08:34:54.0268844Z   + [441433] Java Developer @ Infosys (Bangalore, Hyderabad, Noida) [remote=False]
+2026-09-04T08:34:54.0269388Z   + [419015] Junior Backend Engineer @ Hawk MarTech (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:34:54.0269937Z   + [422154] Full Stack Engineer @ AblyWorks (Delhi, Gurgaon, Noida) [remote=False]
+2026-09-04T08:34:54.0270426Z   + [429982] Frontend Developer @ Adobe (Delhi, Noida) [remote=False]
+2026-09-04T08:34:54.0271029Z [ok] Total fetched 15 jobs for 'cyber security' [Noida, Greater Noida].
+2026-09-04T08:34:54.0271308Z 
+2026-09-04T08:34:54.0271435Z --- Pass 2: Remote (Work From Home) ---
+2026-09-04T08:34:54.0271896Z [->] Searching Instahyre for 'cyber security' | Locations: [Remote (Work From Home)] | Remote=True
+2026-09-04T08:37:01.4794665Z   + [434765] SAP GRC & Security Consultant @ Accenture (Bangalore, Work From Home) [remote=True]
+2026-09-04T08:37:01.4795655Z   + [364875] Full Stack Developer - Django @ Blacklock Security (Work From Home) [remote=True]
+2026-09-04T08:37:01.4796589Z   + [417864] AI RED Team Specialist @ Riyom Technologies (Work From Home) [remote=True]
+2026-09-04T08:37:01.4797476Z   + [407037] Professional Services Engineer @ Swimlane (Work From Home) [remote=True]
+2026-09-04T08:37:01.4798269Z   + [439782] QA Engineer @ Zimperium (Work From Home) [remote=True]
+2026-09-04T08:37:01.4799006Z   + [436331] Test Automation Engineer @ Hydden (Work From Home) [remote=True]
+2026-09-04T08:37:01.4800194Z   + [359831] SDK Tester @ Netomi (Work From Home) [remote=True]
+2026-09-04T08:37:01.4801643Z   + [441738] SIEM Engineer @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:37:01.4802227Z   + [420128] Cybersecurity Specialist @ CyberNest (Work From Home) [remote=True]
+2026-09-04T08:37:01.4802819Z   + [437665] Secops Consultant - ServiceNow @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:37:01.4803358Z   + [437666] Workday Consultant @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:37:01.4803841Z   + [409349] MTS - 1 @ Voereir AB (Noida, Work From Home) [remote=True]
+2026-09-04T08:37:01.4804309Z   + [436340] Software Engineer @ Hydden (Work From Home) [remote=True]
+2026-09-04T08:37:01.4804824Z   + [437808] Workday HCM Functional Consultant @ Accenture (Work From Home) [remote=True]
+2026-09-04T08:37:01.4805353Z   + [359541] Backend Engineer @ TheraDriver (Work From Home) [remote=True]
+2026-09-04T08:37:01.4805836Z [ok] Total fetched 15 jobs for 'cyber security' [Remote (Work From Home)].
+2026-09-04T08:37:01.4806135Z 
+2026-09-04T08:37:01.4806327Z [DONE] Successfully scraped 98 unique jobs across 4 domains.
+2026-09-04T08:37:01.4806610Z 
+2026-09-04T08:37:01.4806802Z [db] instahyre/graduate engineer: 0 new, 30 updated (30 scraped)
+2026-09-04T08:37:01.4807250Z [db] instahyre/python developer: 0 new, 30 updated (30 scraped)
+2026-09-04T08:37:01.4807686Z [db] instahyre/backend developer: 0 new, 30 updated (30 scraped)
+2026-09-04T08:37:01.4808106Z [db] instahyre/cyber security: 0 new, 29 updated (29 scraped)
+2026-09-04T08:37:01.4808356Z 
+2026-09-04T08:37:01.4808482Z ============================================================
+2026-09-04T08:37:01.4808940Z HIRIST | graduate engineer, python developer, backend developer, cyber security
+2026-09-04T08:37:01.4809393Z ============================================================
+2026-09-04T08:37:01.4809611Z 
+2026-09-04T08:37:01.4809735Z === graduate engineer (keyword) ===
+2026-09-04T08:37:01.4810085Z [ok] graduate engineer page 1: 6 cards (6 unique of 6 total)
+2026-09-04T08:37:01.4810444Z [..] enriching 6 jobs...
+2026-09-04T08:37:01.4810900Z [ok] enriched 6/6
+2026-09-04T08:37:01.4811335Z      Melento - Application Support Engineer | Desk Nine | Bangalore
+2026-09-04T08:37:01.4812014Z      Software Development Engineer I - Android | Snapmint Credit Advisory | Gurgaon/Gurugram, Mumbai, Bangalore, Delhi, Jaipur
+2026-09-04T08:37:01.4813105Z      Snapmint - Software Development Engineer I - iOS P | Snapmint Credit Advisory | Gurgaon/Gurugram, Mumbai, Bangalore, Delhi, Jaipur
+2026-09-04T08:37:01.4813610Z 
+2026-09-04T08:37:01.4813745Z === python developer (keyword) ===
+2026-09-04T08:37:01.4814127Z [ok] python developer page 1: 5 cards (5 unique of 5 total)
+2026-09-04T08:37:01.4814523Z [..] enriching 5 jobs...
+2026-09-04T08:37:01.4815163Z [ok] enriched 5/5
+2026-09-04T08:37:01.4815741Z      Cumulations Technologies - Full Stack Developer -  | Cumulations Technologies | Bangalore
+2026-09-04T08:37:01.4816677Z      NexionPro - Data Support Engineer | Nexionpro Services | Chennai, Hyderabad, Bangalore
+2026-09-04T08:37:01.4817467Z      AI Engineer - Enterprise Conversational Platform | HiringBlaze | Noida, Gurgaon/Gurugram
+2026-09-04T08:37:01.4817977Z 
+2026-09-04T08:37:01.4818191Z === backend developer (keyword) ===
+2026-09-04T08:37:01.4818704Z [ok] backend developer page 1: 2 cards (2 unique of 2 total)
+2026-09-04T08:37:01.4828765Z [..] enriching 2 jobs...
+2026-09-04T08:37:01.4829078Z [ok] enriched 2/2
+2026-09-04T08:37:01.4829543Z      Cumulations Technologies - Full Stack Developer -  | Cumulations Technologies | Bangalore
+2026-09-04T08:37:01.4830208Z      AI Engineer - Enterprise Conversational Platform | HiringBlaze | Noida, Gurgaon/Gurugram
+2026-09-04T08:37:01.4830780Z 
+2026-09-04T08:37:01.4830912Z === cyber security (keyword) ===
+2026-09-04T08:37:01.4831269Z [ok] cyber security page 1: 4 cards (4 unique of 4 total)
+2026-09-04T08:37:01.4831630Z [..] enriching 4 jobs...
+2026-09-04T08:37:01.4831900Z [ok] enriched 4/4
+2026-09-04T08:37:01.4832590Z      Cloud DevOps Engineer - Configuration Management | Rainclouds Global Solutions LLP | Pune
+2026-09-04T08:37:01.4833152Z      Compliance Analyst | Rainclouds Global Solutions LLP | Pune
+2026-09-04T08:37:01.4833683Z      NewWave Computing - Azure Project Success Speciali | NewWave Computing | Bangalore
+2026-09-04T08:37:01.4834040Z 
+2026-09-04T08:37:01.4834162Z [ok] 17 jobs across 4 searches
+2026-09-04T08:37:01.4834377Z 
+2026-09-04T08:37:01.4834551Z [db] hirist/graduate engineer: 0 new, 6 updated (6 scraped)
+2026-09-04T08:37:01.4834959Z [db] hirist/python developer: 0 new, 5 updated (5 scraped)
+2026-09-04T08:37:01.4835353Z [db] hirist/backend developer: 0 new, 2 updated (2 scraped)
+2026-09-04T08:37:01.4835739Z [db] hirist/cyber security: 0 new, 4 updated (4 scraped)
+2026-09-04T08:37:01.4835980Z 
+2026-09-04T08:37:01.4836117Z ============================================================
+2026-09-04T08:37:01.4836578Z UNSTOP | graduate engineer, python developer, backend developer, cyber security
+2026-09-04T08:37:01.4837024Z ============================================================
+2026-09-04T08:37:01.4837239Z 
+2026-09-04T08:37:01.4837354Z === graduate engineer ===
+2026-09-04T08:37:01.4837662Z [ok] page 1: 18 cards (18 unique of 10000 total)
+2026-09-04T08:37:01.4838030Z [ok] page 2: 18 cards (36 unique of 10000 total)
+2026-09-04T08:37:01.4838361Z [ok] page 3: 18 cards (52 unique of 10000 total)
+2026-09-04T08:37:01.4838931Z      Graduate Engineer Trainee (Estimation & Drawing En | A1 Fence Products Company Private Limited | Mumbai, Mumbai Suburban
+2026-09-04T08:37:01.4839650Z      Graduate Engineer Trainee - Procurement | Kuche7 manufacturing Pvt Ltd | Bhiwandi
+2026-09-04T08:37:01.4840499Z      Graduate Engineer Trainee (GET)– Marketing | CBS Pvt Ltd | Greater Noida
+2026-09-04T08:37:01.4840983Z 
+2026-09-04T08:37:01.4841104Z === python developer ===
+2026-09-04T08:37:01.4841406Z [ok] page 1: 18 cards (18 unique of 7885 total)
+2026-09-04T08:37:01.4841744Z [ok] page 2: 18 cards (32 unique of 7885 total)
+2026-09-04T08:37:01.4842059Z [ok] page 3: 18 cards (50 unique of 7885 total)
+2026-09-04T08:37:01.4842391Z      Python Developer | V Patrol | Gurgaon
+2026-09-04T08:37:01.4842800Z      Backend Developer (Python) & DevOps Executive | Dhecoded AI | Mumbai
+2026-09-04T08:37:01.4843358Z      Junior Python Developer | Altos Technologies | Kothi
+2026-09-04T08:37:01.4843788Z 
+2026-09-04T08:37:01.4843914Z === backend developer ===
+2026-09-04T08:37:01.4844213Z [ok] page 1: 18 cards (18 unique of 8036 total)
+2026-09-04T08:37:01.4844554Z [ok] page 2: 18 cards (36 unique of 8036 total)
+2026-09-04T08:37:01.4844874Z [ok] page 3: 18 cards (54 unique of 8036 total)
+2026-09-04T08:37:01.4845254Z      Backend Developer | Tracxn Technologies limited | Bangalore
+2026-09-04T08:37:01.4845723Z      Backend Developer (Python) & DevOps Executive | Dhecoded AI | Mumbai
+2026-09-04T08:37:01.4846183Z      Flutter Developer (Backend Knowledge) | Asklexy | Remote
+2026-09-04T08:37:01.4846435Z 
+2026-09-04T08:37:01.4846542Z === cyber security ===
+2026-09-04T08:37:01.4846828Z [ok] page 1: 18 cards (18 unique of 1324 total)
+2026-09-04T08:37:01.4847176Z [ok] page 2: 18 cards (36 unique of 1324 total)
+2026-09-04T08:37:01.4847489Z [ok] page 3: 18 cards (53 unique of 1324 total)
+2026-09-04T08:37:01.4848015Z      Business Development Manager - Networking & Cyber  | VSAM Technologies (INDIA) Private Limited | Delhi
+2026-09-04T08:37:01.4848745Z      Business Development Manager  (Networking & Cyber  | VSAM Technologies (INDIA) Private Limited | Delhi
+2026-09-04T08:37:01.4849338Z      Cyber Security Engineer | Fx31Labs Private Limited | Bangalore Urban
+2026-09-04T08:37:01.4849629Z 
+2026-09-04T08:37:01.4849750Z [ok] 209 jobs across 4 keywords
+2026-09-04T08:37:01.4849935Z 
+2026-09-04T08:37:01.4850110Z [db] unstop/graduate engineer: 0 new, 52 updated (52 scraped)
+2026-09-04T08:37:01.4850533Z [db] unstop/python developer: 0 new, 50 updated (50 scraped)
+2026-09-04T08:37:01.4851263Z [db] unstop/backend developer: 0 new, 54 updated (54 scraped)
+2026-09-04T08:37:01.4851668Z [db] unstop/cyber security: 0 new, 53 updated (53 scraped)
+2026-09-04T08:37:01.4851911Z 
+2026-09-04T08:37:01.4852185Z ============================================================
+2026-09-04T08:37:01.4852630Z LINKEDIN | Python, Cloud & Data Engineer, Cyber Security, AI & Machine Learning
+2026-09-04T08:37:01.4853067Z ============================================================
+2026-09-04T08:37:01.4853607Z [x] linkedin failed: TargetClosedError: BrowserType.launch: Target page, context or browser has been closed
+2026-09-04T08:37:01.4854128Z Browser logs:
+2026-09-04T08:37:01.4854267Z 
+2026-09-04T08:37:01.4854652Z ╔════════════════════════════════════════════════════════════════════════════════════════════════╗
+2026-09-04T08:37:01.4855315Z ║ Looks like you launched a headed browser without having a XServer running.                     ║
+2026-09-04T08:37:01.4856023Z ║ Set either 'headless: true' or use 'xvfb-run <your-playwright-app>' before running Playwright. ║
+2026-09-04T08:37:01.4856614Z ║                                                                                                ║
+2026-09-04T08:37:01.4857140Z ║ <3 Playwright Team                                                                             ║
+2026-09-04T08:37:01.4857729Z ╚════════════════════════════════════════════════════════════════════════════════════════════════╝
+2026-09-04T08:37:01.4858244Z Call log:
+2026-09-04T08:37:01.4865637Z   - <launching> /home/runner/.cache/ms-playwright/chromium-1228/chrome-linux64/chrome --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,Translate,AutoDeElevate,RenderDocument,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --no-sandbox --disable-blink-features=AutomationControlled --user-data-dir=/tmp/playwright_chromiumdev_profile-37KTFE --remote-debugging-pipe --no-startup-window
+2026-09-04T08:37:01.4873336Z   - <launched> pid=3134
+2026-09-04T08:37:01.4873908Z   - [pid=3134][err] [3134:3134:0904/140701.450308:ERROR:ui/ozone/platform/x11/ozone_platform_x11.cc:257] Missing X server or $DISPLAY
+2026-09-04T08:37:01.4874708Z   - [pid=3134][err] [3134:3134:0904/140701.450351:ERROR:ui/aura/env.cc:246] The platform failed to initialize.  Exiting.
+2026-09-04T08:37:01.4875240Z   - [pid=3134] <gracefully close start>
+2026-09-04T08:37:01.4875546Z   - [pid=3134] <kill>
+2026-09-04T08:37:01.4875811Z   - [pid=3134] <will force kill>
+2026-09-04T08:37:01.4876143Z   - [pid=3134] <process did exit: exitCode=1, signal=null>
+2026-09-04T08:37:01.4876523Z   - [pid=3134] starting temporary directories cleanup
+2026-09-04T08:37:01.4876890Z   - [pid=3134] finished temporary directories cleanup
+2026-09-04T08:37:01.4877225Z   - [pid=3134] <gracefully close end>
+2026-09-04T08:37:01.5743748Z 
+2026-09-04T08:37:01.5743764Z 
+2026-09-04T08:37:01.5744232Z ============================================================
+2026-09-04T08:37:01.5744655Z [db] Total: 0 new, 461 updated
+2026-09-04T08:37:01.5744969Z [db] Job table now holds 700 rows
+2026-09-04T08:37:01.5745749Z        foundit: 297
+2026-09-04T08:37:01.5745994Z        hirist: 14
+2026-09-04T08:37:01.5746244Z        instahyre: 115
+2026-09-04T08:37:01.5746498Z        unstop: 274
+2026-09-04T08:37:01.7150557Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-04T08:37:01.7152008Z Post job cleanup.
+2026-09-04T08:37:01.8411980Z Cache hit occurred on the primary key setup-python-Linux-x64-24.04-Ubuntu-python-3.12.14-pip-5657c042a6438ab46de26f1d2859faf1f99f3108f5e53f4fea2088baf555b95c, not saving cache.
+2026-09-04T08:37:01.8413419Z (node:3158) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-04T08:37:01.8414147Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-04T08:37:01.8572867Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-04T08:37:01.8574251Z Post job cleanup.
+2026-09-04T08:37:01.9439076Z [command]/usr/bin/git version
+2026-09-04T08:37:01.9484858Z git version 2.55.0
+2026-09-04T08:37:01.9522839Z Temporarily overriding HOME='/home/runner/work/_temp/e808974d-3bca-4e00-9f94-fce837b0781e' before making global git config changes
+2026-09-04T08:37:01.9524146Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-04T08:37:01.9528011Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/Job-Portal/Job-Portal
+2026-09-04T08:37:01.9573534Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-04T08:37:01.9611589Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-04T08:37:01.9888081Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-04T08:37:01.9934278Z http.https://github.com/.extraheader
+2026-09-04T08:37:01.9942390Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-04T08:37:01.9983387Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-04T08:37:02.0258401Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-04T08:37:02.0302520Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-04T08:37:02.0763964Z Cleaning up orphan processes
+2026-09-04T08:37:02.1070470Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

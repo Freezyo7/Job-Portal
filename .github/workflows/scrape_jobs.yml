@@ -2,9 +2,9 @@ name: Daily Job Scraper
 
 on:
   schedule:
-    # 5:40 AM IST is 00:10 UTC
+    # 5:40 AM IST is 00:10 UTC (5:40 - 05:30 = 00:10 UTC)
     - cron: '10 0 * * *'
-  # Allows manual trigger from GitHub Actions UI anytime
+  # Allows manual triggers anytime from GitHub Actions UI tab
   workflow_dispatch:
 
 jobs:
@@ -35,8 +35,32 @@ jobs:
         run: |
           playwright install chromium --with-deps
 
+      - name: Install Xvfb for headed browser
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb x11-utils
+
+      - name: Start Xvfb
+        # Start Xvfb ourselves rather than via xvfb-run: export DISPLAY for
+        # every later step through $GITHUB_ENV, and block until the server
+        # really accepts connections before Python ever launches a browser.
+        run: |
+          Xvfb :99 -screen 0 1920x1080x24 -ac +extension GLX +render -noreset &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+          for i in $(seq 1 30); do
+            if xdpyinfo -display :99 >/dev/null 2>&1; then
+              echo "[ok] Xvfb is accepting connections on :99"
+              exit 0
+            fi
+            sleep 0.5
+          done
+          echo "[x] Xvfb never came up on :99" >&2
+          exit 1
+
       - name: Execute Scrapers
         env:
+          HEADLESS: "false"
+          DJANGO_ALLOW_ASYNC_UNSAFE: "true"
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
@@ -47,5 +71,17 @@ jobs:
           NAUKRI_PASSWORD: ${{ secrets.NAUKRI_PASSWORD }}
           FOUNDIT_MSSOAT: ${{ secrets.FOUNDIT_MSSOAT }}
           FOUNDIT_MSSOCLIENT: ${{ secrets.FOUNDIT_MSSOCLIENT }}
+          INSTAHYRE_EMAIL: ${{ secrets.INSTAHYRE_EMAIL }}
+          INSTAHYRE_PASSWORD: ${{ secrets.INSTAHYRE_PASSWORD }}
         run: |
+          echo "DISPLAY is $DISPLAY"
           python main.py --all
+
+      - name: Upload scraper debug snapshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraper-debug-output
+          path: BE/debug_output/
+          if-no-files-found: ignore
+          retention-days: 5
