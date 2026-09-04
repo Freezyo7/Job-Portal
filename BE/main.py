@@ -15,6 +15,7 @@ import django
 
 # Django has to be configured before any model import.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 django.setup()
 
 from django.db.models import Count  # noqa: E402  (must follow django.setup())
