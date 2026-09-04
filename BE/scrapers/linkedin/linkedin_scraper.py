@@ -216,11 +216,22 @@ class LinkedInScraper:
                 args=["--disable-blink-features=AutomationControlled"],
             )
 
-            # Reuse saved session if available, else log in fresh.
+            # Reuse the saved session only if LinkedIn still honours it;
+            # a storage state can carry cookies that were revoked since.
+            context = None
             if os.path.exists(STATE_FILE):
                 print("✅ Found saved login state, loading...")
                 context = browser.new_context(storage_state=STATE_FILE)
-            else:
+                page = context.new_page()
+                if session_is_logged_in(page):
+                    print("✅ Saved session is still logged in")
+                    page.close()
+                else:
+                    print("⚠️ Saved session is logged out — logging in fresh")
+                    context.close()
+                    context = None
+
+            if context is None:
                 context = browser.new_context(
                     user_agent=(
                         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -859,6 +870,16 @@ def process_single_page(page, page_num, all_rows, domain_name):
     
     print(f"   ✅ Page {page_num} complete: {page_jobs_processed}/{len(cards)} jobs processed")
     return page_jobs_processed
+
+def session_is_logged_in(page) -> bool:
+    """Open the feed and see whether LinkedIn keeps us there or bounces us
+    to a login/authwall/checkpoint page. Checking cookies isn't enough: a
+    restored `li_at` can still be present after LinkedIn has revoked it."""
+    page.goto("https://www.linkedin.com/feed/", wait_until="domcontentloaded", timeout=30000)
+    # Logged-out redirects are sometimes client-side; give them a moment.
+    page.wait_for_timeout(2500)
+    return "/feed" in page.url
+
 
 def login_with_credentials(page):
     """Fill LinkedIn's login form from LINKEDIN_USERNAME/LINKEDIN_PASSWORD
