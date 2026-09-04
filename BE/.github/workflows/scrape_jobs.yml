@@ -34,6 +34,11 @@ jobs:
         run: |
           playwright install chromium --with-deps
 
+      - name: Install Xvfb for headed browser
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb
+
       - name: Execute Scrapers
         env:
           HEADLESS: "false"
@@ -51,4 +56,5 @@ jobs:
           INSTAHYRE_EMAIL: ${{ secrets.INSTAHYRE_EMAIL }}
           INSTAHYRE_PASSWORD: ${{ secrets.INSTAHYRE_PASSWORD }}
         run: |
-          xvfb-run --auto-servernum python main.py --all
+          xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" python main.py --all
+

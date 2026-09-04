@@ -113,8 +113,14 @@ def run_scraper(name, scraper, label, **run_kwargs) -> tuple[int, int]:
     print(f"{name.upper()} | {label}")
     print(f"{'=' * 60}")
 
+    from concurrent.futures import ThreadPoolExecutor
+
     try:
-        results = scraper.run(**run_kwargs)
+        # Playwright's sync API refuses to run inside an existing asyncio
+        # event loop (Django may create one).  Running the scraper in a
+        # separate thread gives it a clean loop.
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            results = pool.submit(scraper.run, **run_kwargs).result()
     except Exception as e:
         # One source failing shouldn't abandon the others.
         print(f"[x] {name} failed: {type(e).__name__}: {e}")
