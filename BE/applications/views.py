@@ -26,19 +26,31 @@ class ApplicationListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        applications = (
-            Application.objects.filter(user=request.user)
-            # Without this the serializer fires one query per row.
-            .select_related("job")
-        )
+        # No select_related("job") needed — the serializer reads the
+        # snapshot columns on Application itself, not a joined Job.
+        applications = Application.objects.filter(user=request.user)
         return Response(ApplicationSerializer(applications, many=True).data)
 
     def post(self, request):
         serializer = ApplySerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        job = serializer.job
 
+        # defaults= so a repeat "apply" to the same job (get_or_create
+        # returning the existing row) doesn't overwrite the original
+        # snapshot with the job's possibly-changed current details.
         application, created = Application.objects.get_or_create(
-            user = request.user, job = serializer.job
+            user=request.user,
+            job=job,
+            defaults={
+                "job_title": job.title,
+                "job_company": job.company,
+                "job_company_logo": job.company_logo,
+                "job_source": job.source,
+                "job_location": job.location,
+                "job_url": job.url,
+                "job_apply_url": job.apply_url,
+            },
         )
 
         return Response(

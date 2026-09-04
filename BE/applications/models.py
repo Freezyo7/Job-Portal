@@ -19,11 +19,30 @@ class Application(models.Model):
 
     # String reference rather than importing Job, so the two apps stay
     # independent and there is no import cycle.
+    #
+    # SET_NULL, not CASCADE: jobs are perishable (scrapers prune stale
+    # listings), applications are a permanent record. Losing the live link
+    # must not take the Application row — and with it a day of the user's
+    # streak — down with it.
     job = models.ForeignKey(
         "jobs.Job",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="applications",
     )
+
+    # A snapshot of the job's display fields, taken when the user applied.
+    # Deliberately minimal — just what the applications list renders, no
+    # description/skills — so the list stays fully readable (title, company,
+    # logo, and the original link) even after the source Job row is gone.
+    job_title = models.CharField(max_length=500, blank=True, default="")
+    job_company = models.CharField(max_length=255, blank=True, default="")
+    job_company_logo = models.URLField(max_length=2000, blank=True, default="")
+    job_source = models.CharField(max_length=20, blank=True, default="")
+    job_location = models.CharField(max_length=500, blank=True, default="")
+    job_url = models.URLField(max_length=2000, blank=True, default="")
+    job_apply_url = models.URLField(max_length=2000, blank=True, default="")
 
     # Optional recruiter / referral / contact person info
     contact_name = models.CharField(max_length=255, blank=True, default="")

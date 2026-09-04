@@ -4,24 +4,13 @@ from jobs.models import Job
 
 from .models import Application
 
-class ApplicationJobSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Job
-        fields = [
-            "id",
-            "source",
-            "title",
-            "company",
-            "company_logo",
-            "location",
-            "url",
-            "apply_url",
-            "job_type",
-            "employment_type",
-        ]
-
 class ApplicationSerializer(serializers.ModelSerializer):
-    job = ApplicationJobSerializer(read_only=True)
+    # Built from Application's own snapshot columns, not a live join to Job —
+    # this must keep rendering correctly after the source Job row is pruned
+    # or its FK goes SET_NULL. `id` is the live job's id when it still
+    # exists (None once pruned); everything else is the snapshot, so the
+    # title/company/logo/link never disappear.
+    job = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
@@ -34,6 +23,18 @@ class ApplicationSerializer(serializers.ModelSerializer):
             "applied_at",
         ]
         read_only_fields = ["id", "job", "applied_at"]
+
+    def get_job(self, obj):
+        return {
+            "id": obj.job_id,
+            "source": obj.job_source,
+            "title": obj.job_title,
+            "company": obj.job_company,
+            "company_logo": obj.job_company_logo,
+            "location": obj.job_location,
+            "url": obj.job_url,
+            "apply_url": obj.job_apply_url,
+        }
 
 class UpdateApplicationSerializer(serializers.ModelSerializer):
     class Meta:
