@@ -1,15 +1,22 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-// Monochromatic Zinc + Emerald palette
-const COLORS = ["#10b981", "#059669", "#71717a", "#a1a1aa", "#3f3f46"];
+// Harmonious Nature & Earth palette
+const COLORS = ["#6FAF7B", "#C9A96E", "#4A8A5A", "#8A7A65", "#A87840"];
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload?.length) {
     return (
-      <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-xs shadow-sm">
-        <p className="font-semibold text-zinc-900 dark:text-zinc-100">{payload[0].name}</p>
-        <p className="font-mono text-zinc-500 dark:text-zinc-400">{payload[0].value} applications</p>
+      <div
+        className="rounded-md border px-3 py-2 text-xs shadow-sm"
+        style={{
+          backgroundColor: "var(--nt-bg-card)",
+          borderColor: "var(--nt-border)",
+          color: "var(--nt-text-primary)",
+        }}
+      >
+        <p className="font-semibold">{payload[0].name}</p>
+        <p className="font-mono" style={{ color: "var(--nt-text-secondary)" }}>{payload[0].value} applications</p>
       </div>
     );
   }
@@ -26,16 +33,23 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
   ].filter((item) => item.value > 0);
 
   return (
-    <div className="h-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col">
+    <div
+      className="h-full rounded-lg border p-5 flex flex-col"
+      style={{
+        backgroundColor: "var(--nt-bg-card)",
+        borderColor: "var(--nt-border)",
+        boxShadow: "var(--nt-shadow-sm)",
+      }}
+    >
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Application Status</h3>
-        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Pipeline stage breakdown</p>
+        <h3 className="text-sm font-semibold" style={{ color: "var(--nt-text-primary)" }}>Application Status</h3>
+        <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>Pipeline stage breakdown</p>
       </div>
 
       <div className="flex-1 flex items-center justify-center min-h-[220px]">
         {data.length === 0 ? (
           <div className="flex h-full items-center justify-center text-center">
-            <p className="text-sm text-zinc-400 dark:text-zinc-500">No applications tracked yet.</p>
+            <p className="text-sm" style={{ color: "var(--nt-text-muted)" }}>No applications tracked yet.</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -60,7 +74,7 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
                 iconType="square"
                 iconSize={8}
                 formatter={(value) => (
-                  <span className="text-[11px] text-zinc-600 dark:text-zinc-400">{value}</span>
+                  <span className="text-[11px]" style={{ color: "var(--nt-text-secondary)" }}>{value}</span>
                 )}
               />
             </PieChart>
@@ -68,14 +82,18 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
         )}
       </div>
 
-      <div className="mt-3 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 px-3.5 py-2 flex items-center justify-between">
-        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Total Applications</span>
-        <span className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">{totalApplications}</span>
+      <div
+        className="mt-3 rounded-md border px-3.5 py-2 flex items-center justify-between"
+        style={{
+          backgroundColor: "var(--nt-bg-card-alt)",
+          borderColor: "var(--nt-border)",
+        }}
+      >
+        <span className="text-xs font-medium" style={{ color: "var(--nt-text-secondary)" }}>Total Applications</span>
+        <span className="text-sm font-bold font-mono" style={{ color: "var(--nt-accent-sage)" }}>{totalApplications}</span>
       </div>
     </div>
   );
 };
 
 export default ApplicationStatausChart;
-
-

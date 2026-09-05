@@ -77,19 +77,33 @@ const STATS = [
 ];
 
 const TipCard = ({ tip }) => (
-  <div className="flex flex-col gap-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer">
+  <div
+    className="flex flex-col gap-2.5 rounded-lg border p-4 transition-colors cursor-pointer"
+    style={{
+      backgroundColor: "var(--nt-bg-card)",
+      borderColor: "var(--nt-border)",
+      boxShadow: "var(--nt-shadow-sm)",
+    }}
+  >
     <div className="flex items-center justify-between">
-      <span className="inline-flex items-center gap-1 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 px-2 py-0.5 text-[10px] font-mono text-zinc-700 dark:text-zinc-300">
+      <span
+        className="inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-mono"
+        style={{
+          backgroundColor: "var(--nt-bg-secondary)",
+          borderColor: "var(--nt-border)",
+          color: "var(--nt-text-primary)",
+        }}
+      >
         {tip.icon} {tip.category}
       </span>
-      <button className="text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+      <button className="transition-colors" style={{ color: "var(--nt-text-muted)" }}>
         <CiBookmark size={16} />
       </button>
     </div>
-    <h3 className="text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug">{tip.title}</h3>
-    <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed line-clamp-2">{tip.excerpt}</p>
-    <div className="flex items-center justify-between mt-auto pt-2 border-t border-zinc-100 dark:border-zinc-800/80 font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
-      <span>{tip.author}</span>
+    <h3 className="text-xs font-bold leading-snug" style={{ color: "var(--nt-text-primary)" }}>{tip.title}</h3>
+    <p className="text-xs leading-relaxed line-clamp-2" style={{ color: "var(--nt-text-secondary)" }}>{tip.excerpt}</p>
+    <div className="flex items-center justify-between mt-auto pt-2 border-t font-mono text-[10px]" style={{ borderColor: "var(--nt-border)", color: "var(--nt-text-muted)" }}>
+      <span style={{ color: "var(--nt-text-secondary)" }}>{tip.author}</span>
       <div className="flex items-center gap-2">
         <span className="flex items-center gap-1"><CiCalendarDate size={11} />{tip.date}</span>
         <span className="flex items-center gap-1"><CiClock2 size={11} />{tip.readTime}</span>
@@ -106,25 +120,42 @@ const CareerTips = () => {
     : TIPS.filter(t => t.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-6 lg:px-8 text-zinc-900 dark:text-zinc-100 transition-colors">
+    <div className="min-h-screen px-4 py-6 md:px-6 lg:px-8 transition-colors" style={{ backgroundColor: "var(--nt-bg-primary)", color: "var(--nt-text-primary)" }}>
       <div className="mx-auto max-w-7xl flex flex-col gap-5">
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-1 border-b border-zinc-200 dark:border-zinc-800/80">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-1 border-b" style={{ borderColor: "var(--nt-border)" }}>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">Engineering Career Playbooks</h1>
-            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">High-signal interview guides, resume optimization, and compensation frameworks</p>
+            <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--nt-text-primary)" }}>Engineering Career Playbooks</h1>
+            <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>High-signal interview guides, resume optimization, and compensation frameworks</p>
           </div>
         </div>
 
-        {/* ── Stats Row (Strict Monochromatic) ── */}
+        {/* ── Stats Row ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {STATS.map((s, i) => (
-            <div key={i} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
+            <div
+              key={i}
+              className="rounded-lg border p-4 transition-colors"
+              style={{
+                backgroundColor: "var(--nt-bg-card)",
+                borderColor: "var(--nt-border)",
+                boxShadow: "var(--nt-shadow-sm)",
+              }}
+            >
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold font-mono text-zinc-950 dark:text-zinc-50">{s.value}</span>
-                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">{s.badge}</span>
+                <span className="text-2xl font-bold font-mono" style={{ color: "var(--nt-text-primary)" }}>{s.value}</span>
+                <span
+                  className="text-[10px] font-mono px-1.5 py-0.5 rounded border"
+                  style={{
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-accent-gold)",
+                  }}
+                >
+                  {s.badge}
+                </span>
               </div>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1 leading-snug">{s.label}</p>
+              <p className="text-xs mt-1 leading-snug" style={{ color: "var(--nt-text-secondary)" }}>{s.label}</p>
             </div>
           ))}
         </div>
@@ -136,22 +167,49 @@ const CareerTips = () => {
           <div className="flex flex-col gap-5">
 
             {/* Featured Article */}
-            <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 overflow-hidden">
+            <div
+              className="rounded-lg border p-5 overflow-hidden"
+              style={{
+                backgroundColor: "var(--nt-bg-card)",
+                borderColor: "var(--nt-border)",
+                boxShadow: "var(--nt-shadow-sm)",
+              }}
+            >
               <div className="flex items-center justify-between mb-3">
-                <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                <span
+                  className="inline-flex items-center gap-1 rounded border px-2 py-0.5 text-[10px] font-mono font-medium"
+                  style={{
+                    backgroundColor: "rgba(201, 169, 110, 0.15)",
+                    borderColor: "rgba(201, 169, 110, 0.3)",
+                    color: "var(--nt-accent-gold)",
+                  }}
+                >
                   ⭐ {FEATURED.tag}
                 </span>
-                <span className="inline-flex items-center gap-1 text-[10px] font-mono text-zinc-500 dark:text-zinc-400 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5">
+                <span
+                  className="inline-flex items-center gap-1 text-[10px] font-mono rounded border px-2 py-0.5"
+                  style={{
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-text-secondary)",
+                  }}
+                >
                   {FEATURED.category}
                 </span>
               </div>
-              <h2 className="text-base font-bold text-zinc-950 dark:text-zinc-50 leading-snug mb-2">{FEATURED.title}</h2>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">{FEATURED.excerpt}</p>
-              <div className="flex items-center justify-between pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                <div className="font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
-                  <span className="font-medium text-zinc-700 dark:text-zinc-300">{FEATURED.author}</span> · {FEATURED.date} · {FEATURED.readTime}
+              <h2 className="text-base font-bold leading-snug mb-2" style={{ color: "var(--nt-text-primary)" }}>{FEATURED.title}</h2>
+              <p className="text-xs leading-relaxed mb-4" style={{ color: "var(--nt-text-secondary)" }}>{FEATURED.excerpt}</p>
+              <div className="flex items-center justify-between pt-3 border-t" style={{ borderColor: "var(--nt-border)" }}>
+                <div className="font-mono text-[10px]" style={{ color: "var(--nt-text-muted)" }}>
+                  <span className="font-medium" style={{ color: "var(--nt-text-primary)" }}>{FEATURED.author}</span> · {FEATURED.date} · {FEATURED.readTime}
                 </div>
-                <button className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 px-3.5 py-1.5 text-xs font-medium text-white transition-colors">
+                <button
+                  className="inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-medium transition-colors"
+                  style={{
+                    backgroundColor: "var(--nt-accent-gold)",
+                    color: "var(--nt-btn-cta-text)",
+                  }}
+                >
                   Read Guide <HiArrowRight size={12} />
                 </button>
               </div>
@@ -163,11 +221,21 @@ const CareerTips = () => {
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`rounded-md px-3 py-1 text-xs font-mono transition-colors ${
+                  className="rounded-md px-3 py-1 text-xs font-mono transition-colors"
+                  style={
                     activeCategory === cat
-                      ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-semibold"
-                      : "bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700"
-                  }`}
+                      ? {
+                          backgroundColor: "var(--nt-accent-gold)",
+                          color: "var(--nt-btn-cta-text)",
+                          fontWeight: "600",
+                        }
+                      : {
+                          backgroundColor: "var(--nt-bg-card)",
+                          borderColor: "var(--nt-border)",
+                          borderWidth: "1px",
+                          color: "var(--nt-text-secondary)",
+                        }
+                  }
                 >
                   {cat}
                 </button>
@@ -184,49 +252,106 @@ const CareerTips = () => {
           <div className="flex flex-col gap-4">
 
             {/* Quick Tips */}
-            <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
-              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+            <div
+              className="rounded-lg border p-4"
+              style={{
+                backgroundColor: "var(--nt-bg-card)",
+                borderColor: "var(--nt-border)",
+                boxShadow: "var(--nt-shadow-sm)",
+              }}
+            >
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b" style={{ borderColor: "var(--nt-border)" }}>
+                <span
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-md border"
+                  style={{
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-accent-gold)",
+                  }}
+                >
                   <BsLightningCharge size={12} />
                 </span>
-                <h3 className="text-xs font-bold uppercase font-mono text-zinc-900 dark:text-zinc-100">Telemetry Principles</h3>
+                <h3 className="text-xs font-bold uppercase font-mono" style={{ color: "var(--nt-text-primary)" }}>Telemetry Principles</h3>
               </div>
               <div className="space-y-2.5">
                 {QUICK_TIPS.map((q, i) => (
-                  <div key={q.id} className="flex gap-2.5 rounded-md border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-950/50 p-2.5">
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded bg-zinc-200 dark:bg-zinc-800 text-[10px] font-mono font-bold text-zinc-700 dark:text-zinc-300 flex-shrink-0 mt-0.5">
+                  <div
+                    key={q.id}
+                    className="flex gap-2.5 rounded-md border p-2.5"
+                    style={{
+                      backgroundColor: "var(--nt-bg-card-alt)",
+                      borderColor: "var(--nt-border)",
+                    }}
+                  >
+                    <span
+                      className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-mono font-bold flex-shrink-0 mt-0.5"
+                      style={{
+                        backgroundColor: "var(--nt-bg-secondary)",
+                        color: "var(--nt-text-primary)",
+                      }}
+                    >
                       {i + 1}
                     </span>
-                    <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed">{q.tip}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "var(--nt-text-secondary)" }}>{q.tip}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Newsletter / Briefing */}
-            <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
-              <h3 className="text-xs font-bold uppercase font-mono text-zinc-900 dark:text-zinc-100 mb-1">Weekly Engineering Dispatch</h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 leading-relaxed">
+            <div
+              className="rounded-lg border p-4"
+              style={{
+                backgroundColor: "var(--nt-bg-card)",
+                borderColor: "var(--nt-border)",
+                boxShadow: "var(--nt-shadow-sm)",
+              }}
+            >
+              <h3 className="text-xs font-bold uppercase font-mono mb-1" style={{ color: "var(--nt-text-primary)" }}>Weekly Engineering Dispatch</h3>
+              <p className="text-xs mb-3 leading-relaxed" style={{ color: "var(--nt-text-secondary)" }}>
                 Curated market signals, algorithmic compensation breakdowns, and hiring benchmarks.
               </p>
               <input
                 type="email"
                 placeholder="developer@company.com"
-                className="w-full px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 mb-2"
+                className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none mb-2"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                  color: "var(--nt-text-primary)",
+                }}
               />
-              <button className="w-full rounded-md bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 py-2 text-xs font-medium text-white transition-colors">
+              <button
+                className="w-full rounded-md py-2 text-xs font-medium transition-colors"
+                style={{
+                  backgroundColor: "var(--nt-accent-gold)",
+                  color: "var(--nt-btn-cta-text)",
+                }}
+              >
                 Subscribe to Dispatch
               </button>
             </div>
 
             {/* Topics */}
-            <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
-              <h3 className="text-xs font-bold uppercase font-mono text-zinc-900 dark:text-zinc-100 mb-3">Topic Index</h3>
+            <div
+              className="rounded-lg border p-4"
+              style={{
+                backgroundColor: "var(--nt-bg-card)",
+                borderColor: "var(--nt-border)",
+                boxShadow: "var(--nt-shadow-sm)",
+              }}
+            >
+              <h3 className="text-xs font-bold uppercase font-mono mb-3" style={{ color: "var(--nt-text-primary)" }}>Topic Index</h3>
               <div className="flex flex-wrap gap-1.5">
                 {["Resume Architecture", "Total Comp", "Distributed Systems", "System Design Loops", "Career Velocity", "Referral Protocol", "Contracting", "Engineering Leadership"].map((topic) => (
                   <button
                     key={topic}
-                    className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 px-2.5 py-1 text-[11px] font-mono text-zinc-600 dark:text-zinc-300 hover:border-emerald-500/50 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                    className="rounded-md border px-2.5 py-1 text-[11px] font-mono transition-colors"
+                    style={{
+                      backgroundColor: "var(--nt-bg-secondary)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-secondary)",
+                    }}
                   >
                     {topic}
                   </button>
@@ -242,5 +367,3 @@ const CareerTips = () => {
 };
 
 export default CareerTips;
-
-

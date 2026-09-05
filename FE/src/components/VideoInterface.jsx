@@ -188,33 +188,68 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
   }, []);
 
   return (
-    <section className="overflow-hidden rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-none">
+    <section
+      className="overflow-hidden rounded-lg border shadow-none"
+      style={{
+        backgroundColor: "var(--nt-bg-card)",
+        borderColor: "var(--nt-border)",
+        boxShadow: "var(--nt-shadow-sm)",
+      }}
+    >
       {/* AI Avatar area */}
-      <div className="relative flex flex-col items-center justify-center h-60 md:h-72 bg-zinc-50 dark:bg-zinc-950/90 border-b border-zinc-200 dark:border-zinc-800">
+      <div
+        className="relative flex flex-col items-center justify-center h-60 md:h-72 border-b"
+        style={{
+          backgroundColor: "var(--nt-bg-secondary)",
+          borderColor: "var(--nt-border)",
+        }}
+      >
         {/* AI avatar */}
         <div
-          className={`flex h-20 w-20 items-center justify-center rounded-lg bg-zinc-900 dark:bg-zinc-800 border border-zinc-700/80 text-emerald-400 font-mono text-xl font-bold transition-all duration-200 ${
-            aiSpeaking ? "ring-2 ring-emerald-500 scale-105" : ""
+          className={`flex h-20 w-20 items-center justify-center rounded-lg border font-mono text-xl font-bold transition-all duration-200 ${
+            aiSpeaking ? "scale-105" : ""
           }`}
+          style={{
+            backgroundColor: "var(--nt-bg-card-alt)",
+            borderColor: aiSpeaking ? "var(--nt-accent-gold)" : "var(--nt-border)",
+            color: "var(--nt-accent-sage)",
+            boxShadow: aiSpeaking ? "0 0 16px rgba(201, 169, 110, 0.4)" : "none",
+          }}
         >
           AI_SYS
         </div>
-        <p className="mt-3 text-xs font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+        <p className="mt-3 text-xs font-semibold font-mono" style={{ color: "var(--nt-text-primary)" }}>
           {selectedJob ? `${selectedJob.job_title} @ ${selectedJob.company_name}` : "NO JOB SELECTED"}
         </p>
 
         {/* Status badge */}
-        <div className="mt-2.5 flex items-center gap-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1 text-[11px] font-mono text-zinc-600 dark:text-zinc-300">
+        <div
+          className="mt-2.5 flex items-center gap-2 rounded border px-3 py-1 text-[11px] font-mono"
+          style={{
+            backgroundColor: "var(--nt-bg-card)",
+            borderColor: "var(--nt-border)",
+            color: "var(--nt-text-primary)",
+          }}
+        >
           <span
             className={`h-1.5 w-1.5 rounded-full ${
               listening
                 ? "bg-rose-500 animate-ping"
                 : aiSpeaking
-                ? "bg-emerald-500 animate-pulse"
+                ? "animate-pulse"
                 : callActive
-                ? "bg-emerald-500"
-                : "bg-zinc-400 dark:bg-zinc-600"
+                ? ""
+                : ""
             }`}
+            style={{
+              backgroundColor: listening
+                ? "#D9534F"
+                : aiSpeaking
+                ? "var(--nt-accent-gold)"
+                : callActive
+                ? "var(--nt-accent-sage)"
+                : "var(--nt-text-muted)",
+            }}
           />
           {statusText}
         </div>
@@ -225,8 +260,9 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
             {[1, 2, 3, 4, 5].map((i) => (
               <span
                 key={i}
-                className="w-1 rounded-sm bg-emerald-500"
+                className="w-1 rounded-sm"
                 style={{
+                  backgroundColor: "var(--nt-accent-sage)",
                   height: `${WAVE_HEIGHTS[i - 1]}px`,
                   animation: `bounce 0.${i + 3}s infinite alternate`,
                 }}
@@ -237,45 +273,55 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900 px-5 py-3">
-        <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 dark:text-zinc-400">
+      <div
+        className="flex items-center justify-between px-5 py-3"
+        style={{ backgroundColor: "var(--nt-bg-card)" }}
+      >
+        <div className="flex items-center gap-2 text-xs font-mono" style={{ color: "var(--nt-text-muted)" }}>
           {callActive ? (
             <>
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: "var(--nt-accent-sage)" }} />
               SESSION_ACTIVE
             </>
           ) : (
             <>
-              <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-600" />
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--nt-text-muted)" }} />
               SESSION_IDLE
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-2.5">
-          {/* Mic toggle */}
-          <IconButton
-            kind={listening ? "danger" : "ghost"}
-            pressed={listening}
-            ariaLabel={listening ? "Stop listening" : "Start speaking"}
-            onClick={toggleMic}
-            className={!callActive || aiSpeaking ? "opacity-40 cursor-not-allowed" : ""}
-          >
-            {listening ? <MicOffIcon /> : <MicIcon />}
-          </IconButton>
-
-          {/* Start / End call */}
+        <div className="flex items-center gap-2">
           {!callActive ? (
             <button
               onClick={startCall}
-              className="flex items-center gap-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition-colors"
+              disabled={!selectedJob}
+              className="rounded-md px-4 py-2 text-xs font-semibold transition-all disabled:opacity-50"
+              style={{
+                backgroundColor: "var(--nt-accent-gold)",
+                color: "var(--nt-btn-cta-text)",
+              }}
             >
-              Start Interview
+              Start Session
             </button>
           ) : (
-            <IconButton kind="danger" ariaLabel="End interview" onClick={endCall}>
-              <PhoneOffIcon />
-            </IconButton>
+            <>
+              <IconButton
+                kind={listening ? "default" : "ghost"}
+                ariaLabel={listening ? "Mute mic" : "Unmute mic"}
+                onClick={toggleMic}
+                disabled={aiSpeaking}
+              >
+                {listening ? <MicIcon /> : <MicOffIcon />}
+              </IconButton>
+              <IconButton
+                kind="danger"
+                ariaLabel="End interview session"
+                onClick={endCall}
+              >
+                <PhoneOffIcon />
+              </IconButton>
+            </>
           )}
         </div>
       </div>
@@ -284,5 +330,3 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
 };
 
 export default VoiceInterface;
-
-

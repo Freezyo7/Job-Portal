@@ -56,9 +56,16 @@ const QuestionList = ({ questions = [], onJobSelect, selectedJob }) => {
   }, []);
 
   return (
-    <aside className="flex h-full flex-col overflow-hidden rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-none">
+    <aside
+      className="flex h-full flex-col overflow-hidden rounded-lg border shadow-none"
+      style={{
+        backgroundColor: "var(--nt-bg-card)",
+        borderColor: "var(--nt-border)",
+        boxShadow: "var(--nt-shadow-sm)",
+      }}
+    >
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 px-4 pt-3.5">
+      <div className="flex items-center gap-2 border-b px-4 pt-3.5" style={{ borderColor: "var(--nt-border)" }}>
         <Tab active={activeTab === "jobs"} onClick={() => setActiveTab("jobs")}>
           Applied Roles ({jobs.length})
         </Tab>
@@ -74,26 +81,34 @@ const QuestionList = ({ questions = [], onJobSelect, selectedJob }) => {
             <div className="flex items-center justify-center h-24">
               <div className="flex gap-1.5">
                 {[0, 1, 2].map((i) => (
-                  <span key={i} className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"
-                    style={{ animationDelay: `${i * 0.15}s` }} />
+                  <span key={i} className="h-1.5 w-1.5 rounded-full animate-pulse"
+                    style={{ backgroundColor: "var(--nt-accent-sage)", animationDelay: `${i * 0.15}s` }} />
                 ))}
               </div>
             </div>
           ) : jobs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-center px-4">
-              <p className="text-xs font-mono text-zinc-400 dark:text-zinc-500">NO APPLIED POSITIONS FOUND</p>
-              <p className="text-[11px] text-zinc-400 dark:text-zinc-600 mt-1">Submit applications first to calibrate interview engine.</p>
+              <p className="text-xs font-mono" style={{ color: "var(--nt-text-muted)" }}>NO APPLIED POSITIONS FOUND</p>
+              <p className="text-[11px] mt-1" style={{ color: "var(--nt-text-muted)" }}>Submit applications first to calibrate interview engine.</p>
             </div>
           ) : (
             jobs.map((job) => (
               <div
                 key={job.id}
                 onClick={() => handleJobClick(job)}
-                className={`flex items-center gap-3 rounded-md border p-2.5 cursor-pointer transition-all text-xs ${
+                className="flex items-center gap-3 rounded-md border p-2.5 cursor-pointer transition-all text-xs"
+                style={
                   selectedJob?.id === job.id
-                    ? "border-emerald-500/60 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-none"
-                    : "border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/60 hover:border-zinc-300 dark:hover:border-zinc-700"
-                }`}
+                    ? {
+                        backgroundColor: "var(--nt-bg-card-alt)",
+                        borderColor: "var(--nt-accent-sage)",
+                        borderLeftWidth: "3px",
+                      }
+                    : {
+                        backgroundColor: "var(--nt-bg-card-alt)",
+                        borderColor: "var(--nt-border)",
+                      }
+                }
               >
                 {/* Logo or initials */}
                 {job.company_logo ? (
@@ -103,23 +118,32 @@ const QuestionList = ({ questions = [], onJobSelect, selectedJob }) => {
                     loading="lazy"
                     decoding="async"
                     onError={(e) => { e.target.style.display = "none"; e.target.nextSibling.style.display = "flex"; }}
-                    className="h-8 w-8 rounded object-cover border border-zinc-200 dark:border-zinc-700 flex-shrink-0"
+                    className="h-8 w-8 rounded object-cover border flex-shrink-0"
+                    style={{ borderColor: "var(--nt-border)" }}
                   />
                 ) : null}
                 <div
-                  className="h-8 w-8 rounded bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 items-center justify-center text-[10px] font-mono font-bold text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/60"
-                  style={{ display: job.company_logo ? "none" : "flex" }}
+                  className="h-8 w-8 rounded flex-shrink-0 items-center justify-center text-[10px] font-mono font-bold border"
+                  style={{
+                    display: job.company_logo ? "none" : "flex",
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-text-primary)",
+                  }}
                 >
                   {getInitials(job.company_name)}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">{job.job_title}</p>
-                  <p className="text-zinc-500 dark:text-zinc-400 truncate text-[11px]">{job.company_name}</p>
+                  <p className="font-semibold truncate" style={{ color: "var(--nt-text-primary)" }}>{job.job_title}</p>
+                  <p className="truncate text-[11px]" style={{ color: "var(--nt-text-secondary)" }}>{job.company_name}</p>
                 </div>
 
                 {selectedJob?.id === job.id && (
-                  <span className="inline-flex h-4 w-4 items-center justify-center rounded bg-emerald-600 text-[10px] font-mono text-white flex-shrink-0">
+                  <span
+                    className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-mono text-white flex-shrink-0"
+                    style={{ backgroundColor: "var(--nt-accent-sage)" }}
+                  >
                     ✓
                   </span>
                 )}
@@ -136,50 +160,84 @@ const QuestionList = ({ questions = [], onJobSelect, selectedJob }) => {
             <div className="flex flex-col items-center justify-center h-32 gap-3">
               <div className="flex gap-1.5">
                 {[0,1,2].map((i) => (
-                  <span key={i} className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" style={{ animationDelay: `${i * 0.15}s` }} />
+                  <span key={i} className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: "var(--nt-accent-sage)", animationDelay: `${i * 0.15}s` }} />
                 ))}
               </div>
-              <p className="text-xs font-mono text-zinc-500">GENERATING ASSESSMENT PROMPTS...</p>
+              <p className="text-xs font-mono" style={{ color: "var(--nt-text-muted)" }}>GENERATING ASSESSMENT PROMPTS...</p>
             </div>
           ) : aiError ? (
             <div className="flex flex-col items-center justify-center h-32 gap-2 text-center px-4">
               <p className="text-xs text-rose-500 font-medium">⚠ {aiError}</p>
-              <p className="text-[11px] text-zinc-400 dark:text-zinc-500">Telemetry quota exceeded or network timed out.</p>
+              <p className="text-[11px]" style={{ color: "var(--nt-text-muted)" }}>Telemetry quota exceeded or network timed out.</p>
             </div>
           ) : aiQuestions.length > 0 ? (
             <>
               {selectedJob && (
-                <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2 mb-2">
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
-                    Prompt suite for <span className="font-semibold text-zinc-900 dark:text-zinc-100">{selectedJob.job_title}</span> ({selectedJob.company_name})
+                <div className="border-b pb-2 mb-2" style={{ borderColor: "var(--nt-border)" }}>
+                  <p className="text-[11px]" style={{ color: "var(--nt-text-secondary)" }}>
+                    Prompt suite for <span className="font-semibold" style={{ color: "var(--nt-text-primary)" }}>{selectedJob.job_title}</span> ({selectedJob.company_name})
                   </p>
                 </div>
               )}
               {aiQuestions.map((q, i) => (
-                <div key={i} className="flex gap-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/60 p-2.5 text-xs">
-                  <div className="flex h-5 w-5 items-center justify-center rounded bg-zinc-200 dark:bg-zinc-800 text-[10px] font-mono font-semibold text-zinc-700 dark:text-zinc-300 flex-shrink-0">
+                <div
+                  key={i}
+                  className="flex gap-2.5 rounded-md border p-2.5 text-xs"
+                  style={{
+                    backgroundColor: "var(--nt-bg-card-alt)",
+                    borderColor: "var(--nt-border)",
+                  }}
+                >
+                  <div
+                    className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-mono font-semibold flex-shrink-0"
+                    style={{
+                      backgroundColor: "var(--nt-bg-secondary)",
+                      color: "var(--nt-text-primary)",
+                    }}
+                  >
                     {String(i + 1).padStart(2, "0")}
                   </div>
-                  <p className="leading-snug text-zinc-800 dark:text-zinc-200">{q}</p>
+                  <p className="leading-snug" style={{ color: "var(--nt-text-primary)" }}>{q}</p>
                 </div>
               ))}
             </>
           ) : questions.length > 0 ? (
             questions.map((q) => (
-              <div key={q.id} className="flex gap-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/60 p-2.5 text-xs">
-                <div className="flex h-5 w-5 items-center justify-center rounded bg-zinc-200 dark:bg-zinc-800 text-[10px] font-mono font-semibold text-zinc-700 dark:text-zinc-300 flex-shrink-0">
+              <div
+                key={q.id}
+                className="flex gap-2.5 rounded-md border p-2.5 text-xs"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                }}
+              >
+                <div
+                  className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-mono font-semibold flex-shrink-0"
+                  style={{
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    color: "var(--nt-text-primary)",
+                  }}
+                >
                   {q.id}
                 </div>
                 <div className="flex flex-1 items-start justify-between gap-2">
-                  <p className="leading-snug text-zinc-800 dark:text-zinc-200">{q.title}</p>
+                  <p className="leading-snug" style={{ color: "var(--nt-text-primary)" }}>{q.title}</p>
                   {q.answered && (
-                    <span className="inline-flex h-4 w-4 items-center justify-center rounded bg-emerald-500/10 text-[10px] font-mono text-emerald-600 dark:text-emerald-400">✓</span>
+                    <span
+                      className="inline-flex h-4 w-4 items-center justify-center rounded text-[10px] font-mono"
+                      style={{
+                        backgroundColor: "rgba(111, 175, 123, 0.15)",
+                        color: "var(--nt-accent-sage)",
+                      }}
+                    >
+                      ✓
+                    </span>
                   )}
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-xs text-zinc-400 dark:text-zinc-500 text-center mt-6">
+            <p className="text-xs text-center mt-6" style={{ color: "var(--nt-text-muted)" }}>
               Select a position from the list to populate questions.
             </p>
           )}
@@ -190,5 +248,3 @@ const QuestionList = ({ questions = [], onJobSelect, selectedJob }) => {
 };
 
 export default QuestionList;
-
-

@@ -24,11 +24,11 @@ const CoverLetterModal = ({ job, onClose }) => {
         },
         userProfile: {
           username,
-          designation: profile.designation,
-          summary:     profile.summary,
-          skills:      profile.skills,
-          experience:  profile.experience,
-          education:   profile.education,
+          designation: profile?.designation,
+          summary:     profile?.summary,
+          skills:      profile?.skills,
+          experience:  profile?.experience,
+          education:   profile?.education,
         },
       });
       setCoverLetter(res.data.coverLetter);
@@ -50,20 +50,33 @@ const CoverLetterModal = ({ job, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={loading ? undefined : onClose} />
-      <div className="relative w-full max-w-2xl rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div
+        className="relative w-full max-w-2xl rounded-lg border shadow-xl overflow-hidden flex flex-col max-h-[90vh]"
+        style={{
+          backgroundColor: "var(--nt-bg-card)",
+          borderColor: "var(--nt-border)",
+        }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 flex-shrink-0">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b flex-shrink-0" style={{ borderColor: "var(--nt-border)" }}>
           <div className="flex items-center gap-2.5">
-            <div className="h-7 w-7 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center">
-              <HiDocumentText size={14} className="text-zinc-700 dark:text-zinc-300" />
+            <div
+              className="h-7 w-7 rounded-md border flex items-center justify-center"
+              style={{
+                backgroundColor: "var(--nt-bg-secondary)",
+                borderColor: "var(--nt-border)",
+                color: "var(--nt-text-primary)",
+              }}
+            >
+              <HiDocumentText size={14} />
             </div>
             <div>
-              <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Cover Letter Generator</p>
-              <p className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500">{job.jobTitle || job.job_title} · {job.companyName || job.company_name}</p>
+              <p className="text-xs font-semibold" style={{ color: "var(--nt-text-primary)" }}>Cover Letter Generator</p>
+              <p className="text-[10px] font-mono" style={{ color: "var(--nt-text-muted)" }}>{job.jobTitle || job.job_title} · {job.companyName || job.company_name}</p>
             </div>
           </div>
           {!loading && (
-            <button onClick={onClose} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">
+            <button onClick={onClose} className="transition-colors" style={{ color: "var(--nt-text-muted)" }}>
               <HiX size={16} />
             </button>
           )}
@@ -75,15 +88,22 @@ const CoverLetterModal = ({ job, onClose }) => {
             <div className="flex flex-col items-center justify-center h-48 gap-3">
               <div className="flex gap-1.5">
                 {[0,1,2].map((i) => (
-                  <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                  <span key={i} className="h-2 w-2 rounded-full animate-bounce" style={{ backgroundColor: "var(--nt-accent-sage)", animationDelay: `${i * 0.15}s` }} />
                 ))}
               </div>
-              <p className="text-xs font-mono text-zinc-400">Synthesizing personalized cover letter...</p>
+              <p className="text-xs font-mono" style={{ color: "var(--nt-text-muted)" }}>Synthesizing personalized cover letter...</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center h-48 gap-3 text-center">
               <p className="text-xs text-red-500 font-medium">{error}</p>
-              <button onClick={generate} className="rounded-md bg-emerald-600 dark:bg-emerald-500 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 transition-colors">
+              <button
+                onClick={generate}
+                className="rounded-md px-3.5 py-1.5 text-xs font-medium transition-colors"
+                style={{
+                  backgroundColor: "var(--nt-accent-gold)",
+                  color: "var(--nt-btn-cta-text)",
+                }}
+              >
                 Retry Generation
               </button>
             </div>
@@ -91,20 +111,39 @@ const CoverLetterModal = ({ job, onClose }) => {
             <textarea
               value={coverLetter}
               onChange={(e) => setCoverLetter(e.target.value)}
-              className="w-full h-80 text-xs font-mono text-zinc-800 dark:text-zinc-200 bg-zinc-50 dark:bg-zinc-950 leading-relaxed resize-none border border-zinc-200 dark:border-zinc-800 rounded-md p-4 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+              className="w-full h-80 text-xs font-mono leading-relaxed resize-none border rounded-md p-4 focus:outline-none"
+              style={{
+                backgroundColor: "var(--nt-bg-card-alt)",
+                borderColor: "var(--nt-border)",
+                color: "var(--nt-text-primary)",
+              }}
             />
           )}
         </div>
 
         {/* Footer */}
         {!loading && !error && coverLetter && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 flex-shrink-0 bg-zinc-50/50 dark:bg-zinc-900/50">
-            <button onClick={generate} className="text-xs text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors font-mono">
+          <div
+            className="flex items-center justify-between px-5 py-3 border-t flex-shrink-0"
+            style={{
+              backgroundColor: "var(--nt-bg-card-alt)",
+              borderColor: "var(--nt-border)",
+            }}
+          >
+            <button
+              onClick={generate}
+              className="text-xs transition-colors font-mono"
+              style={{ color: "var(--nt-text-secondary)" }}
+            >
               ↺ Regenerate
             </button>
             <button
               onClick={copy}
-              className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-md px-3.5 py-1.5 text-xs font-medium transition-colors"
+              style={{
+                backgroundColor: "var(--nt-accent-gold)",
+                color: "var(--nt-btn-cta-text)",
+              }}
             >
               {copied ? <><HiCheck size={13} /> Copied</> : "Copy to Clipboard"}
             </button>
@@ -116,5 +155,3 @@ const CoverLetterModal = ({ job, onClose }) => {
 };
 
 export default CoverLetterModal;
-
-

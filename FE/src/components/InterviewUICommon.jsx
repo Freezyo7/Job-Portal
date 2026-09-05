@@ -10,22 +10,43 @@ export const IconButton = ({
   pressed,
   ariaLabel,
   className = "",
+  style = {},
   ...props
 }) => {
   const base =
-    "inline-flex h-9 w-9 items-center justify-center rounded-md text-zinc-700 dark:text-zinc-200 transition-colors";
-  const variants = {
-    default: "bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700/60",
-    ghost: "bg-white dark:bg-zinc-900 hover:bg-zinc-50 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800",
-    danger: "bg-rose-600 text-white hover:bg-rose-700 border border-rose-600",
-  };
+    "inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors";
+
+  let variantStyle = {};
+  if (kind === "default") {
+    variantStyle = {
+      backgroundColor: "var(--nt-bg-secondary)",
+      borderColor: "var(--nt-border)",
+      color: "var(--nt-text-primary)",
+      borderWidth: "1px",
+    };
+  } else if (kind === "ghost") {
+    variantStyle = {
+      backgroundColor: "var(--nt-bg-card)",
+      borderColor: "var(--nt-border)",
+      color: "var(--nt-text-primary)",
+      borderWidth: "1px",
+    };
+  } else if (kind === "danger") {
+    variantStyle = {
+      backgroundColor: "#D9534F",
+      borderColor: "#D9534F",
+      color: "#FFFFFF",
+      borderWidth: "1px",
+    };
+  }
 
   return (
     <button
       type="button"
       aria-label={ariaLabel}
       aria-pressed={typeof pressed === "boolean" ? pressed : undefined}
-      className={`${base} ${variants[kind]} ${className}`}
+      className={`${base} ${className}`}
+      style={{ ...variantStyle, ...style }}
       {...props}
     >
       {children}
@@ -36,26 +57,36 @@ export const IconButton = ({
 export const Tab = ({ active, children, onClick }) => (
   <button
     onClick={onClick}
-    className={[
-      "relative px-3.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-colors",
-      active ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200",
-    ].join(" ")}
+    className="relative px-3.5 pb-2.5 text-xs font-semibold uppercase tracking-wider transition-colors"
+    style={{
+      color: active ? "var(--nt-text-primary)" : "var(--nt-text-muted)",
+    }}
   >
     {children}
     {active && (
-      <span className="absolute inset-x-0 bottom-0 h-0.5 bg-emerald-500" />
+      <span
+        className="absolute inset-x-0 bottom-0 h-0.5"
+        style={{ backgroundColor: "var(--nt-accent-sage)" }}
+      />
     )}
   </button>
 );
 
 export const MetaChip = ({ icon, children }) => (
-  <span className="inline-flex items-center gap-1.5 border border-zinc-200 dark:border-zinc-800 rounded-md bg-zinc-50 dark:bg-zinc-900 px-2.5 py-1 text-xs font-medium text-zinc-700 dark:text-zinc-300">
-    {icon && <span className="text-sm text-zinc-500">{icon}</span>}
+  <span
+    className="inline-flex items-center gap-1.5 border rounded-md px-2.5 py-1 text-xs font-medium"
+    style={{
+      backgroundColor: "var(--nt-bg-secondary)",
+      borderColor: "var(--nt-border)",
+      color: "var(--nt-text-primary)",
+    }}
+  >
+    {icon && <span className="text-sm" style={{ color: "var(--nt-text-muted)" }}>{icon}</span>}
     {children}
   </span>
 );
 
-/* --- Simple icons (can be replaced with your own icon set) --- */
+/* --- Simple icons --- */
 
 const OffSlash = ({ className = "" }) => (
   <span
@@ -76,31 +107,29 @@ const WithOffOverlay = ({ children }) => (
 export const MicIcon = () => <CiMicrophoneOn size={20} />;
 export const MicOffIcon = () => (
   <WithOffOverlay>
-    <CiMicrophoneOn size={20} className="text-zinc-500 dark:text-zinc-400" />
+    <CiMicrophoneOn size={20} style={{ color: "var(--nt-text-muted)" }} />
   </WithOffOverlay>
 );
 
 export const CameraIcon = () => <CiCamera size={20} />;
 export const CameraOffIcon = () => (
   <WithOffOverlay>
-    <CiCamera size={20} className="text-zinc-500 dark:text-zinc-400" />
+    <CiCamera size={20} style={{ color: "var(--nt-text-muted)" }} />
   </WithOffOverlay>
 );
 
 export const ScreenShareIcon = () => <MdOutlineScreenshotMonitor size={20} />;
 export const ScreenShareOffIcon = () => (
   <WithOffOverlay>
-    <MdOutlineScreenshotMonitor size={20} className="text-zinc-500 dark:text-zinc-400" />
+    <MdOutlineScreenshotMonitor size={20} style={{ color: "var(--nt-text-muted)" }} />
   </WithOffOverlay>
 );
 
 export const RecordIcon = () => <VscRecord size={20} />;
 export const RecordOffIcon = () => (
   <WithOffOverlay>
-    <VscRecord size={20} className="text-zinc-500 dark:text-zinc-400" />
+    <VscRecord size={20} style={{ color: "var(--nt-text-muted)" }} />
   </WithOffOverlay>
 );
 
 export const PhoneOffIcon = () => <ImPhoneHangUp size={16} />;
-
-

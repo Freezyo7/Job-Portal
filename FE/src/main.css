@@ -13,6 +13,7 @@
   --nt-bg-card:       #F0EAD8;   /* card warm cream */
   --nt-bg-card-alt:   #E8DFC8;   /* input / inset */
   --nt-border:        #C8B89A;   /* warm tan border */
+  --nt-border-subtle: #D8CCB5;   /* subtle inner border */
   --nt-text-primary:  #2C3A28;   /* dark forest text */
   --nt-text-secondary:#6B5E4A;   /* warm brown secondary */
   --nt-text-muted:    #8A7A65;   /* muted sand-grey */
@@ -23,27 +24,36 @@
   --nt-btn-sec-bg:    #E0D5BE;   /* secondary button bg */
   --nt-btn-sec-hover: #D4C8A8;   /* secondary button hover */
   --nt-bg-cta-section:#D8C8A8;   /* CTA banner bg */
+  --nt-bg-sidebar:    #EDE6D6;   /* sidebar */
+  --nt-bg-badge:      #E4D8C0;   /* tag / pill background */
+  --nt-shadow-sm:     0 1px 3px rgba(44, 58, 40, 0.07);
+  --nt-shadow-md:     0 4px 16px rgba(44, 58, 40, 0.08);
 }
 
 html.dark {
   color-scheme: dark;
 
   /* Dark mode — deep forest / teal / brown */
-  --nt-bg-primary:    #1A2E22;
-  --nt-bg-secondary:  #1F3A30;
-  --nt-bg-card:       #243D2C;
-  --nt-bg-card-alt:   #2C4A35;
-  --nt-border:        #3B5445;
-  --nt-text-primary:  #E8DCC8;
-  --nt-text-secondary:#A89880;
-  --nt-text-muted:    #7A9080;
-  --nt-accent-sage:   #6FAF7B;
-  --nt-accent-gold:   #C9A96E;
-  --nt-btn-cta-text:  #1A2E22;
-  --nt-bg-cta-hover:  #D4B87A;
-  --nt-btn-sec-bg:    #2C4A35;
-  --nt-btn-sec-hover: #3B5D44;
-  --nt-bg-cta-section:#2A3520;
+  --nt-bg-primary:    #1A2E22;   /* deep forest */
+  --nt-bg-secondary:  #1F3A30;   /* muted teal */
+  --nt-bg-card:       #243D2C;   /* earthy forest card */
+  --nt-bg-card-alt:   #2C4A35;   /* input / inset surface */
+  --nt-border:        #3B5445;   /* soft sand/earthy border */
+  --nt-border-subtle: #2D4436;   /* subtle inner border */
+  --nt-text-primary:  #E8DCC8;   /* muted cream */
+  --nt-text-secondary:#A89880;   /* soft beige / sand */
+  --nt-text-muted:    #7A9080;   /* muted teal-grey */
+  --nt-accent-sage:   #6FAF7B;   /* organic sage green */
+  --nt-accent-gold:   #C9A96E;   /* warm muted gold */
+  --nt-btn-cta-text:  #1A2E22;   /* text on gold button */
+  --nt-bg-cta-hover:  #D4B87A;   /* gold hover */
+  --nt-btn-sec-bg:    #2C4A35;   /* secondary button */
+  --nt-btn-sec-hover: #3B5D44;   /* secondary hover */
+  --nt-bg-cta-section:#2A3520;   /* deep earthy contrast */
+  --nt-bg-sidebar:    #16261C;   /* deep forest sidebar */
+  --nt-bg-badge:      #264432;   /* badge pill */
+  --nt-shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.2);
+  --nt-shadow-md:     0 4px 16px rgba(0, 0, 0, 0.28);
 }
 
 body {

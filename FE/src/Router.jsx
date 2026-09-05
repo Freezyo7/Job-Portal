@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
 import MyApplication from "./components/MyApplication";
 import SavedJobs from "./components/SavedJobs";
@@ -24,8 +24,17 @@ const HomeRoute = () => {
   const { user, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-slate-950 transition-colors">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 dark:border-slate-800 border-t-[#5B42F3] dark:border-t-indigo-400" />
+      <div
+        className="min-h-screen flex items-center justify-center transition-colors"
+        style={{ backgroundColor: "var(--nt-bg-primary)" }}
+      >
+        <div
+          className="h-8 w-8 animate-spin rounded-full border-2"
+          style={{
+            borderColor: "var(--nt-border)",
+            borderTopColor: "var(--nt-accent-sage)",
+          }}
+        />
       </div>
     );
   }
@@ -59,4 +68,3 @@ const Router = () => {
 };
 
 export default Router;
-

@@ -59,7 +59,12 @@ const Sidebar = () => {
     <>
       {/* Mobile Menu Button (Hamburger) */}
       <button
-        className="fixed top-3 left-3 z-50 p-2 text-zinc-900 dark:text-zinc-100 bg-white dark:bg-zinc-900 rounded-md border border-zinc-200 dark:border-zinc-800 shadow-sm lg:hidden"
+        className="fixed top-3 left-3 z-50 p-2 rounded-md border shadow-sm lg:hidden"
+        style={{
+          backgroundColor: "var(--nt-bg-card)",
+          borderColor: "var(--nt-border)",
+          color: "var(--nt-text-primary)",
+        }}
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle menu"
       >
@@ -76,16 +81,32 @@ const Sidebar = () => {
 
       {/* Sidebar container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col border-r border-zinc-200 dark:border-zinc-800 bg-[#FAFAFA] dark:bg-[#09090B] transition-transform duration-150 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 transform flex-col border-r transition-transform duration-150 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
+        style={{
+          backgroundColor: "var(--nt-bg-sidebar)",
+          borderColor: "var(--nt-border)",
+        }}
       >
-        <div className="h-14 px-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+        <div
+          className="h-14 px-4 border-b flex items-center justify-between"
+          style={{ borderColor: "var(--nt-border)" }}
+        >
           <div className="flex items-center gap-2">
-            <div className="h-6 w-6 rounded-md bg-emerald-600 dark:bg-emerald-500 flex items-center justify-center text-white font-bold text-xs">
+            <div
+              className="h-6 w-6 rounded-md flex items-center justify-center font-bold text-xs"
+              style={{
+                backgroundColor: "var(--nt-accent-sage)",
+                color: "#FFFFFF",
+              }}
+            >
               C
             </div>
-            <span className="font-semibold text-sm text-zinc-900 dark:text-zinc-100 tracking-tight">
+            <span
+              className="font-semibold text-sm tracking-tight"
+              style={{ color: "var(--nt-text-primary)" }}
+            >
               Career Hub
             </span>
           </div>
@@ -96,7 +117,10 @@ const Sidebar = () => {
           {navSections.map((section) => (
             <div key={section.label} className="mb-5">
               {/* Section Label */}
-              <h3 className="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider px-2 mb-1.5">
+              <h3
+                className="text-[10px] font-semibold uppercase tracking-wider px-2 mb-1.5"
+                style={{ color: "var(--nt-text-muted)" }}
+              >
                 {section.label}
               </h3>
 
@@ -108,11 +132,19 @@ const Sidebar = () => {
                     to={item.path}
                     target="_self"
                     className={({ isActive }) =>
-                      `flex items-center px-2.5 py-1.5 rounded-md text-xs transition-colors ${
-                        isActive
-                          ? "bg-zinc-200/80 dark:bg-zinc-800 text-emerald-600 dark:text-emerald-400 font-semibold"
-                          : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-200 font-medium"
-                      }`
+                      `flex items-center px-2.5 py-1.5 rounded-md text-xs transition-colors font-medium`
+                    }
+                    style={({ isActive }) =>
+                      isActive
+                        ? {
+                            backgroundColor: "var(--nt-bg-card-alt)",
+                            color: "var(--nt-accent-sage)",
+                            fontWeight: "600",
+                            borderLeft: "2px solid var(--nt-accent-sage)",
+                          }
+                        : {
+                            color: "var(--nt-text-secondary)",
+                          }
                     }
                     onClick={() => setIsOpen(false)}
                   >
@@ -127,22 +159,43 @@ const Sidebar = () => {
 
         {/* Signed-in user + logout */}
         {user && (
-          <div className="border-t border-zinc-200 dark:border-zinc-800 p-3 space-y-2">
+          <div
+            className="border-t p-3 space-y-2"
+            style={{ borderColor: "var(--nt-border)" }}
+          >
             <div className="flex items-center gap-2.5 px-1 py-1">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-zinc-200 dark:bg-zinc-800 text-xs font-semibold text-zinc-800 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700">
+              <div
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-xs font-semibold border"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                  color: "var(--nt-text-primary)",
+                }}
+              >
                 {(user.username?.[0] ?? "?").toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-semibold text-zinc-800 dark:text-zinc-200">
+                <p
+                  className="truncate text-xs font-semibold"
+                  style={{ color: "var(--nt-text-primary)" }}
+                >
                   {user.username}
                 </p>
-                <p className="truncate text-[10px] text-zinc-400 dark:text-zinc-500">{user.email}</p>
+                <p
+                  className="truncate text-[10px]"
+                  style={{ color: "var(--nt-text-muted)" }}
+                >
+                  {user.email}
+                </p>
               </div>
             </div>
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full items-center rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400 transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-600 dark:hover:text-rose-400"
+              className="flex w-full items-center rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80"
+              style={{
+                color: "var(--nt-text-secondary)",
+              }}
             >
               <MdLogout className="mr-2 text-base" />
               Log out
@@ -155,4 +208,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

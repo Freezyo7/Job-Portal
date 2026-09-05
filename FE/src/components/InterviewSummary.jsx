@@ -24,16 +24,30 @@ const InterviewSummary = ({ summaryData }) => {
   // Placeholder state — shown before any interview is completed
   if (!summaryData) {
     return (
-      <section className="space-y-3 rounded-lg bg-white dark:bg-zinc-900 p-5 border border-zinc-200 dark:border-zinc-800 shadow-none">
+      <section
+        className="space-y-3 rounded-lg p-5 border shadow-none"
+        style={{
+          backgroundColor: "var(--nt-bg-card)",
+          borderColor: "var(--nt-border)",
+          boxShadow: "var(--nt-shadow-sm)",
+        }}
+      >
         <div className="flex flex-col gap-1">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          <h2 className="text-sm font-semibold" style={{ color: "var(--nt-text-primary)" }}>
             Interview Assessment Telemetry
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs" style={{ color: "var(--nt-text-secondary)" }}>
             Complete an interactive audio session to generate evaluation summary.
           </p>
         </div>
-        <div className="rounded-md bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 px-4 py-6 text-center text-xs font-mono text-zinc-400 dark:text-zinc-500">
+        <div
+          className="rounded-md border px-4 py-6 text-center text-xs font-mono"
+          style={{
+            backgroundColor: "var(--nt-bg-card-alt)",
+            borderColor: "var(--nt-border)",
+            color: "var(--nt-text-muted)",
+          }}
+        >
           STATUS: NO_EVALUATION_RECORDED
         </div>
       </section>
@@ -41,19 +55,33 @@ const InterviewSummary = ({ summaryData }) => {
   }
 
   return (
-    <section className="space-y-4 rounded-lg bg-white dark:bg-zinc-900 p-5 border border-zinc-200 dark:border-zinc-800 shadow-none">
+    <section
+      className="space-y-4 rounded-lg p-5 border shadow-none"
+      style={{
+        backgroundColor: "var(--nt-bg-card)",
+        borderColor: "var(--nt-border)",
+        boxShadow: "var(--nt-shadow-sm)",
+      }}
+    >
       {/* Title & metadata row */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3.5">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between border-b pb-3.5" style={{ borderColor: "var(--nt-border)" }}>
         <div>
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          <h2 className="text-sm font-semibold" style={{ color: "var(--nt-text-primary)" }}>
             Evaluation Telemetry – {jobInfo?.job_title}
           </h2>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+          <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>
             AI synthesized performance breakdown for {jobInfo?.company_name}
           </p>
         </div>
-        <div className="inline-flex items-center gap-1.5 rounded bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 text-xs font-mono text-emerald-600 dark:text-emerald-400">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <div
+          className="inline-flex items-center gap-1.5 rounded border px-2.5 py-1 text-xs font-mono font-medium"
+          style={{
+            backgroundColor: "rgba(111, 175, 123, 0.15)",
+            borderColor: "rgba(111, 175, 123, 0.3)",
+            color: "var(--nt-accent-sage)",
+          }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--nt-accent-sage)" }} />
           COMPLETED · {formattedTime}
         </div>
       </div>
@@ -75,21 +103,29 @@ const InterviewSummary = ({ summaryData }) => {
       </div>
 
       {/* AI summary */}
-      <div className="rounded-md bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 p-4 text-xs text-zinc-700 dark:text-zinc-300">
+      <div
+        className="rounded-md border p-4 text-xs"
+        style={{
+          backgroundColor: "var(--nt-bg-card-alt)",
+          borderColor: "var(--nt-border)",
+          color: "var(--nt-text-primary)",
+        }}
+      >
         <div className="mb-2 flex items-center gap-2">
-          <span className="flex h-5 w-5 items-center justify-center rounded bg-emerald-600 text-[10px] font-mono font-bold text-white">
+          <span
+            className="flex h-5 w-5 items-center justify-center rounded text-[10px] font-mono font-bold text-white"
+            style={{ backgroundColor: "var(--nt-accent-sage)" }}
+          >
             AI
           </span>
-          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+          <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--nt-text-primary)" }}>
             Session Synthesis
           </span>
         </div>
-        <p className="leading-relaxed whitespace-pre-line text-zinc-700 dark:text-zinc-300 font-sans">{summary}</p>
+        <p className="leading-relaxed whitespace-pre-line font-sans" style={{ color: "var(--nt-text-primary)" }}>{summary}</p>
       </div>
     </section>
   );
 };
 
 export default InterviewSummary;
-
-

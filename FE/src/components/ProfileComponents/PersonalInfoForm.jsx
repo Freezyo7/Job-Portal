@@ -4,28 +4,40 @@ import { HiCheck } from "react-icons/hi";
 import api from "../../lib/api";
 
 const API = "/auth/profile";
-const inputCls = "w-full px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500";
-const labelCls = "block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1";
 
 const getInitials = (str = "") =>
   str.split(" ").filter(Boolean).slice(0, 2).map(w => w[0].toUpperCase()).join("");
 
 const Panel = ({ children }) => (
-  <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+  <div
+    className="rounded-lg border p-5"
+    style={{
+      backgroundColor: "var(--nt-bg-card)",
+      borderColor: "var(--nt-border)",
+      boxShadow: "var(--nt-shadow-sm)",
+    }}
+  >
     {children}
   </div>
 );
 
 const SectionHeader = ({ title, action }) => (
-  <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-800">
-    <h2 className="text-sm font-bold text-zinc-950 dark:text-zinc-50">{title}</h2>
+  <div className="flex items-center justify-between mb-4 pb-2 border-b" style={{ borderColor: "var(--nt-border)" }}>
+    <h2 className="text-sm font-bold" style={{ color: "var(--nt-text-primary)" }}>{title}</h2>
     {action}
   </div>
 );
 
 const SaveBtn = ({ loading, onClick, label = "Save" }) => (
-  <button onClick={onClick} disabled={loading}
-    className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 px-4 py-1.5 text-xs font-medium text-white transition-colors disabled:opacity-60">
+  <button
+    onClick={onClick}
+    disabled={loading}
+    className="inline-flex items-center gap-1.5 rounded-md px-4 py-1.5 text-xs font-medium transition-colors disabled:opacity-60"
+    style={{
+      backgroundColor: "var(--nt-accent-gold)",
+      color: "var(--nt-btn-cta-text)",
+    }}
+  >
     {loading
       ? <span className="h-3 w-3 rounded-full border-2 border-white/30 border-t-white animate-spin" />
       : <HiCheck size={13} />}
@@ -34,19 +46,32 @@ const SaveBtn = ({ loading, onClick, label = "Save" }) => (
 );
 
 const Toast = ({ msg, type }) => (
-  <div className={`fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-md border px-3.5 py-2 shadow-lg text-xs font-mono
-    ${type === "success"
-      ? "bg-zinc-900 border-emerald-500/40 text-emerald-400 dark:bg-zinc-900 dark:border-emerald-500/40 dark:text-emerald-400"
-      : "bg-zinc-900 border-red-500/40 text-red-400 dark:bg-zinc-900 dark:border-red-500/40 dark:text-red-400"}`}>
+  <div
+    className="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-md border px-3.5 py-2 shadow-lg text-xs font-mono"
+    style={{
+      backgroundColor: "var(--nt-bg-card)",
+      borderColor: type === "success" ? "var(--nt-accent-sage)" : "#D9534F",
+      color: type === "success" ? "var(--nt-accent-sage)" : "#D9534F",
+    }}
+  >
     {type === "success" ? <MdCheck size={14} /> : <MdClose size={14} />}
     {msg}
   </div>
 );
 
-// ── PersonalInfoForm ───────────────────────────────────────────────────────
 const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => {
   const p = profileData || {};
   const fileInputRef = useRef(null);
+
+  const inputStyle = {
+    backgroundColor: "var(--nt-bg-card-alt)",
+    borderColor: "var(--nt-border)",
+    color: "var(--nt-text-primary)",
+  };
+
+  const labelStyle = {
+    color: "var(--nt-text-secondary)",
+  };
 
   // ── Toast ──
   const [toast, setToast] = useState(null);
@@ -232,19 +257,32 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
       {/* ── Resume Parser ── */}
       <Panel>
         <SectionHeader title="Resume Ingestion" />
-        <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/60 p-4">
+        <div
+          className="rounded-md border p-4"
+          style={{
+            backgroundColor: "var(--nt-bg-card-alt)",
+            borderColor: "var(--nt-border)",
+          }}
+        >
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-mono text-emerald-600 dark:text-emerald-400">
+              <div
+                className="inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-[10px] font-mono font-medium"
+                style={{
+                  backgroundColor: "rgba(111, 175, 123, 0.15)",
+                  borderColor: "rgba(111, 175, 123, 0.3)",
+                  color: "var(--nt-accent-sage)",
+                }}
+              >
                 <MdAutoAwesome size={12} />
                 Parser Pipeline
               </div>
-              <h3 className="mt-2 text-sm font-bold text-zinc-950 dark:text-zinc-50">Ingest CV to populate developer records</h3>
-              <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+              <h3 className="mt-2 text-sm font-bold" style={{ color: "var(--nt-text-primary)" }}>Ingest CV to populate developer records</h3>
+              <p className="mt-0.5 text-xs" style={{ color: "var(--nt-text-secondary)" }}>
                 Parses experience, education, skills, and contact metadata into your profile store.
               </p>
               {p.resumeMeta?.fileName && (
-                <p className="mt-1.5 text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
+                <p className="mt-1.5 text-[10px] font-mono" style={{ color: "var(--nt-text-muted)" }}>
                   Last parsed: {p.resumeMeta.fileName}
                   {p.resumeMeta.parsedAt ? ` on ${new Date(p.resumeMeta.parsedAt).toLocaleString("en-IN")}` : ""}
                 </p>
@@ -252,8 +290,15 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
             </div>
 
             <div className="w-full max-w-xs space-y-2">
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-xs font-mono text-zinc-700 dark:text-zinc-300 hover:border-emerald-500 transition-colors">
-                <MdOutlineUploadFile size={16} className="text-emerald-600 dark:text-emerald-400" />
+              <label
+                className="flex cursor-pointer items-center justify-center gap-2 rounded-md border px-3 py-2 text-xs font-mono transition-colors"
+                style={{
+                  backgroundColor: "var(--nt-bg-card)",
+                  borderColor: "var(--nt-border)",
+                  color: "var(--nt-text-primary)",
+                }}
+              >
+                <MdOutlineUploadFile size={16} style={{ color: "var(--nt-accent-sage)" }} />
                 <span className="truncate">{resumeFile ? resumeFile.name : "Select PDF/DOCX"}</span>
                 <input
                   ref={fileInputRef}
@@ -266,7 +311,11 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
               <button
                 onClick={handleResumeUpload}
                 disabled={resumeLoading}
-                className="w-full rounded-md bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 px-3 py-2 text-xs font-medium text-white transition-colors disabled:opacity-60"
+                className="w-full rounded-md px-3 py-2 text-xs font-medium transition-colors disabled:opacity-60"
+                style={{
+                  backgroundColor: "var(--nt-accent-gold)",
+                  color: "var(--nt-btn-cta-text)",
+                }}
               >
                 {resumeLoading ? "Parsing..." : "Parse & Auto-Fill"}
               </button>
@@ -280,12 +329,12 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         <SectionHeader title="Developer Information" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className={labelCls}>Full Name</label>
-            <input value={username} disabled className={`${inputCls} opacity-60 cursor-not-allowed`} />
+            <label className="block text-xs font-medium mb-1" style={labelStyle}>Full Name</label>
+            <input value={username} disabled className="w-full px-3 py-2 rounded-md border text-xs opacity-60 cursor-not-allowed" style={inputStyle} />
           </div>
           <div>
-            <label className={labelCls}>Email Address</label>
-            <input value={email} disabled className={`${inputCls} opacity-60 cursor-not-allowed`} />
+            <label className="block text-xs font-medium mb-1" style={labelStyle}>Email Address</label>
+            <input value={email} disabled className="w-full px-3 py-2 rounded-md border text-xs opacity-60 cursor-not-allowed" style={inputStyle} />
           </div>
           {[
             { key: "designation", label: "Designation",   type: "text",  placeholder: "Software Engineer"  },
@@ -300,15 +349,25 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
             { key: "dob",         label: "Date of Birth", type: "date",  placeholder: ""                    },
           ].map(f => (
             <div key={f.key}>
-              <label className={labelCls}>{f.label}</label>
-              <input type={f.type} value={personal[f.key]} placeholder={f.placeholder}
+              <label className="block text-xs font-medium mb-1" style={labelStyle}>{f.label}</label>
+              <input
+                type={f.type}
+                value={personal[f.key]}
+                placeholder={f.placeholder}
                 onChange={e => setPersonal(prev => ({ ...prev, [f.key]: e.target.value }))}
-                className={inputCls} />
+                className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                style={inputStyle}
+              />
             </div>
           ))}
           <div>
-            <label className={labelCls}>Gender</label>
-            <select value={personal.gender} onChange={e => setPersonal(prev => ({ ...prev, gender: e.target.value }))} className={inputCls}>
+            <label className="block text-xs font-medium mb-1" style={labelStyle}>Gender</label>
+            <select
+              value={personal.gender}
+              onChange={e => setPersonal(prev => ({ ...prev, gender: e.target.value }))}
+              className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+              style={inputStyle}
+            >
               <option value="">Select</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
@@ -316,23 +375,25 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className={labelCls}>Full Address</label>
+            <label className="block text-xs font-medium mb-1" style={labelStyle}>Full Address</label>
             <textarea
               value={personal.fullAddress}
               placeholder="Street address, city, state, postal code"
               onChange={e => setPersonal(prev => ({ ...prev, fullAddress: e.target.value }))}
               rows={2}
-              className={inputCls}
+              className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+              style={inputStyle}
             />
           </div>
           <div className="sm:col-span-2">
-            <label className={labelCls}>Professional Summary</label>
+            <label className="block text-xs font-medium mb-1" style={labelStyle}>Professional Summary</label>
             <textarea
               value={personal.summary}
               placeholder="Concise background summary"
               onChange={e => setPersonal(prev => ({ ...prev, summary: e.target.value }))}
               rows={3}
-              className={inputCls}
+              className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+              style={inputStyle}
             />
           </div>
         </div>
@@ -345,8 +406,15 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
       <Panel>
         <SectionHeader title="Experience History"
           action={
-            <button onClick={() => setShowExpForm(v => !v)}
-              className="inline-flex items-center gap-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-2.5 py-1 text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+            <button
+              onClick={() => setShowExpForm(v => !v)}
+              className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-mono font-medium transition-colors"
+              style={{
+                backgroundColor: "var(--nt-bg-secondary)",
+                borderColor: "var(--nt-border)",
+                color: "var(--nt-text-primary)",
+              }}
+            >
               <span>{showExpForm ? "− Cancel" : "+ Add Experience"}</span>
             </button>
           }
@@ -355,16 +423,30 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         {experiences.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
             {experiences.map((e) => (
-              <div key={e._id} className="flex items-start gap-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 p-3">
-                <div className="h-8 w-8 rounded bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 flex-shrink-0 flex items-center justify-center font-mono text-xs font-bold text-zinc-800 dark:text-zinc-200">
+              <div
+                key={e._id}
+                className="flex items-start gap-2.5 rounded-md border p-3"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                }}
+              >
+                <div
+                  className="h-8 w-8 rounded border flex-shrink-0 flex items-center justify-center font-mono text-xs font-bold"
+                  style={{
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-text-primary)",
+                  }}
+                >
                   {getInitials(e.company)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{e.title}</p>
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{e.company} · {e.type}</p>
-                  <p className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">{formatPeriod(e)}</p>
+                  <p className="text-xs font-semibold truncate" style={{ color: "var(--nt-text-primary)" }}>{e.title}</p>
+                  <p className="text-[11px] truncate" style={{ color: "var(--nt-text-secondary)" }}>{e.company} · {e.type}</p>
+                  <p className="text-[10px] font-mono mt-0.5" style={{ color: "var(--nt-text-muted)" }}>{formatPeriod(e)}</p>
                 </div>
-                <button onClick={() => deleteExp(e._id)} className="text-zinc-400 hover:text-red-500 transition-colors flex-shrink-0">
+                <button onClick={() => deleteExp(e._id)} className="transition-colors hover:text-red-500 flex-shrink-0" style={{ color: "var(--nt-text-muted)" }}>
                   <MdDeleteOutline size={16} />
                 </button>
               </div>
@@ -373,40 +455,68 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         )}
 
         {showExpForm && (
-          <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4">
-            <p className="text-[11px] font-mono uppercase font-semibold text-zinc-500 dark:text-zinc-400 mb-3">Add Work Experience</p>
+          <div className="border-t pt-4" style={{ borderColor: "var(--nt-border)" }}>
+            <p className="text-[11px] font-mono uppercase font-semibold mb-3" style={{ color: "var(--nt-text-muted)" }}>Add Work Experience</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { key: "title",   label: "Job Title",    placeholder: "Software Engineer" },
                 { key: "company", label: "Organization", placeholder: "Acme Corp"           },
               ].map(f => (
                 <div key={f.key}>
-                  <label className={labelCls}>{f.label}</label>
-                  <input type="text" value={expForm[f.key]} placeholder={f.placeholder}
-                    onChange={e => setExpForm(p => ({ ...p, [f.key]: e.target.value }))} className={inputCls} />
+                  <label className="block text-xs font-medium mb-1" style={labelStyle}>{f.label}</label>
+                  <input
+                    type="text"
+                    value={expForm[f.key]}
+                    placeholder={f.placeholder}
+                    onChange={e => setExpForm(p => ({ ...p, [f.key]: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                    style={inputStyle}
+                  />
                 </div>
               ))}
               <div>
-                <label className={labelCls}>Employment Type</label>
-                <select value={expForm.type} onChange={e => setExpForm(p => ({ ...p, type: e.target.value }))} className={inputCls}>
+                <label className="block text-xs font-medium mb-1" style={labelStyle}>Employment Type</label>
+                <select
+                  value={expForm.type}
+                  onChange={e => setExpForm(p => ({ ...p, type: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                  style={inputStyle}
+                >
                   {["Full-time","Part-time","Contract","Freelance","Internship"].map(t => <option key={t}>{t}</option>)}
                 </select>
               </div>
               <div>
-                <label className={labelCls}>Start Date</label>
-                <input type="date" value={expForm.startDate} onChange={e => setExpForm(p => ({ ...p, startDate: e.target.value }))} className={inputCls} />
+                <label className="block text-xs font-medium mb-1" style={labelStyle}>Start Date</label>
+                <input
+                  type="date"
+                  value={expForm.startDate}
+                  onChange={e => setExpForm(p => ({ ...p, startDate: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                  style={inputStyle}
+                />
               </div>
               {!expForm.current && (
                 <div>
-                  <label className={labelCls}>End Date</label>
-                  <input type="date" value={expForm.endDate} onChange={e => setExpForm(p => ({ ...p, endDate: e.target.value }))} className={inputCls} />
+                  <label className="block text-xs font-medium mb-1" style={labelStyle}>End Date</label>
+                  <input
+                    type="date"
+                    value={expForm.endDate}
+                    onChange={e => setExpForm(p => ({ ...p, endDate: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                    style={inputStyle}
+                  />
                 </div>
               )}
             </div>
             <label className="inline-flex items-center gap-2 mt-3 cursor-pointer">
-              <input type="checkbox" checked={expForm.current} onChange={e => setExpForm(p => ({ ...p, current: e.target.checked }))}
-                className="h-3.5 w-3.5 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 focus:ring-emerald-500 bg-zinc-50 dark:bg-zinc-950" />
-              <span className="text-xs text-zinc-700 dark:text-zinc-300">Currently active role</span>
+              <input
+                type="checkbox"
+                checked={expForm.current}
+                onChange={e => setExpForm(p => ({ ...p, current: e.target.checked }))}
+                className="h-3.5 w-3.5 rounded"
+                style={{ accentColor: "var(--nt-accent-sage)" }}
+              />
+              <span className="text-xs" style={{ color: "var(--nt-text-primary)" }}>Currently active role</span>
             </label>
             <div className="flex justify-end mt-3">
               <SaveBtn loading={expLoading} onClick={addExp} label="Save Role" />
@@ -415,7 +525,7 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         )}
 
         {experiences.length === 0 && !showExpForm && (
-          <p className="text-xs text-zinc-400 dark:text-zinc-500 text-center py-2">No experience records attached.</p>
+          <p className="text-xs text-center py-2" style={{ color: "var(--nt-text-muted)" }}>No experience records attached.</p>
         )}
       </Panel>
 
@@ -423,8 +533,15 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
       <Panel>
         <SectionHeader title="Education History"
           action={
-            <button onClick={() => setShowEduForm(v => !v)}
-              className="inline-flex items-center gap-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-2.5 py-1 text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+            <button
+              onClick={() => setShowEduForm(v => !v)}
+              className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-mono font-medium transition-colors"
+              style={{
+                backgroundColor: "var(--nt-bg-secondary)",
+                borderColor: "var(--nt-border)",
+                color: "var(--nt-text-primary)",
+              }}
+            >
               <span>{showEduForm ? "− Cancel" : "+ Add Education"}</span>
             </button>
           }
@@ -433,16 +550,30 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         {educations.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-4">
             {educations.map((e) => (
-              <div key={e._id} className="flex items-start gap-2.5 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 p-3">
-                <div className="h-8 w-8 rounded bg-zinc-200 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 flex-shrink-0 flex items-center justify-center font-mono text-xs font-bold text-zinc-800 dark:text-zinc-200">
+              <div
+                key={e._id}
+                className="flex items-start gap-2.5 rounded-md border p-3"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                }}
+              >
+                <div
+                  className="h-8 w-8 rounded border flex-shrink-0 flex items-center justify-center font-mono text-xs font-bold"
+                  style={{
+                    backgroundColor: "var(--nt-bg-secondary)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-text-primary)",
+                  }}
+                >
                   {getInitials(e.institution)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{e.degree}</p>
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{e.institution}{e.field ? ` · ${e.field}` : ""}</p>
-                  <p className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">{formatPeriod(e)}{e.gpa ? ` · GPA: ${e.gpa}` : ""}</p>
+                  <p className="text-xs font-semibold truncate" style={{ color: "var(--nt-text-primary)" }}>{e.degree}</p>
+                  <p className="text-[11px] truncate" style={{ color: "var(--nt-text-secondary)" }}>{e.institution}{e.field ? ` · ${e.field}` : ""}</p>
+                  <p className="text-[10px] font-mono mt-0.5" style={{ color: "var(--nt-text-muted)" }}>{formatPeriod(e)}{e.gpa ? ` · GPA: ${e.gpa}` : ""}</p>
                 </div>
-                <button onClick={() => deleteEdu(e._id)} className="text-zinc-400 hover:text-red-500 transition-colors flex-shrink-0">
+                <button onClick={() => deleteEdu(e._id)} className="transition-colors hover:text-red-500 flex-shrink-0" style={{ color: "var(--nt-text-muted)" }}>
                   <MdDeleteOutline size={16} />
                 </button>
               </div>
@@ -451,8 +582,8 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         )}
 
         {showEduForm && (
-          <div className="border-t border-zinc-100 dark:border-zinc-800 pt-4">
-            <p className="text-[11px] font-mono uppercase font-semibold text-zinc-500 dark:text-zinc-400 mb-3">Add Academic Record</p>
+          <div className="border-t pt-4" style={{ borderColor: "var(--nt-border)" }}>
+            <p className="text-[11px] font-mono uppercase font-semibold mb-3" style={{ color: "var(--nt-text-muted)" }}>Add Academic Record</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { key: "institution", label: "Institution",    placeholder: "University Name" },
@@ -461,26 +592,49 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
                 { key: "gpa",         label: "GPA / Score",    placeholder: "3.8 / 4.0"       },
               ].map(f => (
                 <div key={f.key}>
-                  <label className={labelCls}>{f.label}</label>
-                  <input type="text" value={eduForm[f.key]} placeholder={f.placeholder}
-                    onChange={e => setEduForm(p => ({ ...p, [f.key]: e.target.value }))} className={inputCls} />
+                  <label className="block text-xs font-medium mb-1" style={labelStyle}>{f.label}</label>
+                  <input
+                    type="text"
+                    value={eduForm[f.key]}
+                    placeholder={f.placeholder}
+                    onChange={e => setEduForm(p => ({ ...p, [f.key]: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                    style={inputStyle}
+                  />
                 </div>
               ))}
               <div>
-                <label className={labelCls}>Start Date</label>
-                <input type="date" value={eduForm.startDate} onChange={e => setEduForm(p => ({ ...p, startDate: e.target.value }))} className={inputCls} />
+                <label className="block text-xs font-medium mb-1" style={labelStyle}>Start Date</label>
+                <input
+                  type="date"
+                  value={eduForm.startDate}
+                  onChange={e => setEduForm(p => ({ ...p, startDate: e.target.value }))}
+                  className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                  style={inputStyle}
+                />
               </div>
               {!eduForm.current && (
                 <div>
-                  <label className={labelCls}>End Date</label>
-                  <input type="date" value={eduForm.endDate} onChange={e => setEduForm(p => ({ ...p, endDate: e.target.value }))} className={inputCls} />
+                  <label className="block text-xs font-medium mb-1" style={labelStyle}>End Date</label>
+                  <input
+                    type="date"
+                    value={eduForm.endDate}
+                    onChange={e => setEduForm(p => ({ ...p, endDate: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none"
+                    style={inputStyle}
+                  />
                 </div>
               )}
             </div>
             <label className="inline-flex items-center gap-2 mt-3 cursor-pointer">
-              <input type="checkbox" checked={eduForm.current} onChange={e => setEduForm(p => ({ ...p, current: e.target.checked }))}
-                className="h-3.5 w-3.5 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 focus:ring-emerald-500 bg-zinc-50 dark:bg-zinc-950" />
-              <span className="text-xs text-zinc-700 dark:text-zinc-300">Currently enrolled</span>
+              <input
+                type="checkbox"
+                checked={eduForm.current}
+                onChange={e => setEduForm(p => ({ ...p, current: e.target.checked }))}
+                className="h-3.5 w-3.5 rounded"
+                style={{ accentColor: "var(--nt-accent-sage)" }}
+              />
+              <span className="text-xs" style={{ color: "var(--nt-text-primary)" }}>Currently enrolled</span>
             </label>
             <div className="flex justify-end mt-3">
               <SaveBtn loading={eduLoading} onClick={addEdu} label="Save Academic Record" />
@@ -489,7 +643,7 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         )}
 
         {educations.length === 0 && !showEduForm && (
-          <p className="text-xs text-zinc-400 dark:text-zinc-500 text-center py-2">No education records attached.</p>
+          <p className="text-xs text-center py-2" style={{ color: "var(--nt-text-muted)" }}>No education records attached.</p>
         )}
       </Panel>
 
@@ -498,9 +652,17 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         <SectionHeader title="Skills & Keywords" />
         <div className="flex flex-wrap gap-1.5 mb-3 min-h-[2rem]">
           {skills.length === 0
-            ? <p className="text-xs text-zinc-400 dark:text-zinc-500">No skills registered.</p>
+            ? <p className="text-xs" style={{ color: "var(--nt-text-muted)" }}>No skills registered.</p>
             : skills.map(s => (
-              <span key={s} className="inline-flex items-center gap-1.5 rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 px-2 py-0.5 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">
+              <span
+                key={s}
+                className="inline-flex items-center gap-1.5 rounded border px-2 py-0.5 text-[11px] font-mono"
+                style={{
+                  backgroundColor: "var(--nt-bg-secondary)",
+                  borderColor: "var(--nt-border)",
+                  color: "var(--nt-text-primary)",
+                }}
+              >
                 {s}
                 <button onClick={() => removeSkill(s)} className="hover:text-red-500 transition-colors leading-none">×</button>
               </span>
@@ -509,13 +671,23 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
         </div>
         <div className="flex gap-2">
           <input
-            type="text" value={skillInput} placeholder="e.g. TypeScript, Docker, PostgreSQL..."
+            type="text"
+            value={skillInput}
+            placeholder="e.g. TypeScript, Docker, PostgreSQL..."
             onChange={e => setSkillInput(e.target.value)}
             onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addSkill())}
-            className={`${inputCls} flex-1`}
+            className="w-full px-3 py-2 rounded-md border text-xs focus:outline-none flex-1"
+            style={inputStyle}
           />
-          <button onClick={addSkill}
-            className="rounded-md border border-zinc-300 dark:border-zinc-700 px-3.5 py-1.5 text-xs font-mono font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors flex-shrink-0">
+          <button
+            onClick={addSkill}
+            className="rounded-md border px-3.5 py-1.5 text-xs font-mono font-medium transition-colors flex-shrink-0"
+            style={{
+              backgroundColor: "var(--nt-btn-sec-bg)",
+              borderColor: "var(--nt-border)",
+              color: "var(--nt-text-primary)",
+            }}
+          >
             Add
           </button>
         </div>
@@ -530,4 +702,3 @@ const PersonalInfoForm = ({ profileData, username, email, onProfileUpdate }) => 
 };
 
 export default PersonalInfoForm;
-

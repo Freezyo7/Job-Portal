@@ -12,6 +12,7 @@ const DashCards = ({ statusCounts, totalApplications }) => {
       label: "Applications Submitted",
       note: "Tracked by Django",
       pill: "Active",
+      color: "var(--nt-accent-sage)",
     },
     {
       icon: <BsHourglassSplit size={16} />,
@@ -19,6 +20,7 @@ const DashCards = ({ statusCounts, totalApplications }) => {
       label: "Under Review",
       note: "Awaiting recruiter updates",
       pill: "Pending",
+      color: "var(--nt-accent-gold)",
     },
     {
       icon: <HiMiniSparkles size={18} />,
@@ -26,6 +28,7 @@ const DashCards = ({ statusCounts, totalApplications }) => {
       label: "Shortlisted",
       note: "Strongest active pipeline",
       pill: "Pipeline",
+      color: "var(--nt-accent-sage)",
     },
     {
       icon: <IoCheckmarkDoneCircleOutline size={18} />,
@@ -33,6 +36,7 @@ const DashCards = ({ statusCounts, totalApplications }) => {
       label: "Offers Received",
       note: "Final-stage wins",
       pill: "Wins",
+      color: "var(--nt-accent-gold)",
     },
   ];
 
@@ -41,19 +45,53 @@ const DashCards = ({ statusCounts, totalApplications }) => {
       {cards.map((card, i) => (
         <div
           key={i}
-          className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 transition-colors hover:border-zinc-300 dark:hover:border-zinc-700"
+          className="rounded-lg border p-4 transition-colors"
+          style={{
+            backgroundColor: "var(--nt-bg-card)",
+            borderColor: "var(--nt-border)",
+            boxShadow: "var(--nt-shadow-sm)",
+          }}
         >
           <div className="flex items-center justify-between mb-3">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 text-zinc-700 dark:text-zinc-300">
+            <span
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border"
+              style={{
+                backgroundColor: "var(--nt-bg-secondary)",
+                borderColor: "var(--nt-border)",
+                color: card.color,
+              }}
+            >
               {card.icon}
             </span>
-            <span className="inline-flex items-center rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+            <span
+              className="inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold"
+              style={{
+                backgroundColor: "var(--nt-bg-secondary)",
+                borderColor: "var(--nt-border)",
+                color: card.color,
+              }}
+            >
               {card.pill}
             </span>
           </div>
-          <p className="text-2xl font-bold font-mono tracking-tight text-zinc-950 dark:text-zinc-50">{card.value}</p>
-          <p className="mt-1 text-xs font-medium text-zinc-600 dark:text-zinc-400">{card.label}</p>
-          <p className="mt-1 text-[11px] text-zinc-400 dark:text-zinc-500">{card.note}</p>
+          <p
+            className="text-2xl font-bold font-mono tracking-tight"
+            style={{ color: "var(--nt-text-primary)" }}
+          >
+            {card.value}
+          </p>
+          <p
+            className="mt-1 text-xs font-medium"
+            style={{ color: "var(--nt-text-secondary)" }}
+          >
+            {card.label}
+          </p>
+          <p
+            className="mt-1 text-[11px]"
+            style={{ color: "var(--nt-text-muted)" }}
+          >
+            {card.note}
+          </p>
         </div>
       ))}
     </div>
@@ -61,5 +99,3 @@ const DashCards = ({ statusCounts, totalApplications }) => {
 };
 
 export default DashCards;
-
-

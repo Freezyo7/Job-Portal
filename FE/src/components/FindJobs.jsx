@@ -19,25 +19,46 @@ const LogoOrInitials = ({ logo, name, size = "h-10 w-10" }) => {
         loading="lazy"
         decoding="async"
         onError={() => setFailedLogo(logo)}
-        className={`${size} rounded-md object-cover border border-zinc-200 dark:border-zinc-800 flex-shrink-0`}
+        className={`${size} rounded-md object-cover border flex-shrink-0`}
+        style={{ borderColor: "var(--nt-border)" }}
       />
     );
   }
   return (
-    <div className={`${size} rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-mono font-bold text-xs flex items-center justify-center flex-shrink-0`}>
+    <div
+      className={`${size} rounded-md border font-mono font-bold text-xs flex items-center justify-center flex-shrink-0`}
+      style={{
+        backgroundColor: "var(--nt-bg-card-alt)",
+        borderColor: "var(--nt-border)",
+        color: "var(--nt-text-primary)",
+      }}
+    >
       {getInitials(name)}
     </div>
   );
 };
 
 const DetailChip = ({ icon, label, value }) => (
-  <div className="flex items-center gap-3 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3">
-    <span className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 flex-shrink-0">
+  <div
+    className="flex items-center gap-3 rounded-md border p-3"
+    style={{
+      backgroundColor: "var(--nt-bg-card-alt)",
+      borderColor: "var(--nt-border)",
+    }}
+  >
+    <span
+      className="inline-flex h-8 w-8 items-center justify-center rounded-md border flex-shrink-0"
+      style={{
+        backgroundColor: "var(--nt-bg-secondary)",
+        borderColor: "var(--nt-border)",
+        color: "var(--nt-text-primary)",
+      }}
+    >
       {icon}
     </span>
     <div>
-      <p className="text-[10px] uppercase font-mono text-zinc-400 dark:text-zinc-500">{label}</p>
-      <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">{value}</p>
+      <p className="text-[10px] uppercase font-mono" style={{ color: "var(--nt-text-muted)" }}>{label}</p>
+      <p className="text-xs font-semibold" style={{ color: "var(--nt-text-primary)" }}>{value}</p>
     </div>
   </div>
 );
@@ -142,24 +163,38 @@ const FindJobs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-6 lg:px-8 text-zinc-900 dark:text-zinc-100 transition-colors">
+    <div className="min-h-screen px-4 py-6 md:px-6 lg:px-8 transition-colors" style={{ backgroundColor: "var(--nt-bg-primary)", color: "var(--nt-text-primary)" }}>
       <div className="mx-auto max-w-7xl flex flex-col gap-5 lg:grid lg:grid-cols-[1fr,1.35fr]">
 
         {/* ── Left: Job List ── */}
-        <div className="flex flex-col overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <div
+          className="flex flex-col overflow-hidden rounded-lg border"
+          style={{
+            backgroundColor: "var(--nt-bg-card)",
+            borderColor: "var(--nt-border)",
+            boxShadow: "var(--nt-shadow-sm)",
+          }}
+        >
 
           {/* Header */}
-          <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="p-4 border-b" style={{ borderColor: "var(--nt-border)" }}>
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className="text-base font-bold tracking-tight text-zinc-950 dark:text-zinc-50">Market Postings</h2>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                <h2 className="text-base font-bold tracking-tight" style={{ color: "var(--nt-text-primary)" }}>Market Postings</h2>
+                <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>
                   Showing {filteredJobs.length} of {totalCount} {totalCount === 1 ? "listing" : "listings"}
                 </p>
               </div>
               {stats && (
-                <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 text-xs font-mono font-medium text-emerald-600 dark:text-emerald-400">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-mono font-medium"
+                  style={{
+                    backgroundColor: "rgba(111, 175, 123, 0.15)",
+                    borderColor: "rgba(111, 175, 123, 0.3)",
+                    color: "var(--nt-accent-sage)",
+                  }}
+                >
+                  <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ backgroundColor: "var(--nt-accent-sage)" }} />
                   {stats.fetched_today} fetched today
                 </span>
               )}
@@ -167,13 +202,18 @@ const FindJobs = () => {
 
             {/* Search */}
             <div className="relative">
-              <CiSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+              <CiSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--nt-text-muted)" }} />
               <input
                 type="text"
                 placeholder="Search by title, company, location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                className="w-full pl-8 pr-3 py-2 rounded-md border text-xs focus:outline-none transition-colors"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                  color: "var(--nt-text-primary)",
+                }}
               />
             </div>
 
@@ -183,11 +223,20 @@ const FindJobs = () => {
                 <button
                   type="button"
                   onClick={() => setSourceFilter("")}
-                  className={`flex-shrink-0 rounded-md px-2.5 py-1 text-[11px] font-mono transition-colors ${
-                    sourceFilter === "" 
-                      ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-medium" 
-                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                  }`}
+                  className="flex-shrink-0 rounded-md px-2.5 py-1 text-[11px] font-mono transition-colors"
+                  style={
+                    sourceFilter === ""
+                      ? {
+                          backgroundColor: "var(--nt-accent-gold)",
+                          color: "var(--nt-btn-cta-text)",
+                          fontWeight: "600",
+                        }
+                      : {
+                          backgroundColor: "var(--nt-bg-secondary)",
+                          color: "var(--nt-text-secondary)",
+                          border: "1px solid var(--nt-border)",
+                        }
+                  }
                 >
                   All ({stats.total})
                 </button>
@@ -198,11 +247,20 @@ const FindJobs = () => {
                       key={src}
                       type="button"
                       onClick={() => setSourceFilter(sourceFilter === src ? "" : src)}
-                      className={`flex-shrink-0 rounded-md px-2.5 py-1 text-[11px] font-mono transition-colors ${
-                        sourceFilter === src 
-                          ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-medium" 
-                          : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
-                      }`}
+                      className="flex-shrink-0 rounded-md px-2.5 py-1 text-[11px] font-mono transition-colors"
+                      style={
+                        sourceFilter === src
+                          ? {
+                              backgroundColor: "var(--nt-accent-gold)",
+                              color: "var(--nt-btn-cta-text)",
+                              fontWeight: "600",
+                            }
+                          : {
+                              backgroundColor: "var(--nt-bg-secondary)",
+                              color: "var(--nt-text-secondary)",
+                              border: "1px solid var(--nt-border)",
+                            }
+                      }
                     >
                       {sourceLabel(src)} ({count})
                     </button>
@@ -212,21 +270,23 @@ const FindJobs = () => {
 
             {/* Quick toggles */}
             <div className="flex items-center gap-4 mt-3">
-              <label className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer select-none">
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none" style={{ color: "var(--nt-text-secondary)" }}>
                 <input
                   type="checkbox"
                   checked={remoteOnly}
                   onChange={(e) => setRemoteOnly(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 focus:ring-emerald-500 bg-zinc-50 dark:bg-zinc-950"
+                  className="h-3.5 w-3.5 rounded"
+                  style={{ accentColor: "var(--nt-accent-sage)" }}
                 />
                 Remote only
               </label>
-              <label className="flex items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400 cursor-pointer select-none">
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer select-none" style={{ color: "var(--nt-text-secondary)" }}>
                 <input
                   type="checkbox"
                   checked={fetchedTodayOnly}
                   onChange={(e) => setFetchedTodayOnly(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-zinc-300 dark:border-zinc-700 text-emerald-600 focus:ring-emerald-500 bg-zinc-50 dark:bg-zinc-950"
+                  className="h-3.5 w-3.5 rounded"
+                  style={{ accentColor: "var(--nt-accent-sage)" }}
                 />
                 Fetched today only
               </label>
@@ -239,17 +299,17 @@ const FindJobs = () => {
               <div className="flex items-center justify-center h-40">
                 <div className="flex gap-1.5">
                   {[0,1,2].map((i) => (
-                    <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                    <span key={i} className="h-2 w-2 rounded-full animate-bounce" style={{ backgroundColor: "var(--nt-accent-sage)", animationDelay: `${i * 0.15}s` }} />
                   ))}
                 </div>
               </div>
             ) : loadError ? (
-              <div className="flex flex-col items-center justify-center h-40 px-6 text-center text-zinc-500 dark:text-zinc-400">
+              <div className="flex flex-col items-center justify-center h-40 px-6 text-center" style={{ color: "var(--nt-text-muted)" }}>
                 <HiX size={28} className="mb-2 text-red-500" />
                 <p className="text-xs">{loadError}</p>
               </div>
             ) : filteredJobs.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-40 text-zinc-400 dark:text-zinc-500">
+              <div className="flex flex-col items-center justify-center h-40" style={{ color: "var(--nt-text-muted)" }}>
                 <CiSearch size={32} className="mb-2 opacity-40" />
                 <p className="text-xs font-semibold">No listings found</p>
                 <p className="text-[11px] mt-0.5">Try altering filters or search criteria</p>
@@ -261,42 +321,71 @@ const FindJobs = () => {
                   <div
                     key={job.id}
                     onClick={() => setSelectedJob(job)}
-                    className={`flex items-center gap-3 rounded-md border p-3 cursor-pointer transition-colors ${
+                    className="flex items-center gap-3 rounded-md border p-3 cursor-pointer transition-colors"
+                    style={
                       active
-                        ? "border-emerald-500/60 bg-emerald-500/5 dark:bg-emerald-500/10"
-                        : "border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700"
-                    }`}
+                        ? {
+                            backgroundColor: "var(--nt-bg-card-alt)",
+                            borderColor: "var(--nt-accent-sage)",
+                            borderLeftWidth: "3px",
+                          }
+                        : {
+                            backgroundColor: "var(--nt-bg-card)",
+                            borderColor: "var(--nt-border)",
+                          }
+                    }
                   >
                     <LogoOrInitials logo={job.companyLogo} name={job.companyName} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{job.jobTitle}</p>
-                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{job.companyName}</p>
+                      <p className="text-xs font-semibold truncate" style={{ color: "var(--nt-text-primary)" }}>{job.jobTitle}</p>
+                      <p className="text-[11px] truncate" style={{ color: "var(--nt-text-secondary)" }}>{job.companyName}</p>
                       <div className="flex items-center gap-1.5 mt-1 flex-wrap font-mono text-[10px]">
-                        <span className="inline-flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                        <span className="inline-flex items-center gap-1" style={{ color: "var(--nt-text-muted)" }}>
                           <CiLocationOn size={11} />{job.jobGeo}
                         </span>
-                        <span className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">
+                        <span
+                          className="px-1.5 py-0.5 rounded border"
+                          style={{
+                            backgroundColor: "var(--nt-bg-secondary)",
+                            borderColor: "var(--nt-border)",
+                            color: "var(--nt-text-secondary)",
+                          }}
+                        >
                           {job.jobType}
                         </span>
                         {job.sourceLabel && (
-                          <span className="px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/60 font-semibold">
+                          <span
+                            className="px-1.5 py-0.5 rounded border font-semibold"
+                            style={{
+                              backgroundColor: "var(--nt-bg-secondary)",
+                              borderColor: "var(--nt-border)",
+                              color: "var(--nt-text-primary)",
+                            }}
+                          >
                             {job.sourceLabel}
                           </span>
                         )}
                         {job.isRemote && (
-                          <span className="rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 font-semibold">
+                          <span
+                            className="rounded border px-1.5 py-0.5 font-semibold"
+                            style={{
+                              backgroundColor: "rgba(111, 175, 123, 0.15)",
+                              borderColor: "rgba(111, 175, 123, 0.3)",
+                              color: "var(--nt-accent-sage)",
+                            }}
+                          >
                             Remote
                           </span>
                         )}
                         {job.fetchedAt && (
-                          <span className="inline-flex items-center gap-1 text-zinc-400 dark:text-zinc-500">
+                          <span className="inline-flex items-center gap-1" style={{ color: "var(--nt-text-muted)" }}>
                             <BsClock size={9} />{timeAgo(job.fetchedAt)}
                           </span>
                         )}
                       </div>
                     </div>
                     {active && (
-                      <HiArrowRight size={13} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                      <HiArrowRight size={13} style={{ color: "var(--nt-accent-sage)" }} className="flex-shrink-0" />
                     )}
                   </div>
                 );
@@ -308,7 +397,12 @@ const FindJobs = () => {
                 type="button"
                 onClick={handleLoadMore}
                 disabled={loadingMore}
-                className="w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/60 py-2 text-xs font-medium text-zinc-800 dark:text-zinc-200 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-60"
+                className="w-full rounded-md border py-2 text-xs font-medium transition-colors disabled:opacity-60"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                  color: "var(--nt-text-primary)",
+                }}
               >
                 {loadingMore
                   ? "Loading..."
@@ -319,39 +413,87 @@ const FindJobs = () => {
         </div>
 
         {/* ── Right: Job Detail ── */}
-        <div className="flex flex-col overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+        <div
+          className="flex flex-col overflow-hidden rounded-lg border"
+          style={{
+            backgroundColor: "var(--nt-bg-card)",
+            borderColor: "var(--nt-border)",
+            boxShadow: "var(--nt-shadow-sm)",
+          }}
+        >
           {selectedJob ? (
             <>
-              {/* Sleek industrial banner */}
-              <div className="relative h-20 flex-shrink-0 bg-zinc-900 dark:bg-zinc-950 border-b border-zinc-800">
+              {/* Nature header banner */}
+              <div
+                className="relative h-20 flex-shrink-0 border-b"
+                style={{
+                  backgroundColor: "var(--nt-bg-secondary)",
+                  borderColor: "var(--nt-border)",
+                }}
+              >
                 <div className="absolute -bottom-6 left-5">
                   <LogoOrInitials logo={selectedJob.companyLogo} name={selectedJob.companyName} size="h-12 w-12" />
                 </div>
                 {selectedJob.sourceLabel && (
-                  <span className="absolute top-3 right-4 font-mono text-[10px] uppercase font-semibold px-2 py-0.5 rounded bg-zinc-800 border border-zinc-700 text-zinc-200">
+                  <span
+                    className="absolute top-3 right-4 font-mono text-[10px] uppercase font-semibold px-2 py-0.5 rounded border"
+                    style={{
+                      backgroundColor: "var(--nt-bg-card)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-primary)",
+                    }}
+                  >
                     {selectedJob.sourceLabel}
                   </span>
                 )}
               </div>
 
               {/* Title row */}
-              <div className="px-5 pt-8 pb-3.5 border-b border-zinc-200 dark:border-zinc-800">
-                <h2 className="text-base font-bold text-zinc-950 dark:text-zinc-50">{selectedJob.jobTitle}</h2>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{selectedJob.companyName}</p>
+              <div className="px-5 pt-8 pb-3.5 border-b" style={{ borderColor: "var(--nt-border)" }}>
+                <h2 className="text-base font-bold" style={{ color: "var(--nt-text-primary)" }}>{selectedJob.jobTitle}</h2>
+                <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>{selectedJob.companyName}</p>
                 <div className="flex flex-wrap gap-1.5 mt-2.5 font-mono text-[10px]">
                   {selectedJob.domain && (
-                    <span className="rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 text-zinc-700 dark:text-zinc-300">
+                    <span
+                      className="rounded border px-2 py-0.5"
+                      style={{
+                        backgroundColor: "var(--nt-bg-card-alt)",
+                        borderColor: "var(--nt-border)",
+                        color: "var(--nt-text-primary)",
+                      }}
+                    >
                       {selectedJob.domain}
                     </span>
                   )}
-                  <span className="rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 text-zinc-700 dark:text-zinc-300">
+                  <span
+                    className="rounded border px-2 py-0.5"
+                    style={{
+                      backgroundColor: "var(--nt-bg-card-alt)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-primary)",
+                    }}
+                  >
                     {selectedJob.jobType}
                   </span>
-                  <span className="rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 px-2 py-0.5 text-zinc-700 dark:text-zinc-300">
+                  <span
+                    className="rounded border px-2 py-0.5"
+                    style={{
+                      backgroundColor: "var(--nt-bg-card-alt)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-primary)",
+                    }}
+                  >
                     {selectedJob.jobLevel}
                   </span>
                   {selectedJob.isRemote && (
-                    <span className="rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span
+                      className="rounded border px-2 py-0.5 font-semibold"
+                      style={{
+                        backgroundColor: "rgba(111, 175, 123, 0.15)",
+                        borderColor: "rgba(111, 175, 123, 0.3)",
+                        color: "var(--nt-accent-sage)",
+                      }}
+                    >
                       Remote
                     </span>
                   )}
@@ -378,10 +520,17 @@ const FindJobs = () => {
 
                 {/* Description */}
                 {selectedJob.jobDescription && (
-                  <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 p-4">
-                    <h3 className="text-[11px] font-mono uppercase font-semibold text-zinc-500 dark:text-zinc-400 mb-2">Job Specification</h3>
+                  <div
+                    className="rounded-md border p-4"
+                    style={{
+                      backgroundColor: "var(--nt-bg-card-alt)",
+                      borderColor: "var(--nt-border)",
+                    }}
+                  >
+                    <h3 className="text-[11px] font-mono uppercase font-semibold mb-2" style={{ color: "var(--nt-text-muted)" }}>Job Specification</h3>
                     <div
-                      className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed max-w-none prose prose-xs dark:prose-invert"
+                      className="text-xs leading-relaxed max-w-none"
+                      style={{ color: "var(--nt-text-primary)" }}
                       dangerouslySetInnerHTML={{ __html: selectedJob.jobDescription }}
                     />
                   </div>
@@ -391,14 +540,23 @@ const FindJobs = () => {
                 <div className="flex flex-col sm:flex-row gap-2 pt-2">
                   <button
                     onClick={() => setCoverLetterJob(selectedJob)}
-                    className="flex-1 flex items-center justify-center gap-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 py-2.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-md border py-2.5 text-xs font-medium transition-colors"
+                    style={{
+                      backgroundColor: "var(--nt-btn-sec-bg)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-primary)",
+                    }}
                   >
                     ✉ Generate Cover Letter
                   </button>
 
                   <button
                     onClick={() => handleApplyClick(selectedJob)}
-                    className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 py-2.5 text-xs font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-md py-2.5 text-xs font-medium transition-colors"
+                    style={{
+                      backgroundColor: "var(--nt-accent-gold)",
+                      color: "var(--nt-btn-cta-text)",
+                    }}
                   >
                     Apply Now <HiArrowRight size={13} />
                   </button>
@@ -406,11 +564,17 @@ const FindJobs = () => {
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-zinc-400 dark:text-zinc-500 gap-2 py-16">
-              <div className="h-12 w-12 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center">
-                <BsBriefcase size={20} className="text-zinc-400" />
+            <div className="flex flex-col items-center justify-center h-full gap-2 py-16" style={{ color: "var(--nt-text-muted)" }}>
+              <div
+                className="h-12 w-12 rounded-md border flex items-center justify-center"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "var(--nt-border)",
+                }}
+              >
+                <BsBriefcase size={20} style={{ color: "var(--nt-text-muted)" }} />
               </div>
-              <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Select a posting to inspect details</p>
+              <p className="text-xs font-medium" style={{ color: "var(--nt-text-secondary)" }}>Select a posting to inspect details</p>
             </div>
           )}
         </div>
@@ -422,10 +586,16 @@ const FindJobs = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={applyStatus === "loading" ? undefined : closeModal} />
 
-          <div className="relative w-full max-w-sm rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
+          <div
+            className="relative w-full max-w-sm rounded-lg border shadow-xl overflow-hidden"
+            style={{
+              backgroundColor: "var(--nt-bg-card)",
+              borderColor: "var(--nt-border)",
+            }}
+          >
             <div className="p-5">
               {applyStatus !== "loading" && (
-                <button onClick={closeModal} className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">
+                <button onClick={closeModal} className="absolute top-4 right-4 transition-colors" style={{ color: "var(--nt-text-muted)" }}>
                   <HiX size={16} />
                 </button>
               )}
@@ -433,27 +603,36 @@ const FindJobs = () => {
               <div className="flex items-center gap-3 mb-4">
                 <LogoOrInitials logo={pendingJob.companyLogo} name={pendingJob.companyName} size="h-9 w-9" />
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{pendingJob.jobTitle}</p>
-                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{pendingJob.companyName}</p>
+                  <p className="text-xs font-semibold truncate" style={{ color: "var(--nt-text-primary)" }}>{pendingJob.jobTitle}</p>
+                  <p className="text-[11px] truncate" style={{ color: "var(--nt-text-secondary)" }}>{pendingJob.companyName}</p>
                 </div>
               </div>
 
               {!applyStatus && (
                 <>
-                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Confirm Application Status</p>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 leading-relaxed">
+                  <p className="text-xs font-semibold mb-1" style={{ color: "var(--nt-text-primary)" }}>Confirm Application Status</p>
+                  <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--nt-text-secondary)" }}>
                     We opened the job page in a new tab. Confirm if you completed submission to log this in your activity telemetry.
                   </p>
                   <div className="flex gap-2">
                     <button
                       onClick={handleConfirmApply}
-                      className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 py-2 text-xs font-medium text-white hover:bg-emerald-700 transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-md py-2 text-xs font-medium transition-colors"
+                      style={{
+                        backgroundColor: "var(--nt-accent-gold)",
+                        color: "var(--nt-btn-cta-text)",
+                      }}
                     >
                       <HiCheck size={13} /> Yes, I Applied
                     </button>
                     <button
                       onClick={closeModal}
-                      className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                      className="flex-1 rounded-md border py-2 text-xs font-medium transition-colors"
+                      style={{
+                        backgroundColor: "var(--nt-btn-sec-bg)",
+                        borderColor: "var(--nt-border)",
+                        color: "var(--nt-text-primary)",
+                      }}
                     >
                       Not Yet
                     </button>
@@ -465,21 +644,34 @@ const FindJobs = () => {
                 <div className="flex flex-col items-center py-4 gap-2.5">
                   <div className="flex gap-1.5">
                     {[0,1,2].map((i) => (
-                      <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                      <span key={i} className="h-2 w-2 rounded-full animate-bounce" style={{ backgroundColor: "var(--nt-accent-sage)", animationDelay: `${i * 0.15}s` }} />
                     ))}
                   </div>
-                  <p className="text-xs text-zinc-400 font-mono">Syncing application...</p>
+                  <p className="text-xs font-mono" style={{ color: "var(--nt-text-muted)" }}>Syncing application...</p>
                 </div>
               )}
 
               {applyStatus === "success" && (
                 <div className="flex flex-col items-center py-3 gap-2.5 text-center">
-                  <div className="h-10 w-10 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                    <HiCheck size={20} className="text-emerald-600 dark:text-emerald-400" />
+                  <div
+                    className="h-10 w-10 rounded-md border flex items-center justify-center"
+                    style={{
+                      backgroundColor: "rgba(111, 175, 123, 0.15)",
+                      borderColor: "rgba(111, 175, 123, 0.3)",
+                    }}
+                  >
+                    <HiCheck size={20} style={{ color: "var(--nt-accent-sage)" }} />
                   </div>
-                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Application Tracked</p>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Successfully synced to your telemetry board.</p>
-                  <button onClick={closeModal} className="mt-1 rounded-md bg-emerald-600 dark:bg-emerald-500 px-5 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 transition-colors">
+                  <p className="text-xs font-semibold" style={{ color: "var(--nt-text-primary)" }}>Application Tracked</p>
+                  <p className="text-xs" style={{ color: "var(--nt-text-secondary)" }}>Successfully synced to your telemetry board.</p>
+                  <button
+                    onClick={closeModal}
+                    className="mt-1 rounded-md px-5 py-1.5 text-xs font-medium transition-colors"
+                    style={{
+                      backgroundColor: "var(--nt-accent-gold)",
+                      color: "var(--nt-btn-cta-text)",
+                    }}
+                  >
                     Done
                   </button>
                 </div>
@@ -487,9 +679,17 @@ const FindJobs = () => {
 
               {applyStatus === "duplicate" && (
                 <div className="flex flex-col items-center py-3 gap-2.5 text-center">
-                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Already Tracked</p>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">This posting is already registered in your application history.</p>
-                  <button onClick={closeModal} className="mt-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-5 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                  <p className="text-xs font-semibold" style={{ color: "var(--nt-text-primary)" }}>Already Tracked</p>
+                  <p className="text-xs" style={{ color: "var(--nt-text-secondary)" }}>This posting is already registered in your application history.</p>
+                  <button
+                    onClick={closeModal}
+                    className="mt-1 rounded-md border px-5 py-1.5 text-xs font-medium transition-colors"
+                    style={{
+                      backgroundColor: "var(--nt-btn-sec-bg)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-primary)",
+                    }}
+                  >
                     Close
                   </button>
                 </div>
@@ -498,8 +698,16 @@ const FindJobs = () => {
               {applyStatus === "error" && (
                 <div className="flex flex-col items-center py-3 gap-2.5 text-center">
                   <p className="text-xs font-semibold text-red-500">Failed to Save</p>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Could not record submission status. Please try again.</p>
-                  <button onClick={closeModal} className="mt-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-5 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                  <p className="text-xs" style={{ color: "var(--nt-text-secondary)" }}>Could not record submission status. Please try again.</p>
+                  <button
+                    onClick={closeModal}
+                    className="mt-1 rounded-md border px-5 py-1.5 text-xs font-medium transition-colors"
+                    style={{
+                      backgroundColor: "var(--nt-btn-sec-bg)",
+                      borderColor: "var(--nt-border)",
+                      color: "var(--nt-text-primary)",
+                    }}
+                  >
                     Close
                   </button>
                 </div>
@@ -518,5 +726,3 @@ const FindJobs = () => {
 };
 
 export default FindJobs;
-
-

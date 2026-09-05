@@ -10,10 +10,17 @@ const API = "/auth/settings";
 // ── Reusable input ─────────────────────────────────────────────────────────
 const Field = ({ label, id, type = "text", value, onChange, disabled, placeholder, hint }) => (
   <div>
-    <label htmlFor={id} className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1.5">
+    <label htmlFor={id} className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: "var(--nt-text-secondary)" }}>
       {label}
       {disabled && (
-        <span className="ml-2 rounded bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-500 border border-zinc-200 dark:border-zinc-700/50">
+        <span
+          className="ml-2 rounded px-1.5 py-0.5 text-[10px] font-mono border"
+          style={{
+            backgroundColor: "var(--nt-bg-secondary)",
+            borderColor: "var(--nt-border)",
+            color: "var(--nt-text-muted)",
+          }}
+        >
           read-only
         </span>
       )}
@@ -21,22 +28,29 @@ const Field = ({ label, id, type = "text", value, onChange, disabled, placeholde
     <input
       id={id} type={type} value={value} onChange={onChange}
       disabled={disabled} placeholder={placeholder}
-      className={`w-full px-3 py-2 rounded-md border text-xs font-mono transition-all focus:outline-none
-        ${disabled
-          ? "border-zinc-200 dark:border-zinc-800/80 bg-zinc-100/70 dark:bg-zinc-950/70 text-zinc-400 dark:text-zinc-500 cursor-not-allowed"
-          : "border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:border-emerald-500 dark:focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20"
-        }`}
+      className={`w-full px-3 py-2 rounded-md border text-xs font-mono transition-all focus:outline-none ${
+        disabled ? "opacity-60 cursor-not-allowed" : ""
+      }`}
+      style={{
+        backgroundColor: disabled ? "var(--nt-bg-secondary)" : "var(--nt-bg-card-alt)",
+        borderColor: "var(--nt-border)",
+        color: "var(--nt-text-primary)",
+      }}
     />
-    {hint && <p className="mt-1 text-[11px] text-zinc-500 dark:text-zinc-400">{hint}</p>}
+    {hint && <p className="mt-1 text-[11px]" style={{ color: "var(--nt-text-muted)" }}>{hint}</p>}
   </div>
 );
 
 // ── Toast ──────────────────────────────────────────────────────────────────
 const Toast = ({ msg, type, onClose }) => (
-  <div className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-lg border px-4 py-2.5 shadow-xl text-xs font-medium transition-all
-    ${type === "success" 
-      ? "bg-zinc-900 dark:bg-zinc-900 border-emerald-500/40 text-emerald-400" 
-      : "bg-zinc-900 dark:bg-zinc-900 border-rose-500/40 text-rose-400"}`}>
+  <div
+    className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-lg border px-4 py-2.5 shadow-xl text-xs font-medium transition-all"
+    style={{
+      backgroundColor: "var(--nt-bg-card)",
+      borderColor: type === "success" ? "var(--nt-accent-sage)" : "#D9534F",
+      color: type === "success" ? "var(--nt-accent-sage)" : "#D9534F",
+    }}
+  >
     {type === "success" ? <HiCheck size={16} /> : <HiX size={16} />}
     <span>{msg}</span>
     <button onClick={onClose} className="ml-2 opacity-60 hover:opacity-100"><HiX size={14} /></button>
@@ -45,15 +59,29 @@ const Toast = ({ msg, type, onClose }) => (
 
 // ── Section wrapper ────────────────────────────────────────────────────────
 const Section = ({ icon, title, subtitle, children }) => (
-  <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-none">
+  <div
+    className="rounded-lg border overflow-hidden shadow-none"
+    style={{
+      backgroundColor: "var(--nt-bg-card)",
+      borderColor: "var(--nt-border)",
+      boxShadow: "var(--nt-shadow-sm)",
+    }}
+  >
     <div className="p-5">
-      <div className="flex items-center gap-3 mb-5 border-b border-zinc-100 dark:border-zinc-800 pb-3.5">
-        <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700/60">
+      <div className="flex items-center gap-3 mb-5 border-b pb-3.5" style={{ borderColor: "var(--nt-border)" }}>
+        <span
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md border"
+          style={{
+            backgroundColor: "var(--nt-bg-secondary)",
+            borderColor: "var(--nt-border)",
+            color: "var(--nt-text-primary)",
+          }}
+        >
           {icon}
         </span>
         <div>
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
-          {subtitle && <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{subtitle}</p>}
+          <h3 className="text-sm font-semibold" style={{ color: "var(--nt-text-primary)" }}>{title}</h3>
+          {subtitle && <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -92,7 +120,6 @@ const Settings = () => {
     api.get(API)
       .then((res) => {
         const raw = res.data && typeof res.data === "object" ? res.data : null;
-        // Normalise Django field names for the UI
         const safeUser = raw ? {
           ...raw,
           createdAt:    raw.date_joined,
@@ -117,7 +144,6 @@ const Settings = () => {
     try {
       const res = await api.patch(`${API}/profile/`, profile);
       if (res.data?.email_changed) {
-        // Account deactivated – will be redirected to login after cookie is cleared
         showToast("Email updated. Please verify your new inbox to continue.");
         setTimeout(() => navigate("/login"), 2500);
         return;
@@ -175,11 +201,11 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "var(--nt-bg-primary)" }}>
         <div className="flex gap-1.5">
           {[0, 1, 2].map((i) => (
-            <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"
-              style={{ animationDelay: `${i * 0.15}s` }} />
+            <span key={i} className="h-2 w-2 rounded-full animate-pulse"
+              style={{ backgroundColor: "var(--nt-accent-sage)", animationDelay: `${i * 0.15}s` }} />
           ))}
         </div>
       </div>
@@ -187,22 +213,28 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-8 lg:px-6 lg:py-6 text-zinc-900 dark:text-zinc-100 transition-colors duration-150">
+    <div
+      className="min-h-screen px-4 py-6 md:px-8 lg:px-6 lg:py-6 transition-colors duration-150"
+      style={{
+        backgroundColor: "var(--nt-bg-primary)",
+        color: "var(--nt-text-primary)",
+      }}
+    >
       <div className="mx-auto max-w-3xl flex flex-col gap-5">
 
         {/* Page header */}
-        <div className="border-b border-zinc-200 dark:border-zinc-800 pb-4">
-          <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">System Settings</h1>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Manage preferences, security configuration, and authentication credentials.</p>
+        <div className="border-b pb-4" style={{ borderColor: "var(--nt-border)" }}>
+          <h1 className="text-base font-semibold tracking-tight" style={{ color: "var(--nt-text-primary)" }}>System Settings</h1>
+          <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>Manage preferences, security configuration, and authentication credentials.</p>
         </div>
 
         {/* ── Appearance & Theme ── */}
         <Section icon={<BsSun size={15} />} title="Theme Configuration" subtitle="Select interface mode for telemetry and workspace.">
           <div className="grid grid-cols-3 gap-3">
             {[
-              { id: "light", label: "Light Mode", icon: <BsSun size={16} className="text-zinc-700 dark:text-zinc-300" />, desc: "High-contrast daylight" },
-              { id: "dark", label: "Dark Mode", icon: <BsMoon size={16} className="text-emerald-400" />, desc: "Zinc 950 industrial" },
-              { id: "system", label: "System Sync", icon: <BsDisplay size={16} className="text-zinc-400" />, desc: `Auto (${resolvedTheme})` },
+              { id: "light", label: "Light Mode", icon: <BsSun size={16} style={{ color: "var(--nt-accent-gold)" }} />, desc: "Warm Sand & Sage" },
+              { id: "dark", label: "Dark Mode", icon: <BsMoon size={16} style={{ color: "var(--nt-accent-sage)" }} />, desc: "Deep Forest & Teal" },
+              { id: "system", label: "System Sync", icon: <BsDisplay size={16} style={{ color: "var(--nt-text-muted)" }} />, desc: `Auto (${resolvedTheme})` },
             ].map((opt) => {
               const active = theme === opt.id;
               return (
@@ -210,19 +242,35 @@ const Settings = () => {
                   key={opt.id}
                   type="button"
                   onClick={() => setTheme(opt.id)}
-                  className={`flex flex-col items-center text-center p-3.5 rounded-lg border transition-all ${
+                  className="flex flex-col items-center text-center p-3.5 rounded-lg border transition-all"
+                  style={
                     active
-                      ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shadow-sm"
-                      : "border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 hover:border-zinc-300 dark:hover:border-zinc-700"
-                  }`}
+                      ? {
+                          backgroundColor: "var(--nt-bg-card-alt)",
+                          borderColor: "var(--nt-accent-sage)",
+                          color: "var(--nt-accent-sage)",
+                          borderWidth: "1.5px",
+                        }
+                      : {
+                          backgroundColor: "var(--nt-bg-secondary)",
+                          borderColor: "var(--nt-border)",
+                          color: "var(--nt-text-primary)",
+                        }
+                  }
                 >
-                  <div className="p-2 rounded-md bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 mb-2">
+                  <div
+                    className="p-2 rounded-md border mb-2"
+                    style={{
+                      backgroundColor: "var(--nt-bg-card)",
+                      borderColor: "var(--nt-border)",
+                    }}
+                  >
                     {opt.icon}
                   </div>
-                  <span className={`text-xs font-semibold ${active ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-700 dark:text-zinc-300"}`}>
+                  <span className="text-xs font-semibold" style={{ color: active ? "var(--nt-accent-sage)" : "var(--nt-text-primary)" }}>
                     {opt.label}
                   </span>
-                  <span className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  <span className="text-[10px] mt-0.5" style={{ color: "var(--nt-text-muted)" }}>
                     {opt.desc}
                   </span>
                 </button>
@@ -260,7 +308,11 @@ const Settings = () => {
             <div className="flex justify-end pt-2">
               <button
                 type="submit" disabled={profileLoading}
-                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors shadow-none disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-md px-3.5 py-2 text-xs font-semibold transition-colors shadow-none disabled:opacity-60"
+                style={{
+                  backgroundColor: "var(--nt-accent-gold)",
+                  color: "var(--nt-btn-cta-text)",
+                }}
               >
                 {profileLoading ? (
                   <span className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -297,7 +349,11 @@ const Settings = () => {
             <div className="flex justify-end pt-2">
               <button
                 type="submit" disabled={pwdLoading}
-                className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 px-3.5 py-2 text-xs font-semibold text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors shadow-none disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-md px-3.5 py-2 text-xs font-semibold transition-colors shadow-none disabled:opacity-60"
+                style={{
+                  backgroundColor: "var(--nt-accent-gold)",
+                  color: "var(--nt-btn-cta-text)",
+                }}
               >
                 {pwdLoading ? (
                   <span className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -309,39 +365,63 @@ const Settings = () => {
         </Section>
 
         {/* ── Danger Zone ── */}
-        <div className="rounded-lg border border-rose-200 dark:border-rose-950 bg-rose-50/20 dark:bg-rose-950/10 p-5">
+        <div
+          className="rounded-lg border p-5"
+          style={{
+            backgroundColor: "var(--nt-bg-card)",
+            borderColor: "#D9534F",
+          }}
+        >
           <div className="flex items-center gap-3 mb-4">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/50">
+            <span
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md border"
+              style={{
+                backgroundColor: "rgba(217, 83, 79, 0.15)",
+                borderColor: "rgba(217, 83, 79, 0.3)",
+                color: "#D9534F",
+              }}
+            >
               <BsTrash size={14} />
             </span>
             <div>
-              <h3 className="text-sm font-semibold text-rose-600 dark:text-rose-400">Danger Zone</h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Permanent operations that will erase all telemetry and account history.</p>
+              <h3 className="text-sm font-semibold" style={{ color: "#D9534F" }}>Danger Zone</h3>
+              <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>Permanent operations that will erase all telemetry and account history.</p>
             </div>
           </div>
 
           {!showDeleteConfirm ? (
             <button
               onClick={() => setShowDeleteConfirm(true)}
-              className="rounded-md border border-rose-300 dark:border-rose-900/60 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+              className="rounded-md border px-3.5 py-2 text-xs font-semibold transition-colors"
+              style={{
+                borderColor: "#D9534F",
+                color: "#D9534F",
+                backgroundColor: "transparent",
+              }}
             >
               Delete Account
             </button>
           ) : (
             <div className="flex flex-col gap-3">
-              <p className="text-xs text-rose-600 dark:text-rose-400 leading-relaxed">
+              <p className="text-xs leading-relaxed" style={{ color: "#D9534F" }}>
                 This will permanently delete your account and all associated application telemetry. Enter password to confirm execution.
               </p>
               <input
                 type="password" value={deletePassword}
                 onChange={(e) => setDeletePassword(e.target.value)}
                 placeholder="Enter account password"
-                className="w-full px-3 py-2 rounded-md border border-rose-300 dark:border-rose-900/60 bg-white dark:bg-zinc-950 text-xs font-mono text-zinc-900 dark:text-zinc-100 focus:outline-none focus:border-rose-500"
+                className="w-full px-3 py-2 rounded-md border text-xs font-mono focus:outline-none"
+                style={{
+                  backgroundColor: "var(--nt-bg-card-alt)",
+                  borderColor: "#D9534F",
+                  color: "var(--nt-text-primary)",
+                }}
               />
               <div className="flex gap-2.5">
                 <button
                   onClick={handleDeleteAccount} disabled={!deletePassword || deleteLoading}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-rose-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-rose-700 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-md px-3.5 py-2 text-xs font-semibold text-white transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: "#D9534F" }}
                 >
                   {deleteLoading ? (
                     <span className="h-3 w-3 rounded-full border-2 border-white/30 border-t-white animate-spin" />
@@ -350,7 +430,12 @@ const Settings = () => {
                 </button>
                 <button
                   onClick={() => { setShowDeleteConfirm(false); setDeletePassword(""); }}
-                  className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-800 px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+                  className="rounded-md border px-3 py-2 text-xs font-semibold transition-colors"
+                  style={{
+                    backgroundColor: "var(--nt-btn-sec-bg)",
+                    borderColor: "var(--nt-border)",
+                    color: "var(--nt-text-primary)",
+                  }}
                 >
                   Cancel
                 </button>
@@ -368,4 +453,3 @@ const Settings = () => {
 };
 
 export default Settings;
-
