@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   BsBriefcase, BsLinkedin, BsEnvelope, BsPersonPlus, BsX, BsCheck2,
@@ -8,22 +8,22 @@ import { HiX } from "react-icons/hi";
 import api from "../lib/api";
 import { resolveLogoUrl, toDisplayLogoUrl } from "../lib/jobLogos";
 
-// ── Platform badge ────────────────────────────────────────────────────────────
+// ── Platform badge (Clean Monochromatic / Zinc) ──────────────────────────────
 const PLATFORM_CONFIG = {
-  naukri:   { label: "Naukri",   bg: "bg-orange-50",  text: "text-orange-600",  border: "border-orange-200" },
-  foundit:  { label: "Foundit",  bg: "bg-blue-50",    text: "text-blue-600",    border: "border-blue-200"   },
-  hirist:   { label: "Hirist",   bg: "bg-violet-50",  text: "text-violet-600",  border: "border-violet-200" },
-  unstop:   { label: "Unstop",   bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200"},
-  linkedin: { label: "LinkedIn", bg: "bg-sky-50",     text: "text-sky-600",     border: "border-sky-200"    },
-  indeed:   { label: "Indeed",   bg: "bg-indigo-50",  text: "text-indigo-600",  border: "border-indigo-200" },
+  naukri:   { label: "Naukri",   bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-700 dark:text-zinc-300", border: "border-zinc-200 dark:border-zinc-700" },
+  foundit:  { label: "Foundit",  bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-700 dark:text-zinc-300", border: "border-zinc-200 dark:border-zinc-700" },
+  hirist:   { label: "Hirist",   bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-700 dark:text-zinc-300", border: "border-zinc-200 dark:border-zinc-700" },
+  unstop:   { label: "Unstop",   bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-700 dark:text-zinc-300", border: "border-zinc-200 dark:border-zinc-700" },
+  linkedin: { label: "LinkedIn", bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-700 dark:text-zinc-300", border: "border-zinc-200 dark:border-zinc-700" },
+  indeed:   { label: "Indeed",   bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-700 dark:text-zinc-300", border: "border-zinc-200 dark:border-zinc-700" },
 };
 
 const PlatformBadge = ({ source }) => {
   const cfg = PLATFORM_CONFIG[source?.toLowerCase()] ?? {
-    label: source ?? "Other", bg: "bg-slate-50", text: "text-slate-500", border: "border-slate-200",
+    label: source ?? "Other", bg: "bg-zinc-100 dark:bg-zinc-800", text: "text-zinc-600 dark:text-zinc-400", border: "border-zinc-200 dark:border-zinc-700",
   };
   return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-wide ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-mono font-medium ${cfg.bg} ${cfg.text} ${cfg.border}`}>
       {cfg.label}
     </span>
   );
@@ -36,12 +36,12 @@ const LogoOrInitials = ({ logo, name }) => {
   if (logo && failed !== logo) {
     return (
       <img src={logo} alt={name} loading="lazy" onError={() => setFailed(logo)}
-        className="h-11 w-11 rounded-xl object-cover border border-slate-100 flex-shrink-0" />
+        className="h-10 w-10 rounded-md object-cover border border-zinc-200 dark:border-zinc-800 flex-shrink-0" />
     );
   }
   return (
-    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-[#4f46e5] to-[#7c3aed] flex items-center justify-center flex-shrink-0">
-      <span className="text-xs font-bold text-white">{initials}</span>
+    <div className="h-10 w-10 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-100 flex items-center justify-center flex-shrink-0 font-mono text-xs font-bold">
+      {initials}
     </div>
   );
 };
@@ -71,14 +71,14 @@ const ContactModal = ({ application, onClose, onSaved }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="w-full max-w-md rounded-3xl border-2 border-slate-200/80 bg-white shadow-2xl p-6 flex flex-col gap-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs px-4">
+      <div className="w-full max-w-md rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col gap-4 shadow-xl">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-800">Add Recruiter / Contact</h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-700"><HiX size={18} /></button>
+          <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Add Recruiter / Contact</h3>
+          <button onClick={onClose} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"><HiX size={18} /></button>
         </div>
-        <p className="text-[11px] text-slate-400">
-          Attach recruiter or referral info for <strong className="text-slate-600">{application.job.title}</strong> at <strong className="text-slate-600">{application.job.company}</strong>.
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Attach recruiter or referral info for <strong className="text-zinc-800 dark:text-zinc-200">{application.job.title}</strong> at <strong className="text-zinc-800 dark:text-zinc-200">{application.job.company}</strong>.
         </p>
         {[
           { id: "contact_name",     label: "Name",         placeholder: "Jane Recruiter",             type: "text"  },
@@ -86,22 +86,22 @@ const ContactModal = ({ application, onClose, onSaved }) => {
           { id: "contact_linkedin", label: "LinkedIn URL", placeholder: "https://linkedin.com/in/...", type: "url"   },
         ].map(({ id, label, placeholder, type }) => (
           <div key={id}>
-            <label className="block text-xs font-medium text-slate-600 mb-1.5">{label}</label>
+            <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">{label}</label>
             <input
               type={type} value={form[id]} placeholder={placeholder}
               onChange={e => setForm(f => ({ ...f, [id]: e.target.value }))}
-              className="w-full px-4 py-2.5 rounded-2xl border border-slate-200 bg-white/80 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10 transition-all"
+              className="w-full px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
             />
           </div>
         ))}
         {error && <p className="text-xs text-red-500">{error}</p>}
-        <div className="flex gap-3 justify-end pt-1">
-          <button onClick={onClose} className="rounded-2xl border border-slate-200 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+        <div className="flex gap-2 justify-end pt-1">
+          <button onClick={onClose} className="rounded-md border border-zinc-200 dark:border-zinc-800 px-3.5 py-1.5 text-xs text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
             Cancel
           </button>
           <button onClick={handleSave} disabled={saving}
-            className="inline-flex items-center gap-2 rounded-2xl bg-[#4f46e5] px-5 py-2 text-sm font-medium text-white hover:bg-[#4338ca] transition-colors disabled:opacity-60">
-            {saving ? <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : <BsCheck2 size={14} />}
+            className="inline-flex items-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors disabled:opacity-60">
+            {saving ? <span className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" /> : <BsCheck2 size={13} />}
             Save
           </button>
         </div>
@@ -110,7 +110,7 @@ const ContactModal = ({ application, onClose, onSaved }) => {
   );
 };
 
-// ── Activity Heatmap (GitHub style) ──────────────────────────────────────────
+// ── Activity Heatmap (GitHub style - Zinc & Emerald) ─────────────────────────
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -140,11 +140,11 @@ function buildHeatmapGrid(activityData, year) {
 
 function heatColor(count) {
   if (count === null) return "bg-transparent";
-  if (count === 0) return "bg-slate-100";
-  if (count === 1) return "bg-[#c7d2fe]";
-  if (count === 2) return "bg-[#818cf8]";
-  if (count <= 4) return "bg-[#6366f1]";
-  return "bg-[#4338ca]";
+  if (count === 0) return "bg-zinc-100 dark:bg-zinc-800/80";
+  if (count === 1) return "bg-emerald-200 dark:bg-emerald-950 border border-emerald-500/20";
+  if (count === 2) return "bg-emerald-400 dark:bg-emerald-800";
+  if (count <= 4) return "bg-emerald-500 dark:bg-emerald-600";
+  return "bg-emerald-600 dark:bg-emerald-500";
 }
 
 const ActivityHeatmap = ({ year }) => {
@@ -163,7 +163,7 @@ const ActivityHeatmap = ({ year }) => {
 
   if (loading) return (
     <div className="flex items-center justify-center h-24">
-      <div className="flex gap-1.5">{[0,1,2].map(i => <span key={i} className="h-2 w-2 rounded-full bg-[#4f46e5] animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</div>
+      <div className="flex gap-1.5">{[0,1,2].map(i => <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</div>
     </div>
   );
 
@@ -173,12 +173,12 @@ const ActivityHeatmap = ({ year }) => {
         <div className="flex gap-[3px] pl-8">
           {weeks.map((_, wi) => {
             const ml = monthLabels.find(m => m.weekIndex === wi);
-            return <div key={wi} className="w-3 text-[9px] text-slate-400 text-center">{ml?.label ?? ""}</div>;
+            return <div key={wi} className="w-3 text-[9px] font-mono text-zinc-400 dark:text-zinc-500 text-center">{ml?.label ?? ""}</div>;
           })}
         </div>
         {[0,1,2,3,4,5,6].map(day => (
           <div key={day} className="flex items-center gap-[3px]">
-            <span className="w-7 text-[9px] text-slate-400 text-right pr-1">{day % 2 === 1 ? WEEK_DAYS[day] : ""}</span>
+            <span className="w-7 text-[9px] font-mono text-zinc-400 dark:text-zinc-500 text-right pr-1">{day % 2 === 1 ? WEEK_DAYS[day] : ""}</span>
             {weeks.map((week, wi) => {
               const cell = week[day];
               if (!cell) return <div key={wi} className="w-3 h-3 rounded-[2px] bg-transparent" />;
@@ -190,33 +190,36 @@ const ActivityHeatmap = ({ year }) => {
           </div>
         ))}
         <div className="flex items-center gap-1 justify-end pt-1">
-          <span className="text-[9px] text-slate-400">Less</span>
-          {["bg-slate-100","bg-[#c7d2fe]","bg-[#818cf8]","bg-[#6366f1]","bg-[#4338ca]"].map(c => (
+          <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500">Less</span>
+          {["bg-zinc-100 dark:bg-zinc-800/80","bg-emerald-200 dark:bg-emerald-950","bg-emerald-400 dark:bg-emerald-800","bg-emerald-500 dark:bg-emerald-600","bg-emerald-600 dark:bg-emerald-500"].map(c => (
             <div key={c} className={`w-3 h-3 rounded-[2px] ${c}`} />
           ))}
-          <span className="text-[9px] text-slate-400">More</span>
+          <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500">More</span>
         </div>
       </div>
     </div>
   );
 };
 
-// ── Stats bar ─────────────────────────────────────────────────────────────────
+// ── Stats bar (Strict Monochromatic Theme 2) ─────────────────────────────────
 const StatsBar = ({ stats }) => {
   if (!stats) return null;
   const items = [
-    { label: "Total",       value: stats.total_applied,     color: "text-[#4f46e5]",   bg: "bg-[#eef2ff]"   },
-    { label: "Streak",      value: `${stats.current_streak}d`, color: "text-orange-600", bg: "bg-orange-50"  },
-    { label: "Best Streak", value: `${stats.longest_streak}d`, color: "text-purple-600", bg: "bg-purple-50"  },
-    { label: "This Week",   value: stats.applied_this_week,  color: "text-emerald-600", bg: "bg-emerald-50"  },
-    { label: "This Month",  value: stats.applied_this_month, color: "text-sky-600",     bg: "bg-sky-50"      },
+    { label: "Total Applications", value: stats.total_applied,        badge: "All" },
+    { label: "Current Streak",     value: `${stats.current_streak}d`, badge: "Active" },
+    { label: "Longest Streak",     value: `${stats.longest_streak}d`, badge: "Best" },
+    { label: "This Week",          value: stats.applied_this_week,    badge: "7d" },
+    { label: "This Month",         value: stats.applied_this_month,   badge: "30d" },
   ];
   return (
-    <div className="flex flex-wrap gap-2">
-      {items.map(({ label, value, color, bg }) => (
-        <div key={label} className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 ${bg}`}>
-          <span className={`text-xl font-bold ${color}`}>{value}</span>
-          <span className="text-[11px] text-slate-500">{label}</span>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      {items.map(({ label, value, badge }) => (
+        <div key={label} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-3.5 transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{label}</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">{badge}</span>
+          </div>
+          <p className="text-xl font-bold font-mono tracking-tight text-zinc-950 dark:text-zinc-50 mt-1">{value}</p>
         </div>
       ))}
     </div>
@@ -226,12 +229,12 @@ const StatsBar = ({ stats }) => {
 // ── Empty state ───────────────────────────────────────────────────────────────
 const EmptyState = () => (
   <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
-    <div className="inline-flex h-16 w-16 items-center justify-center rounded-3xl bg-[#eef2ff]">
-      <BsBriefcase size={28} className="text-[#4f46e5]" />
+    <div className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400">
+      <BsBriefcase size={20} />
     </div>
-    <p className="text-sm font-medium text-slate-700">No applications yet</p>
-    <p className="text-xs text-slate-400 max-w-xs">Browse jobs and confirm applications to see them here.</p>
-    <Link to="/find-jobs" className="mt-1 rounded-full bg-[#4f46e5] px-5 py-2 text-xs font-medium text-white hover:bg-[#4338ca] transition-colors">
+    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">No applications tracked</p>
+    <p className="text-xs text-zinc-500 dark:text-zinc-400 max-w-xs">Apply to jobs to monitor recruitment telemetry here.</p>
+    <Link to="/find-jobs" className="mt-2 rounded-md bg-emerald-600 dark:bg-emerald-500 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors">
       Browse Jobs
     </Link>
   </div>
@@ -244,44 +247,44 @@ const JobRow = ({ application, onContactEdit, onDelete }) => {
   const hasContact = contact_name || contact_email || contact_linkedin;
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:shadow-md hover:border-[#4f46e5]/20 transition-all duration-200">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 rounded-md border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 p-3.5 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
       <LogoOrInitials logo={logo} name={job.company} />
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center gap-2 mb-0.5">
-          <p className="text-sm font-semibold text-slate-800 truncate">{job.title}</p>
+          <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{job.title}</p>
           <PlatformBadge source={job.source} />
         </div>
-        <p className="text-xs text-slate-500">{job.company}{job.location ? ` · ${job.location}` : ""}</p>
-        <p className="text-[11px] text-slate-400 mt-0.5">
+        <p className="text-[11px] text-zinc-500 dark:text-zinc-400">{job.company}{job.location ? ` · ${job.location}` : ""}</p>
+        <p className="text-[10px] font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">
           Applied {new Date(applied_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
         </p>
       </div>
       <div className="flex-shrink-0 min-w-[140px]">
         {hasContact ? (
           <div className="flex flex-col gap-1">
-            {contact_name && <p className="text-xs font-medium text-slate-700">{contact_name}</p>}
-            <div className="flex items-center gap-2">
+            {contact_name && <p className="text-xs font-medium text-zinc-700 dark:text-zinc-300">{contact_name}</p>}
+            <div className="flex items-center gap-1.5">
               {contact_email && (
                 <a href={`mailto:${contact_email}`} title={contact_email}
-                  className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-slate-500 hover:bg-[#eef2ff] hover:text-[#4f46e5] transition-colors">
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
                   <BsEnvelope size={11} />
                 </a>
               )}
               {contact_linkedin && (
                 <a href={contact_linkedin} target="_blank" rel="noreferrer" title="LinkedIn"
-                  className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-slate-500 hover:bg-sky-50 hover:text-sky-600 transition-colors">
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
                   <BsLinkedin size={11} />
                 </a>
               )}
               <button onClick={() => onContactEdit(application)} title="Edit contact"
-                className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-slate-100 text-slate-400 hover:bg-[#eef2ff] hover:text-[#4f46e5] transition-colors text-[10px]">
+                className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors text-[10px]">
                 ✎
               </button>
             </div>
           </div>
         ) : (
           <button onClick={() => onContactEdit(application)}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-dashed border-slate-200 px-3 py-1.5 text-[11px] text-slate-400 hover:border-[#4f46e5]/40 hover:text-[#4f46e5] transition-colors">
+            className="inline-flex items-center gap-1 rounded-md border border-dashed border-zinc-300 dark:border-zinc-700 px-2.5 py-1 text-[10px] text-zinc-500 dark:text-zinc-400 hover:border-emerald-500 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
             <BsPersonPlus size={11} /> Add Contact
           </button>
         )}
@@ -289,13 +292,13 @@ const JobRow = ({ application, onContactEdit, onDelete }) => {
       <div className="flex items-center gap-2 flex-shrink-0">
         {(job.apply_url || job.url) && (
           <a href={job.apply_url || job.url} target="_blank" rel="noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-xl bg-[#eef2ff] px-3 py-1.5 text-[11px] font-medium text-[#4f46e5] hover:bg-[#4f46e5] hover:text-white transition-colors">
-            View
+            className="inline-flex items-center gap-1 rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors">
+            View Job
           </a>
         )}
         <button onClick={() => onDelete(application.id)}
-          className="inline-flex h-7 w-7 items-center justify-center rounded-xl border border-red-100 text-red-400 hover:bg-red-50 hover:border-red-200 transition-colors">
-          <BsX size={16} />
+          className="inline-flex h-6 w-6 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-red-500 hover:border-red-300 dark:hover:border-red-900/60 transition-colors">
+          <BsX size={14} />
         </button>
       </div>
     </div>
@@ -342,48 +345,50 @@ const MyApplication = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f3f4ff] via-[#f6f7ff] to-[#e9f0ff] px-4 py-6 md:px-8 lg:px-6 lg:py-5 text-slate-900">
-      <div className="mx-auto max-w-6xl flex flex-col gap-6">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-6 lg:px-8 text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="mx-auto max-w-7xl flex flex-col gap-5">
 
-        <div>
-          <h1 className="text-lg font-semibold text-slate-900">My Applications</h1>
-          <p className="text-xs text-slate-400 mt-0.5">Track all your job applications in one place.</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-1 border-b border-zinc-200 dark:border-zinc-800/80">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">Applications Directory</h1>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Track, update and inspect submission status across platforms</p>
+          </div>
         </div>
 
         {stats && <StatsBar stats={stats} />}
 
-        <div className="rounded-3xl border-2 border-slate-200/80 bg-white/60 backdrop-blur-sm shadow-lg shadow-slate-200/60 p-5">
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
           <div className="flex items-center gap-2 mb-4">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-[#eef2ff] text-[#4f46e5]">
-              <BsCalendar3 size={14} />
+            <span className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+              <BsCalendar3 size={13} />
             </span>
             <div>
-              <h3 className="text-sm font-semibold text-slate-800">Activity — {currentYear}</h3>
-              <p className="text-[11px] text-slate-400">Applications per day</p>
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Application Activity — {currentYear}</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">Daily frequency calendar</p>
             </div>
           </div>
           <ActivityHeatmap year={currentYear} />
         </div>
 
-        <div className="rounded-3xl border-2 border-slate-200/80 bg-white/60 backdrop-blur-sm shadow-2xl shadow-slate-300/50 overflow-hidden">
-          <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
-            <h2 className="text-base font-semibold text-slate-900">Applied Jobs</h2>
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eef2ff] px-3 py-1 text-xs font-medium text-[#4f46e5]">
-              <BsBriefcase size={12} />
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-3.5 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+            <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Active Records</h2>
+            <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 text-xs font-mono font-medium text-emerald-600 dark:text-emerald-400">
+              <BsBriefcase size={11} />
               {applications.length} {applications.length === 1 ? "Job" : "Jobs"}
             </span>
           </div>
 
-          <div className="flex flex-col gap-2 px-5 py-4 max-h-[70vh] overflow-y-auto">
+          <div className="flex flex-col gap-2 p-4 max-h-[70vh] overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center h-40">
-                <div className="flex gap-1.5">{[0,1,2].map(i => <span key={i} className="h-2 w-2 rounded-full bg-[#4f46e5] animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</div>
+                <div className="flex gap-1.5">{[0,1,2].map(i => <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{animationDelay:`${i*0.15}s`}} />)}</div>
               </div>
             ) : error ? (
               <div className="flex flex-col items-center justify-center h-40 gap-2 text-center">
-                <p className="text-sm text-slate-500">{error}</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">{error}</p>
                 {error.includes("log in") && (
-                  <Link to="/login" className="rounded-full bg-[#4f46e5] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#4338ca] transition-colors">Sign In</Link>
+                  <Link to="/login" className="rounded-md bg-emerald-600 dark:bg-emerald-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 transition-colors">Sign In</Link>
                 )}
               </div>
             ) : applications.length === 0 ? (

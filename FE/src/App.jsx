@@ -3,6 +3,7 @@ import Router from "./Router";
 import { useLocation } from "react-router-dom";
 import { AuthProvider } from "./lib/AuthContext";
 import { useAuth } from "./lib/useAuth";
+import { ThemeProvider } from "./lib/ThemeContext";
 
 // Pages that never show the Sidebar (public / full-screen pages)
 const NO_SIDEBAR_PAGES = ["/login", "/signup", "/verify", "/landing"];
@@ -19,7 +20,7 @@ function AppShell() {
   const showSidebar = !isNoSidebarPage && !isLandingRoot && !!user;
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex bg-[#FAFAFA] dark:bg-[#09090B] text-[#09090B] dark:text-[#FAFAFA] transition-colors duration-150">
       {showSidebar && (
         <div>
           <Sidebar />
@@ -34,9 +35,11 @@ function AppShell() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppShell />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppShell />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

@@ -1,14 +1,15 @@
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-const COLORS = ["#4f46e5", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6"];
+// Monochromatic Zinc + Emerald palette
+const COLORS = ["#10b981", "#059669", "#71717a", "#a1a1aa", "#3f3f46"];
 
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload?.length) {
     return (
-      <div className="rounded-2xl border border-slate-100 bg-white px-3 py-2 shadow-lg text-xs">
-        <p className="font-semibold text-slate-800">{payload[0].name}</p>
-        <p className="text-slate-500">{payload[0].value} applications</p>
+      <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-xs shadow-sm">
+        <p className="font-semibold text-zinc-900 dark:text-zinc-100">{payload[0].name}</p>
+        <p className="font-mono text-zinc-500 dark:text-zinc-400">{payload[0].value} applications</p>
       </div>
     );
   }
@@ -25,16 +26,16 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
   ].filter((item) => item.value > 0);
 
   return (
-    <div className="h-full rounded-3xl border-2 border-slate-100 bg-white/70 backdrop-blur-sm p-5 shadow-lg shadow-slate-200/60 flex flex-col">
+    <div className="h-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-slate-800">Application Status</h3>
-        <p className="text-xs font-light text-slate-400 mt-0.5">Breakdown by current stage</p>
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Application Status</h3>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Pipeline stage breakdown</p>
       </div>
 
       <div className="flex-1 flex items-center justify-center min-h-[220px]">
         {data.length === 0 ? (
           <div className="flex h-full items-center justify-center text-center">
-            <p className="text-sm text-slate-400">No MongoDB-tracked applications yet.</p>
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">No applications tracked yet.</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -44,10 +45,11 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
                 cx="50%"
                 cy="50%"
                 innerRadius={55}
-                outerRadius={90}
-                paddingAngle={4}
-                cornerRadius={8}
+                outerRadius={85}
+                paddingAngle={3}
+                cornerRadius={4}
                 dataKey="value"
+                stroke="none"
               >
                 {data.map((_, i) => (
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -55,10 +57,10 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
               </Pie>
               <Tooltip content={<CustomTooltip />} />
               <Legend
-                iconType="circle"
+                iconType="square"
                 iconSize={8}
                 formatter={(value) => (
-                  <span className="text-[11px] text-slate-600">{value}</span>
+                  <span className="text-[11px] text-zinc-600 dark:text-zinc-400">{value}</span>
                 )}
               />
             </PieChart>
@@ -66,12 +68,14 @@ const ApplicationStatausChart = ({ statusCounts, totalApplications }) => {
         )}
       </div>
 
-      <div className="mt-3 rounded-2xl bg-[#eef2ff] px-4 py-2.5 flex items-center justify-between">
-        <span className="text-xs font-light text-slate-500">Total Applications</span>
-        <span className="text-sm font-bold text-[#4f46e5]">{totalApplications}</span>
+      <div className="mt-3 rounded-md bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-800 px-3.5 py-2 flex items-center justify-between">
+        <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Total Applications</span>
+        <span className="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400">{totalApplications}</span>
       </div>
     </div>
   );
 };
 
 export default ApplicationStatausChart;
+
+

@@ -24,72 +24,72 @@ const InterviewSummary = ({ summaryData }) => {
   // Placeholder state — shown before any interview is completed
   if (!summaryData) {
     return (
-      <section className="space-y-4 rounded-3xl bg-[#f5f3ff]/40 p-5 border-2 border-slate-200 shadow-lg shadow-slate-200/70 md:p-6">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-base font-light text-slate-900 md:text-lg">
-              Interview Summary
-            </h2>
-            <p className="mt-1 text-xs font-light text-slate-500 md:text-[13px]">
-              Complete an interview to see your AI-generated summary here.
-            </p>
-          </div>
+      <section className="space-y-3 rounded-lg bg-white dark:bg-zinc-900 p-5 border border-zinc-200 dark:border-zinc-800 shadow-none">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Interview Assessment Telemetry
+          </h2>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            Complete an interactive audio session to generate evaluation summary.
+          </p>
         </div>
-        <div className="mt-2 rounded-2xl bg-[#f5f3ff] px-4 py-6 text-center text-xs text-slate-400 md:text-[13px]">
-          No interview completed yet.
+        <div className="rounded-md bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 px-4 py-6 text-center text-xs font-mono text-zinc-400 dark:text-zinc-500">
+          STATUS: NO_EVALUATION_RECORDED
         </div>
       </section>
     );
   }
 
   return (
-    <section className="space-y-4 rounded-3xl bg-[#f5f3ff]/40 p-5 border-2 border-slate-200 shadow-lg shadow-slate-200/70 md:p-6">
+    <section className="space-y-4 rounded-lg bg-white dark:bg-zinc-900 p-5 border border-zinc-200 dark:border-zinc-800 shadow-none">
       {/* Title & metadata row */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3.5">
         <div>
-          <h2 className="text-base font-light text-slate-900 md:text-lg">
-            Interview Summary – {jobInfo?.job_title}
+          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            Evaluation Telemetry – {jobInfo?.job_title}
           </h2>
-          <p className="mt-1 text-xs font-light text-slate-500 md:text-[13px]">
-            AI-assisted interview summary for {jobInfo?.company_name}
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+            AI synthesized performance breakdown for {jobInfo?.company_name}
           </p>
         </div>
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-light text-slate-700 shadow-sm">
+        <div className="inline-flex items-center gap-1.5 rounded bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 text-xs font-mono text-emerald-600 dark:text-emerald-400">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          Completed · {formattedTime}
+          COMPLETED · {formattedTime}
         </div>
       </div>
 
       {/* Meta chips */}
-      <div className="flex flex-wrap items-center gap-2 text-xs font-light md:text-[13px]">
+      <div className="flex flex-wrap items-center gap-2 text-xs">
         {formattedDate && (
-          <MetaChip icon={<CiCalendarDate size={15} />}>{formattedDate}</MetaChip>
+          <MetaChip icon={<CiCalendarDate size={14} />}>{formattedDate}</MetaChip>
         )}
-        <MetaChip icon={<CiShoppingTag size={15} />}>
+        <MetaChip icon={<CiShoppingTag size={14} />}>
           {jobInfo?.job_title || "Interview"}
         </MetaChip>
-        <MetaChip icon={<RiAdminLine size={15} />}>
+        <MetaChip icon={<RiAdminLine size={14} />}>
           {jobInfo?.company_name || "Company"}
         </MetaChip>
-        <MetaChip icon={<CiUser size={15} />}>
+        <MetaChip icon={<CiUser size={14} />}>
           {jobInfo?.location || "Location"}
         </MetaChip>
       </div>
 
       {/* AI summary */}
-      <div className="mt-2 rounded-2xl bg-[#f5f3ff] px-4 py-3 text-xs text-slate-700 md:text-[13px]">
-        <div className="mb-1.5 flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#4f46e5] text-[11px] font-semibold text-white">
+      <div className="rounded-md bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800/80 p-4 text-xs text-zinc-700 dark:text-zinc-300">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="flex h-5 w-5 items-center justify-center rounded bg-emerald-600 text-[10px] font-mono font-bold text-white">
             AI
           </span>
-          <span className="text-[18px] font-light text-slate-900">
-            AI Summary of Interview
+          <span className="text-xs font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+            Session Synthesis
           </span>
         </div>
-        <p className="leading-relaxed">{summary}</p>
+        <p className="leading-relaxed whitespace-pre-line text-zinc-700 dark:text-zinc-300 font-sans">{summary}</p>
       </div>
     </section>
   );
 };
 
 export default InterviewSummary;
+
+

@@ -7,23 +7,6 @@ import { getInitials } from "../lib/jobLogos";
 import { normalizeJob, unwrapList } from "../lib/normalizeJob";
 import CoverLetterModal from "./CoverLetterModal";
 
-
-const ACCENT_COLORS = [
-  "bg-[#eef2ff] text-[#4f46e5]",
-  "bg-emerald-50 text-emerald-700",
-  "bg-amber-50 text-amber-700",
-  "bg-rose-50 text-rose-600",
-  "bg-sky-50 text-sky-700",
-  "bg-purple-50 text-purple-700",
-  "bg-teal-50 text-teal-700",
-];
-
-const TYPE_COLORS = {
-  "Full-time": "bg-emerald-50 text-emerald-700",
-  "Contract":  "bg-amber-50 text-amber-700",
-  "Part-time": "bg-sky-50 text-sky-700",
-};
-
 const groupByCompany = (jobs) => {
   const map = new Map();
   jobs.forEach((job) => {
@@ -71,7 +54,6 @@ const Companies = () => {
   const [coverLetterJob, setCoverLetterJob] = useState(null);
 
   const handleApplyClick = (job) => {
-    // Send the user where they can actually apply, not just read the posting.
     window.open(job.applyUrl, "_blank", "noopener,noreferrer");
     setPendingJob(job);
     setApplyStatus(null);
@@ -91,8 +73,6 @@ const Companies = () => {
   const closeModal = () => { setPendingJob(null); setApplyStatus(null); };
 
   useEffect(() => {
-    // Grouping by company only makes sense over the full dataset, so walk
-    // every page rather than showing companies derived from the first 20.
     let cancelled = false;
 
     const fetchAllJobs = async () => {
@@ -105,7 +85,6 @@ const Companies = () => {
           const res = await api.get(url, { params });
           collected.push(...unwrapList(res.data));
           url = res.data?.next ?? null;
-          // `next` is absolute and already carries the query string.
           params = undefined;
         }
 
@@ -116,7 +95,6 @@ const Companies = () => {
         setLoadError(normalized.length ? "" : "No jobs found. Run the scrapers to load listings.");
       } catch (err) {
         if (cancelled) return;
-        // Fail visibly rather than falling back to fake companies.
         setJobs([]);
         setSelectedCompany(null);
         setLoadError(
@@ -141,87 +119,86 @@ const Companies = () => {
   }, [companies, search]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f3f4ff] via-[#f6f7ff] to-[#e9f0ff] px-4 py-6 md:px-8 lg:px-6 lg:py-5 text-slate-900">
-      <div className="mx-auto max-w-6xl flex flex-col gap-6 lg:grid lg:grid-cols-[1fr,1.6fr]">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-6 lg:px-8 text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="mx-auto max-w-7xl flex flex-col gap-5 lg:grid lg:grid-cols-[1fr,1.4fr]">
 
         {/* ── Left: Company List ── */}
-        <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-slate-200/80 bg-white/60 backdrop-blur-sm shadow-2xl shadow-slate-300/50">
+        <div className="flex flex-col overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
 
           {/* Header */}
-          <div className="px-5 pt-5 pb-4 border-b border-slate-100">
+          <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <h2 className="text-base font-semibold text-slate-900">Companies</h2>
-                <p className="text-xs font-light text-slate-400 mt-0.5">
-                  {filtered.length} {filtered.length === 1 ? "company" : "companies"} · {jobs.length} total jobs
+                <h2 className="text-base font-bold tracking-tight text-zinc-950 dark:text-zinc-50">Companies Index</h2>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                  {filtered.length} {filtered.length === 1 ? "organization" : "organizations"} · {jobs.length} total active roles
                 </p>
               </div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eef2ff] px-3 py-1 text-xs font-medium text-[#4f46e5]">
-                <BsBuilding size={11} /> Browse
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 px-2.5 py-1 text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300">
+                <BsBuilding size={11} /> Index
               </span>
             </div>
             <div className="relative">
-              <CiSearch size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <CiSearch size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search companies..."
-                className="w-full pl-9 pr-4 py-2.5 rounded-2xl border border-slate-200 bg-white/80 text-xs text-slate-800 placeholder:text-slate-300 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10 transition-all"
+                placeholder="Search organizations..."
+                className="w-full pl-8 pr-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-600 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
               />
             </div>
           </div>
 
           {/* List */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 max-h-[75vh]">
+          <div className="flex-1 overflow-y-auto p-3 space-y-1.5 max-h-[75vh]">
             {loading ? (
               <div className="flex items-center justify-center h-40">
                 <div className="flex gap-1.5">
                   {[0,1,2].map((i) => (
-                    <span key={i} className="h-2 w-2 rounded-full bg-[#4f46e5] animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                    <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
                   ))}
                 </div>
               </div>
             ) : loadError ? (
-              <div className="flex flex-col items-center justify-center h-40 px-6 text-center text-slate-500">
-                <HiX size={32} className="mb-2 text-red-400" />
-                <p className="text-sm font-medium text-slate-700">{loadError}</p>
+              <div className="flex flex-col items-center justify-center h-40 px-6 text-center text-zinc-500 dark:text-zinc-400">
+                <HiX size={28} className="mb-2 text-red-500" />
+                <p className="text-xs">{loadError}</p>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-40 text-slate-400">
+              <div className="flex flex-col items-center justify-center h-40 text-zinc-400 dark:text-zinc-500">
                 <CiSearch size={32} className="mb-2 opacity-40" />
-                <p className="text-sm">No companies found</p>
+                <p className="text-xs font-semibold">No companies found</p>
               </div>
             ) : (
-              filtered.map((company, i) => {
+              filtered.map((company) => {
                 const active = selectedCompany?.name === company.name;
-                const colorCls = ACCENT_COLORS[i % ACCENT_COLORS.length];
                 return (
                   <button
                     key={company.name}
                     onClick={() => { setSelectedCompany(company); setSelectedJob(null); }}
-                    className={`w-full flex items-center gap-3 rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+                    className={`w-full flex items-center gap-3 rounded-md border p-3 text-left transition-colors ${
                       active
-                        ? "border-[#4f46e5] bg-[#eef2ff] shadow-md"
-                        : "border-slate-100 bg-white shadow-sm hover:border-[#4f46e5]/30 hover:shadow-md"
+                        ? "border-emerald-500/60 bg-emerald-500/5 dark:bg-emerald-500/10"
+                        : "border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700"
                     }`}
                   >
                     <CompanyLogo
                       logo={company.jobs[0]?.companyLogo}
                       name={company.name}
-                      className="h-10 w-10 rounded-xl object-cover border border-slate-100 flex-shrink-0"
-                      fallbackClassName={`h-10 w-10 rounded-xl flex-shrink-0 flex items-center justify-center text-xs font-bold ${colorCls}`}
+                      className="h-9 w-9 rounded-md object-cover border border-zinc-200 dark:border-zinc-800 flex-shrink-0"
+                      fallbackClassName="h-9 w-9 rounded-md flex-shrink-0 flex items-center justify-center text-xs font-mono font-bold bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-slate-800 truncate">{company.name}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
-                        {company.jobs.length} {company.jobs.length === 1 ? "job" : "jobs"} posted
+                      <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{company.name}</p>
+                      <p className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500 mt-0.5">
+                        {company.jobs.length} {company.jobs.length === 1 ? "position" : "positions"}
                       </p>
-                      <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
+                      <span className="inline-flex items-center gap-1 text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5">
                         <CiLocationOn size={11} />{company.jobs[0]?.jobGeo}
                       </span>
                     </div>
-                    {active && <HiArrowRight size={14} className="text-[#4f46e5] flex-shrink-0" />}
+                    {active && <HiArrowRight size={13} className="text-emerald-600 dark:text-emerald-400 flex-shrink-0" />}
                   </button>
                 );
               })
@@ -230,197 +207,190 @@ const Companies = () => {
         </div>
 
         {/* ── Right: Company Detail ── */}
-        <div key={selectedCompany?.name} className="flex flex-col overflow-hidden rounded-3xl border-2 border-slate-200/80 bg-white/60 backdrop-blur-sm shadow-2xl shadow-slate-300/50">
+        <div key={selectedCompany?.name} className="flex flex-col overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900">
           {selectedCompany ? (
             <>
               {/* Banner */}
-              <div className="relative h-24 flex-shrink-0 bg-[linear-gradient(135deg,#03001e,#7303c0,#ec38bc,#fdeff9)]">
-                <div className="absolute -bottom-6 left-6">
+              <div className="relative h-20 flex-shrink-0 bg-zinc-900 dark:bg-zinc-950 border-b border-zinc-800">
+                <div className="absolute -bottom-5 left-5">
                   <CompanyLogo
                     logo={selectedCompany.jobs[0]?.companyLogo}
                     name={selectedCompany.name}
-                    className="h-12 w-12 rounded-2xl border-4 border-white bg-white object-cover shadow-lg"
-                    fallbackClassName={`h-12 w-12 rounded-2xl border-4 border-white shadow-lg flex items-center justify-center text-sm font-bold ${
-                      ACCENT_COLORS[companies.findIndex(c => c.name === selectedCompany.name) % ACCENT_COLORS.length]
-                    }`}
+                    className="h-11 w-11 rounded-md border-2 border-white dark:border-zinc-900 bg-white dark:bg-zinc-900 object-cover shadow-sm"
+                    fallbackClassName="h-11 w-11 rounded-md border-2 border-white dark:border-zinc-900 bg-zinc-800 text-zinc-100 shadow-sm flex items-center justify-center font-mono text-xs font-bold"
                   />
                 </div>
               </div>
 
               {/* Company info */}
-              <div className="px-6 pt-9 pb-4 border-b border-slate-100">
-                <h2 className="text-base font-semibold text-slate-900">{selectedCompany.name}</h2>
-                <div className="flex items-center gap-3 mt-2 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eef2ff] px-2.5 py-1 text-[11px] font-medium text-[#4f46e5]">
+              <div className="px-5 pt-8 pb-3.5 border-b border-zinc-200 dark:border-zinc-800">
+                <h2 className="text-base font-bold text-zinc-950 dark:text-zinc-50">{selectedCompany.name}</h2>
+                <div className="flex items-center gap-2 mt-2 flex-wrap font-mono text-[10px]">
+                  <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 font-semibold text-emerald-600 dark:text-emerald-400">
                     <BsBriefcase size={10} />
                     {selectedCompany.jobs.length} open {selectedCompany.jobs.length === 1 ? "role" : "roles"}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
-                    <CiLocationOn size={13} />{selectedCompany.jobs[0]?.jobGeo}
+                  <span className="inline-flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                    <CiLocationOn size={12} />{selectedCompany.jobs[0]?.jobGeo}
                   </span>
                 </div>
               </div>
 
               {/* Jobs list OR Job detail */}
               {selectedJob ? (
-                <div className="flex-1 overflow-y-auto px-5 py-4">
+                <div className="flex-1 overflow-y-auto p-5 space-y-4">
                   <button
                     onClick={() => setSelectedJob(null)}
-                    className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[#4f46e5] hover:text-[#4338ca] mb-4"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono text-emerald-600 dark:text-emerald-400 hover:underline"
                   >
-                    <HiArrowRight size={12} className="rotate-180" /> Back to positions
+                    <HiArrowRight size={12} className="rotate-180" /> Back to open roles
                   </button>
 
-                  {/* Job header card */}
-                  <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm mb-3">
-                    <div className="flex items-start gap-4 mb-4">
+                  <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 p-4">
+                    <div className="flex items-start gap-3 mb-3">
                       <CompanyLogo
                         logo={selectedJob.companyLogo}
                         name={selectedJob.companyName}
-                        className="h-12 w-12 rounded-xl object-cover border border-slate-100 flex-shrink-0"
-                        fallbackClassName={`h-12 w-12 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-bold ${ACCENT_COLORS[0]}`}
+                        className="h-10 w-10 rounded-md object-cover border border-zinc-200 dark:border-zinc-800 flex-shrink-0"
+                        fallbackClassName="h-10 w-10 rounded-md flex-shrink-0 flex items-center justify-center font-mono text-xs font-bold bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-800">{selectedJob.jobTitle}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{selectedJob.companyName}</p>
+                        <p className="text-sm font-bold text-zinc-950 dark:text-zinc-50">{selectedJob.jobTitle}</p>
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{selectedJob.companyName}</p>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      <span className="inline-flex items-center gap-1 text-[11px] text-slate-500 bg-slate-50 rounded-full px-2.5 py-1">
-                        <CiLocationOn size={12} />{selectedJob.jobGeo}
+                    <div className="flex flex-wrap gap-1.5 mb-3 font-mono text-[10px]">
+                      <span className="inline-flex items-center gap-1 text-zinc-600 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 rounded px-2 py-0.5 border border-zinc-200 dark:border-zinc-700/60">
+                        <CiLocationOn size={11} />{selectedJob.jobGeo}
                       </span>
-                      <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${TYPE_COLORS[selectedJob.jobType] || "bg-slate-100 text-slate-600"}`}>
+                      <span className="rounded px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">
                         {selectedJob.jobType}
                       </span>
                       {selectedJob.domain && (
-                        <span className={`rounded-full px-2.5 py-1 text-[11px] font-medium ${ACCENT_COLORS[0]}`}>
+                        <span className="rounded px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">
                           {selectedJob.domain}
                         </span>
                       )}
                       {selectedJob.jobLevel && (
-                        <span className="rounded-full px-2.5 py-1 text-[11px] bg-slate-50 text-slate-500">
+                        <span className="rounded px-2 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">
                           {selectedJob.jobLevel}
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 font-mono text-[10px] text-zinc-400 dark:text-zinc-500">
                       {selectedJob.postedDate && (
-                        <span className="text-[11px] text-slate-400">Posted: {selectedJob.postedDate}</span>
+                        <span>Posted: {selectedJob.postedDate}</span>
                       )}
                       {selectedJob.applicants && (
-                        <span className="text-[11px] text-slate-400">{selectedJob.applicants} applicants</span>
+                        <span>{selectedJob.applicants} applicants</span>
                       )}
                     </div>
                   </div>
 
-                  {/* Full JD */}
                   {selectedJob.jobDescription && (
-                    <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm mb-3">
-                      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-3">Job Description</p>
-                      <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">{selectedJob.jobDescription}</p>
+                    <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/50 p-4">
+                      <p className="text-[11px] font-mono uppercase font-semibold text-zinc-500 dark:text-zinc-400 mb-2">Job Description</p>
+                      <p className="text-xs text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-line">{selectedJob.jobDescription}</p>
                     </div>
                   )}
 
-                  {/* Cover Letter + Apply buttons */}
-                  <button
-                    onClick={() => setCoverLetterJob(selectedJob)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-[#4f46e5] px-4 py-2 text-xs font-medium text-[#4f46e5] hover:bg-[#eef2ff] transition-colors mb-2"
-                  >
-                    ✉ Generate Cover Letter
-                  </button>
-                  <br />
-                  {/* Apply button */}
-                  <button
-                    onClick={() => handleApplyClick(selectedJob)}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-[#4f46e5] px-4 py-2 text-xs font-medium text-white hover:bg-[#4338ca] transition-colors shadow-sm mb-4"
-                  >
-                    Apply Now <HiArrowRight size={12} />
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                    <button
+                      onClick={() => setCoverLetterJob(selectedJob)}
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 py-2.5 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                    >
+                      ✉ Generate Cover Letter
+                    </button>
+                    <button
+                      onClick={() => handleApplyClick(selectedJob)}
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 py-2.5 text-xs font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors"
+                    >
+                      Apply Now <HiArrowRight size={13} />
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="flex-1 overflow-y-auto px-5 py-4 space-y-2.5 max-h-[calc(100vh-18rem)]">
-                  <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide mb-3">Open Positions</p>
-                  {selectedCompany.jobs.map((job, i) => (
+                <div className="flex-1 overflow-y-auto p-4 space-y-2 max-h-[calc(100vh-18rem)]">
+                  <p className="text-[11px] font-mono uppercase font-semibold text-zinc-500 dark:text-zinc-400 mb-1">Open Positions</p>
+                  {selectedCompany.jobs.map((job) => (
                     <div
                       key={job.id}
                       onClick={() => setSelectedJob(job)}
-                      className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:shadow-md hover:border-[#4f46e5]/20 transition-all duration-200 cursor-pointer"
+                      className="flex items-center gap-3 rounded-md border border-zinc-200 dark:border-zinc-800/80 bg-white dark:bg-zinc-900 p-3 hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors cursor-pointer"
                     >
                       <CompanyLogo
                         logo={job.companyLogo}
                         name={job.companyName}
-                        className="h-10 w-10 rounded-xl object-cover border border-slate-100 flex-shrink-0"
-                        fallbackClassName={`h-10 w-10 rounded-xl flex-shrink-0 flex items-center justify-center text-[11px] font-bold ${
-                          ACCENT_COLORS[i % ACCENT_COLORS.length]
-                        }`}
+                        className="h-9 w-9 rounded-md object-cover border border-zinc-200 dark:border-zinc-800 flex-shrink-0"
+                        fallbackClassName="h-9 w-9 rounded-md flex-shrink-0 flex items-center justify-center font-mono text-[10px] font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-700"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 truncate">{job.jobTitle}</p>
-                        <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <span className="inline-flex items-center gap-1 text-[11px] text-slate-400">
-                            <CiLocationOn size={12} />{job.jobGeo}
+                        <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{job.jobTitle}</p>
+                        <div className="flex items-center gap-1.5 mt-1 flex-wrap font-mono text-[10px]">
+                          <span className="inline-flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
+                            <CiLocationOn size={11} />{job.jobGeo}
                           </span>
                           {job.domain && (
-                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${ACCENT_COLORS[i % ACCENT_COLORS.length]}`}>
+                            <span className="rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 px-1.5 py-0.5 text-zinc-600 dark:text-zinc-400">
                               {job.domain}
                             </span>
                           )}
-                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${TYPE_COLORS[job.jobType] || "bg-slate-100 text-slate-600"}`}>
+                          <span className="rounded bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 px-1.5 py-0.5 text-zinc-600 dark:text-zinc-400">
                             {job.jobType}
                           </span>
                         </div>
                       </div>
-                      <HiArrowRight size={14} className="text-slate-300 flex-shrink-0" />
+                      <HiArrowRight size={13} className="text-zinc-400 dark:text-zinc-600 flex-shrink-0" />
                     </div>
                   ))}
                 </div>
               )}
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-3">
-              <div className="h-16 w-16 rounded-2xl bg-[#eef2ff] flex items-center justify-center">
-                <BsBuilding size={28} className="text-[#4f46e5] opacity-50" />
+            <div className="flex flex-col items-center justify-center h-full text-zinc-400 dark:text-zinc-500 gap-2 py-16">
+              <div className="h-12 w-12 rounded-md border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center">
+                <BsBuilding size={20} className="text-zinc-400" />
               </div>
-              <p className="text-sm font-medium text-slate-500">Select a company to view roles</p>
+              <p className="text-xs font-medium text-zinc-600 dark:text-zinc-400">Select an organization to view roles</p>
             </div>
           )}
         </div>
 
       </div>
+
       {/* ── Confirmation Modal ── */}
       {pendingJob && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={applyStatus === "loading" ? undefined : closeModal} />
-          <div className="relative w-full max-w-sm rounded-3xl border-2 border-slate-200/80 bg-white shadow-2xl shadow-slate-300/50 overflow-hidden">
-            <div className="h-1.5 w-full bg-[linear-gradient(135deg,#03001e,#7303c0,#ec38bc,#fdeff9)]" />
-            <div className="p-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-xs" onClick={applyStatus === "loading" ? undefined : closeModal} />
+          <div className="relative w-full max-w-sm rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl overflow-hidden">
+            <div className="p-5">
               {applyStatus !== "loading" && (
-                <button onClick={closeModal} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
-                  <HiX size={18} />
+                <button onClick={closeModal} className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">
+                  <HiX size={16} />
                 </button>
               )}
-              <div className="flex items-center gap-3 mb-5">
+              <div className="flex items-center gap-3 mb-4">
                 <CompanyLogo
                   logo={pendingJob.companyLogo}
                   name={pendingJob.companyName}
-                  className="h-11 w-11 rounded-xl object-cover border border-slate-100 flex-shrink-0"
-                  fallbackClassName="h-11 w-11 rounded-xl flex-shrink-0 flex items-center justify-center text-sm font-bold bg-[#eef2ff] text-[#4f46e5]"
+                  className="h-9 w-9 rounded-md object-cover border border-zinc-200 dark:border-zinc-800 flex-shrink-0"
+                  fallbackClassName="h-9 w-9 rounded-md flex-shrink-0 flex items-center justify-center font-mono text-xs font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
                 />
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-slate-800 truncate">{pendingJob.jobTitle}</p>
-                  <p className="text-xs text-slate-500 truncate">{pendingJob.companyName}</p>
+                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate">{pendingJob.jobTitle}</p>
+                  <p className="text-[11px] text-zinc-500 dark:text-zinc-400 truncate">{pendingJob.companyName}</p>
                 </div>
               </div>
 
               {!applyStatus && (
                 <>
-                  <p className="text-sm font-medium text-slate-800 mb-1">Did you complete your application?</p>
-                  <p className="text-xs text-slate-400 mb-5 leading-relaxed">We opened the job page in a new tab. Let us know if you submitted so we can track it for you.</p>
-                  <div className="flex gap-3">
-                    <button onClick={handleConfirmApply} className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-[#4f46e5] py-2.5 text-sm font-medium text-white hover:bg-[#4338ca] transition-colors shadow-sm">
-                      <HiCheck size={15} /> Yes, I Applied
+                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Confirm Application Status</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-4 leading-relaxed">We opened the external portal. Confirm if you completed submission to track this job.</p>
+                  <div className="flex gap-2">
+                    <button onClick={handleConfirmApply} className="flex-1 flex items-center justify-center gap-1.5 rounded-md bg-emerald-600 dark:bg-emerald-500 py-2 text-xs font-medium text-white hover:bg-emerald-700 transition-colors">
+                      <HiCheck size={13} /> Yes, I Applied
                     </button>
-                    <button onClick={closeModal} className="flex-1 rounded-2xl border border-slate-200 bg-slate-50 py-2.5 text-sm font-medium text-slate-600 hover:bg-white transition-colors">
+                    <button onClick={closeModal} className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
                       Not Yet
                     </button>
                   </div>
@@ -428,50 +398,45 @@ const Companies = () => {
               )}
 
               {applyStatus === "loading" && (
-                <div className="flex flex-col items-center py-4 gap-3">
+                <div className="flex flex-col items-center py-4 gap-2.5">
                   <div className="flex gap-1.5">
-                    {[0,1,2].map((i) => <span key={i} className="h-2 w-2 rounded-full bg-[#4f46e5] animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />)}
+                    {[0,1,2].map((i) => <span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />)}
                   </div>
-                  <p className="text-xs text-slate-400">Saving your application...</p>
+                  <p className="text-xs text-zinc-400 font-mono">Syncing application...</p>
                 </div>
               )}
 
               {applyStatus === "success" && (
-                <div className="flex flex-col items-center py-4 gap-3 text-center">
-                  <div className="h-12 w-12 rounded-2xl bg-emerald-50 flex items-center justify-center">
-                    <HiCheck size={24} className="text-emerald-500" />
+                <div className="flex flex-col items-center py-3 gap-2.5 text-center">
+                  <div className="h-10 w-10 rounded-md bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                    <HiCheck size={20} className="text-emerald-600 dark:text-emerald-400" />
                   </div>
-                  <p className="text-sm font-semibold text-slate-800">Application Tracked!</p>
-                  <p className="text-xs text-slate-400">Added to your applications. Good luck! 🎉</p>
-                  <button onClick={closeModal} className="mt-1 rounded-2xl bg-[#4f46e5] px-6 py-2 text-xs font-medium text-white hover:bg-[#4338ca] transition-colors">Done</button>
+                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Application Tracked!</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Added to your applications. Good luck!</p>
+                  <button onClick={closeModal} className="mt-1 rounded-md bg-emerald-600 dark:bg-emerald-500 px-5 py-1.5 text-xs font-medium text-white hover:bg-emerald-700 transition-colors">Done</button>
                 </div>
               )}
 
               {applyStatus === "duplicate" && (
-                <div className="flex flex-col items-center py-4 gap-3 text-center">
-                  <div className="h-12 w-12 rounded-2xl bg-[#eef2ff] flex items-center justify-center">
-                    <HiCheck size={24} className="text-[#4f46e5]" />
-                  </div>
-                  <p className="text-sm font-semibold text-slate-800">Already Tracked</p>
-                  <p className="text-xs text-slate-400">You've already applied to this job.</p>
-                  <button onClick={closeModal} className="mt-1 rounded-2xl bg-slate-100 px-6 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 transition-colors">Got it</button>
+                <div className="flex flex-col items-center py-3 gap-2.5 text-center">
+                  <p className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">Already Tracked</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">You've already applied to this job.</p>
+                  <button onClick={closeModal} className="mt-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-5 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Got it</button>
                 </div>
               )}
 
               {applyStatus === "error" && (
-                <div className="flex flex-col items-center py-4 gap-3 text-center">
-                  <div className="h-12 w-12 rounded-2xl bg-red-50 flex items-center justify-center">
-                    <HiX size={24} className="text-red-400" />
-                  </div>
-                  <p className="text-sm font-semibold text-slate-800">Couldn't Save</p>
-                  <p className="text-xs text-slate-400">Something went wrong. Please try again.</p>
-                  <button onClick={closeModal} className="mt-1 rounded-2xl bg-slate-100 px-6 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 transition-colors">Close</button>
+                <div className="flex flex-col items-center py-3 gap-2.5 text-center">
+                  <p className="text-xs font-semibold text-red-500">Failed to Save</p>
+                  <p className="text-xs text-zinc-500 dark:text-zinc-400">Something went wrong. Please try again.</p>
+                  <button onClick={closeModal} className="mt-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-5 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">Close</button>
                 </div>
               )}
             </div>
           </div>
         </div>
       )}
+
       {/* ── Cover Letter Modal ── */}
       {coverLetterJob && (
         <CoverLetterModal job={coverLetterJob} onClose={() => setCoverLetterJob(null)} />
@@ -481,3 +446,5 @@ const Companies = () => {
 };
 
 export default Companies;
+
+

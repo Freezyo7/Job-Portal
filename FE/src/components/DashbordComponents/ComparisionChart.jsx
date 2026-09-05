@@ -7,13 +7,13 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
     return (
-      <div className="rounded-2xl border border-slate-100 bg-white px-3 py-2.5 shadow-lg text-xs space-y-1">
-        <p className="font-semibold text-slate-700 mb-1">{label}</p>
+      <div className="rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 shadow-sm text-xs space-y-1">
+        <p className="font-semibold text-zinc-900 dark:text-zinc-100 mb-1">{label}</p>
         {payload.map((p, i) => (
           <div key={i} className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full" style={{ background: p.color }} />
-            <span className="text-slate-500">{p.name}:</span>
-            <span className="font-semibold text-slate-800">{p.value}</span>
+            <span className="h-2 w-2 rounded-sm bg-emerald-500" />
+            <span className="text-zinc-500 dark:text-zinc-400">{p.name}:</span>
+            <span className="font-mono font-semibold text-zinc-900 dark:text-zinc-100">{p.value}</span>
           </div>
         ))}
       </div>
@@ -26,10 +26,10 @@ const ComparisionChart = ({ chartData }) => {
   const hasData = chartData.some((item) => item.Applications > 0);
 
   return (
-    <div className="h-full rounded-3xl border-2 border-slate-100 bg-white/70 backdrop-blur-sm p-5 shadow-lg shadow-slate-200/60 flex flex-col">
+    <div className="h-full rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 flex flex-col">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-slate-800">Application Activity</h3>
-        <p className="text-xs font-light text-slate-400 mt-0.5">MongoDB-tracked applications by month</p>
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Application Velocity</h3>
+        <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Tracked applications by month</p>
       </div>
 
       <div className="flex-1 min-h-[220px]">
@@ -37,21 +37,21 @@ const ComparisionChart = ({ chartData }) => {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="gradApplications" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4f46e5" stopOpacity={0.25} />
-                  <stop offset="95%" stopColor="#4f46e5" stopOpacity={0.02} />
+                <linearGradient id="gradApplicationsEmerald" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#71717a" strokeOpacity={0.15} vertical={false} />
               <XAxis
                 dataKey="name"
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
-                axisLine={false}
+                tick={{ fontSize: 11, fill: "#71717a" }}
+                axisLine={{ stroke: "#27272a", strokeOpacity: 0.2 }}
                 tickLine={false}
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fontSize: 11, fill: "#94a3b8" }}
+                tick={{ fontSize: 11, fill: "#71717a" }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -59,17 +59,17 @@ const ComparisionChart = ({ chartData }) => {
               <Area
                 type="monotone"
                 dataKey="Applications"
-                stroke="#4f46e5"
+                stroke="#10b981"
                 strokeWidth={2}
-                fill="url(#gradApplications)"
+                fill="url(#gradApplicationsEmerald)"
                 dot={false}
-                activeDot={{ r: 4, fill: "#4f46e5" }}
+                activeDot={{ r: 4, fill: "#10b981", strokeWidth: 0 }}
               />
             </AreaChart>
           </ResponsiveContainer>
         ) : (
           <div className="flex h-full items-center justify-center text-center">
-            <p className="text-sm text-slate-400">No application activity has been tracked yet this year.</p>
+            <p className="text-sm text-zinc-400 dark:text-zinc-500">No application activity has been tracked yet this year.</p>
           </div>
         )}
       </div>
@@ -78,3 +78,5 @@ const ComparisionChart = ({ chartData }) => {
 };
 
 export default ComparisionChart;
+
+

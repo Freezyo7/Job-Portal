@@ -8,7 +8,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
   const [callActive, setCallActive] = useState(false);
   const [listening, setListening] = useState(false);
   const [aiSpeaking, setAiSpeaking] = useState(false);
-  const [statusText, setStatusText] = useState("Select a job and start the interview");
+  const [statusText, setStatusText] = useState("Select a job and initiate interview stream");
   const [, setTranscript] = useState([]);
   const [, setQuestions] = useState([]);
 
@@ -34,7 +34,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
   // Send message to Gemini via backend
   const sendToAI = useCallback(
     async (userMessage) => {
-      setStatusText("AI is thinking...");
+      setStatusText("Synthesizing response...");
       try {
         const { data } = await api.post("/interview/chat", {
           message: userMessage,
@@ -64,16 +64,16 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
           { id: String(prev.length + 1).padStart(2, "0"), title: aiReply, answered: false },
         ]);
 
-        setStatusText("AI is speaking...");
+        setStatusText("Audio output active...");
         speak(aiReply, () => {
           if (callActiveRef.current) {
-            setStatusText("Your turn — click mic to speak");
+            setStatusText("Input stream ready — engage microphone");
           }
         });
       } catch (err) {
         console.error("AI error:", err);
         const is429 = err.response?.status === 429;
-        setStatusText(is429 ? "AI quota exceeded. Please try again later." : "Error reaching AI. Try again.");
+        setStatusText(is429 ? "Telemetry quota exceeded. Please retry shortly." : "Stream communication error.");
         if (is429) {
           callActiveRef.current = false;
           setCallActive(false);
@@ -88,7 +88,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Speech recognition not supported. Use Chrome.");
+      alert("Speech recognition not supported. Use Chrome or a WebSpeech-compatible browser.");
       return null;
     }
     const rec = new SpeechRecognition();
@@ -99,12 +99,12 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
     rec.onresult = (e) => {
       const said = e.results[0][0].transcript;
       setListening(false);
-      setStatusText(`You said: "${said}"`);
+      setStatusText(`User: "${said}"`);
       sendToAI(said);
     };
     rec.onerror = () => {
       setListening(false);
-      setStatusText("Mic error. Try again.");
+      setStatusText("Microphone signal failed. Re-try.");
     };
     rec.onend = () => setListening(false);
     return rec;
@@ -113,7 +113,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
   // Start call — AI greets first
   const startCall = useCallback(async () => {
     if (!selectedJob) {
-      setStatusText("Please select a job first from the Applied Jobs tab.");
+      setStatusText("Please select target posting from the Applied Jobs panel.");
       return;
     }
     callActiveRef.current = true;
@@ -121,7 +121,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
     historyRef.current = [];
     setTranscript([]);
     setQuestions([]);
-    setStatusText("Starting interview...");
+    setStatusText("Initializing audio session...");
     await sendToAI("Hello, I am ready for the interview.");
   }, [selectedJob, sendToAI]);
 
@@ -133,14 +133,14 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
     if (listening) {
       recognitionRef.current?.stop();
       setListening(false);
-      setStatusText("Your turn — click mic to speak");
+      setStatusText("Input stream ready — engage microphone");
     } else {
       const rec = setupRecognition();
       if (!rec) return;
       recognitionRef.current = rec;
       rec.start();
       setListening(true);
-      setStatusText("Listening...");
+      setStatusText("Listening for audio input...");
     }
   }, [callActive, aiSpeaking, listening, setupRecognition]);
 
@@ -151,7 +151,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
     setListening(false);
     synthRef.current.cancel();
     recognitionRef.current?.stop();
-    setStatusText("Generating summary...");
+    setStatusText("Compiling evaluation telemetry...");
 
     try {
       const { data } = await api.post("/interview/summary", {
@@ -168,7 +168,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
     } catch (err) {
       console.error("Summary error:", err);
       onCallEnd({
-        summary: "Summary could not be generated.",
+        summary: "Summary telemetry could not be compiled.",
         jobInfo: selectedJob,
         endedAt: new Date(),
         transcript: historyRef.current,
@@ -188,32 +188,32 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
   }, []);
 
   return (
-    <section className="overflow-hidden rounded-3xl bg-white shadow-lg shadow-slate-200/70">
+    <section className="overflow-hidden rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-none">
       {/* AI Avatar area */}
-      <div className="relative flex flex-col items-center justify-center h-64 md:h-80 bg-gradient-to-br from-[#eef2ff] to-[#f5f3ff]">
+      <div className="relative flex flex-col items-center justify-center h-60 md:h-72 bg-zinc-50 dark:bg-zinc-950/90 border-b border-zinc-200 dark:border-zinc-800">
         {/* AI avatar */}
         <div
-          className={`flex h-24 w-24 items-center justify-center rounded-full bg-[#4f46e5] text-white text-3xl font-bold shadow-xl transition-all duration-300 ${
-            aiSpeaking ? "ring-4 ring-[#4f46e5]/40 scale-110" : ""
+          className={`flex h-20 w-20 items-center justify-center rounded-lg bg-zinc-900 dark:bg-zinc-800 border border-zinc-700/80 text-emerald-400 font-mono text-xl font-bold transition-all duration-200 ${
+            aiSpeaking ? "ring-2 ring-emerald-500 scale-105" : ""
           }`}
         >
-          AI
+          AI_SYS
         </div>
-        <p className="mt-4 text-sm font-medium text-slate-700">
-          {selectedJob ? `${selectedJob.job_title} @ ${selectedJob.company_name}` : "No job selected"}
+        <p className="mt-3 text-xs font-semibold text-zinc-900 dark:text-zinc-100 font-mono">
+          {selectedJob ? `${selectedJob.job_title} @ ${selectedJob.company_name}` : "NO JOB SELECTED"}
         </p>
 
         {/* Status badge */}
-        <div className="mt-3 flex items-center gap-2 rounded-full bg-white/80 border border-slate-200 px-4 py-1.5 text-xs text-slate-600 shadow-sm">
+        <div className="mt-2.5 flex items-center gap-2 rounded bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3 py-1 text-[11px] font-mono text-zinc-600 dark:text-zinc-300">
           <span
-            className={`h-2 w-2 rounded-full ${
+            className={`h-1.5 w-1.5 rounded-full ${
               listening
-                ? "bg-red-500 animate-pulse"
+                ? "bg-rose-500 animate-ping"
                 : aiSpeaking
                 ? "bg-emerald-500 animate-pulse"
                 : callActive
-                ? "bg-blue-400"
-                : "bg-slate-300"
+                ? "bg-emerald-500"
+                : "bg-zinc-400 dark:bg-zinc-600"
             }`}
           />
           {statusText}
@@ -221,11 +221,11 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
 
         {/* Listening wave indicator */}
         {listening && (
-          <div className="mt-3 flex items-end gap-1 h-6">
+          <div className="mt-2.5 flex items-end gap-1 h-5">
             {[1, 2, 3, 4, 5].map((i) => (
               <span
                 key={i}
-                className="w-1 rounded-full bg-[#4f46e5]"
+                className="w-1 rounded-sm bg-emerald-500"
                 style={{
                   height: `${WAVE_HEIGHTS[i - 1]}px`,
                   animation: `bounce 0.${i + 3}s infinite alternate`,
@@ -237,22 +237,22 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50 px-6 py-4">
-        <div className="flex items-center gap-2 text-xs text-slate-500">
+      <div className="flex items-center justify-between bg-zinc-50/50 dark:bg-zinc-900 px-5 py-3">
+        <div className="flex items-center gap-2 text-xs font-mono text-zinc-500 dark:text-zinc-400">
           {callActive ? (
             <>
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Interview in progress
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              SESSION_ACTIVE
             </>
           ) : (
             <>
-              <span className="h-2 w-2 rounded-full bg-slate-300" />
-              Not started
+              <span className="h-1.5 w-1.5 rounded-full bg-zinc-400 dark:bg-zinc-600" />
+              SESSION_IDLE
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           {/* Mic toggle */}
           <IconButton
             kind={listening ? "danger" : "ghost"}
@@ -268,7 +268,7 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
           {!callActive ? (
             <button
               onClick={startCall}
-              className="flex items-center gap-2 rounded-full bg-[#4f46e5] px-5 py-2 text-sm font-medium text-white shadow hover:bg-[#4338ca] transition-colors"
+              className="flex items-center gap-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white transition-colors"
             >
               Start Interview
             </button>
@@ -284,3 +284,5 @@ const VoiceInterface = ({ selectedJob, onCallEnd }) => {
 };
 
 export default VoiceInterface;
+
+

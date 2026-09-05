@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashCards from "./DashbordComponents/DashCards";
 import ApplicationStatausChart from "./DashbordComponents/ApplicationStatausChart";
@@ -7,7 +7,7 @@ import api from "../lib/api";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-// ── Heatmap (same logic as MyApplication) ────────────────────────────────────
+// ── Heatmap (Theme 2 Zinc & Emerald) ─────────────────────────────────────────
 const WEEK_DAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -37,11 +37,11 @@ function buildHeatmapGrid(activityData, year) {
 
 function heatColor(count) {
   if (count === null) return "bg-transparent";
-  if (count === 0)    return "bg-slate-100";
-  if (count === 1)    return "bg-[#c7d2fe]";
-  if (count === 2)    return "bg-[#818cf8]";
-  if (count <= 4)     return "bg-[#6366f1]";
-  return "bg-[#4338ca]";
+  if (count === 0)    return "bg-zinc-100 dark:bg-zinc-800/80";
+  if (count === 1)    return "bg-emerald-200 dark:bg-emerald-950 border border-emerald-500/20";
+  if (count === 2)    return "bg-emerald-400 dark:bg-emerald-800";
+  if (count <= 4)     return "bg-emerald-500 dark:bg-emerald-600";
+  return "bg-emerald-600 dark:bg-emerald-500";
 }
 
 const ActivityHeatmap = ({ year }) => {
@@ -57,53 +57,56 @@ const ActivityHeatmap = ({ year }) => {
   const { weeks, monthLabels } = buildHeatmapGrid(activity, year);
   if (loading) return (
     <div className="flex items-center justify-center h-24">
-      <div className="flex gap-1.5">{[0,1,2].map(i=><span key={i} className="h-2 w-2 rounded-full bg-[#4f46e5] animate-bounce" style={{animationDelay:`${i*0.15}s`}}/>)}</div>
+      <div className="flex gap-1.5">{[0,1,2].map(i=><span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{animationDelay:`${i*0.15}s`}}/>)}</div>
     </div>
   );
   return (
     <div className="overflow-x-auto">
       <div className="inline-flex flex-col gap-1 min-w-max">
         <div className="flex gap-[3px] pl-8">
-          {weeks.map((_,wi)=>{const ml=monthLabels.find(m=>m.weekIndex===wi);return<div key={wi} className="w-3 text-[9px] text-slate-400 text-center">{ml?.label??""}</div>;})}
+          {weeks.map((_,wi)=>{const ml=monthLabels.find(m=>m.weekIndex===wi);return<div key={wi} className="w-3 text-[9px] font-mono text-zinc-400 dark:text-zinc-500 text-center">{ml?.label??""}</div>;})}
         </div>
         {[0,1,2,3,4,5,6].map(day=>(
           <div key={day} className="flex items-center gap-[3px]">
-            <span className="w-7 text-[9px] text-slate-400 text-right pr-1">{day%2===1?WEEK_DAYS[day]:""}</span>
+            <span className="w-7 text-[9px] font-mono text-zinc-400 dark:text-zinc-500 text-right pr-1">{day%2===1?WEEK_DAYS[day]:""}</span>
             {weeks.map((week,wi)=>{const cell=week[day];if(!cell)return<div key={wi} className="w-3 h-3 rounded-[2px] bg-transparent"/>;return<div key={wi} title={cell.inYear?`${cell.date}: ${cell.count} applied`:""} className={`w-3 h-3 rounded-[2px] transition-transform hover:scale-125 cursor-default ${heatColor(cell.count)}`}/>;})}</div>
         ))}
         <div className="flex items-center gap-1 justify-end pt-1">
-          <span className="text-[9px] text-slate-400">Less</span>
-          {["bg-slate-100","bg-[#c7d2fe]","bg-[#818cf8]","bg-[#6366f1]","bg-[#4338ca]"].map(c=><div key={c} className={`w-3 h-3 rounded-[2px] ${c}`}/>)}
-          <span className="text-[9px] text-slate-400">More</span>
+          <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500">Less</span>
+          {["bg-zinc-100 dark:bg-zinc-800/80","bg-emerald-200 dark:bg-emerald-950","bg-emerald-400 dark:bg-emerald-800","bg-emerald-500 dark:bg-emerald-600","bg-emerald-600 dark:bg-emerald-500"].map(c=><div key={c} className={`w-3 h-3 rounded-[2px] ${c}`}/>)}
+          <span className="text-[9px] font-mono text-zinc-400 dark:text-zinc-500">More</span>
         </div>
       </div>
     </div>
   );
 };
 
-// ── Streak cards ──────────────────────────────────────────────────────────────
+// ── Streak cards (Strict Monochromatic Theme 2) ─────────────────────────────
 const StreakCards = ({ stats }) => {
   if (!stats) return null;
   const cards = [
-    { label: "Current Streak", value: `${stats.current_streak} days`, sub: "Keep it going!", color: "text-orange-600", bg: "bg-orange-50", border: "border-orange-100" },
-    { label: "Longest Streak", value: `${stats.longest_streak} days`, sub: "Personal best",  color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-100" },
-    { label: "This Week",      value: stats.applied_this_week,        sub: "Mon – Sun",       color: "text-emerald-600",bg: "bg-emerald-50",border: "border-emerald-100"},
-    { label: "This Month",     value: stats.applied_this_month,       sub: "Calendar month",  color: "text-sky-600",    bg: "bg-sky-50",    border: "border-sky-100"    },
+    { label: "Current Streak", value: `${stats.current_streak} days`, sub: "Consecutive activity", badge: "Active" },
+    { label: "Longest Streak", value: `${stats.longest_streak} days`, sub: "Personal record", badge: "Best" },
+    { label: "This Week",      value: stats.applied_this_week,        sub: "Mon – Sun submissions", badge: "7d" },
+    { label: "This Month",     value: stats.applied_this_month,       sub: "Calendar month submissions", badge: "30d" },
   ];
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      {cards.map(({ label, value, sub, color, bg, border }) => (
-        <div key={label} className={`rounded-2xl border-2 ${border} ${bg} px-4 py-3`}>
-          <p className={`text-2xl font-bold ${color}`}>{value}</p>
-          <p className="text-xs font-medium text-slate-700 mt-0.5">{label}</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">{sub}</p>
+      {cards.map(({ label, value, sub, badge }) => (
+        <div key={label} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-3 transition-colors hover:border-zinc-300 dark:hover:border-zinc-700">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-medium text-zinc-600 dark:text-zinc-400">{label}</span>
+            <span className="text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700/60">{badge}</span>
+          </div>
+          <p className="text-2xl font-bold font-mono tracking-tight text-zinc-950 dark:text-zinc-50 mt-1">{value}</p>
+          <p className="text-[10px] text-zinc-400 dark:text-zinc-500 mt-0.5">{sub}</p>
         </div>
       ))}
     </div>
   );
 };
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+// ── Main Dashboard ────────────────────────────────────────────────────────────
 const Dashboard = () => {
   const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
@@ -128,7 +131,6 @@ const Dashboard = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  // DashCards expects status counts — Django has no status field, so every app is "Applied"
   const statusCounts = useMemo(() => ({
     Applied: applications.length,
     "Under Review": 0,
@@ -148,18 +150,18 @@ const Dashboard = () => {
   }, [applications]);
 
   if (loading) return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f3f4ff] via-[#f6f7ff] to-[#e9f0ff] flex items-center justify-center">
-      <div className="flex gap-1.5">{[0,1,2].map(i=><span key={i} className="h-2.5 w-2.5 rounded-full bg-[#4f46e5] animate-bounce" style={{animationDelay:`${i*0.15}s`}}/>)}</div>
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] flex items-center justify-center">
+      <div className="flex gap-1.5">{[0,1,2].map(i=><span key={i} className="h-2 w-2 rounded-full bg-emerald-500 animate-bounce" style={{animationDelay:`${i*0.15}s`}}/>)}</div>
     </div>
   );
 
   if (error) return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f3f4ff] via-[#f6f7ff] to-[#e9f0ff] px-4 py-6 md:px-8 lg:px-6 lg:py-5">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-8 lg:px-6 lg:py-5">
       <div className="mx-auto max-w-4xl">
-        <div className="rounded-3xl border-2 border-slate-200/80 bg-white/70 p-8 text-center shadow-xl">
-          <p className="text-base font-semibold text-slate-800">{error}</p>
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 text-center">
+          <p className="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{error}</p>
           {error.includes("log in") && (
-            <button onClick={() => navigate("/login")} className="mt-4 rounded-2xl bg-[#4f46e5] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#4338ca] transition-colors">
+            <button onClick={() => navigate("/login")} className="mt-4 rounded-md bg-emerald-600 dark:bg-emerald-500 px-4 py-2 text-xs font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 transition-colors">
               Go to Login
             </button>
           )}
@@ -169,25 +171,43 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f3f4ff] via-[#f6f7ff] to-[#e9f0ff] px-4 py-6 md:px-8 lg:px-6 lg:py-5 text-slate-900">
-      <div className="mx-auto max-w-6xl flex flex-col gap-6">
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] px-4 py-6 md:px-6 lg:px-8 text-zinc-900 dark:text-zinc-100 transition-colors">
+      <div className="mx-auto max-w-7xl flex flex-col gap-5">
 
+        {/* Header summary info */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-1 border-b border-zinc-200 dark:border-zinc-800/80">
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50">Telemetry & Activity</h1>
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">High-density application tracking and pipeline metrics</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-mono">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Live Sync
+            </span>
+          </div>
+        </div>
+
+        {/* 4 Metric Cards */}
         <DashCards statusCounts={statusCounts} totalApplications={stats?.total_applied ?? applications.length} />
 
-        {/* Streak cards */}
+        {/* 4 Streak Cards (strictly monochromatic) */}
         <StreakCards stats={stats} />
 
         {/* Activity heatmap */}
-        <div className="rounded-3xl border-2 border-slate-200/80 bg-white/60 backdrop-blur-sm shadow-lg shadow-slate-200/60 p-5">
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-slate-800">Application Activity — {currentYear}</h3>
-            <p className="text-[11px] text-slate-400 mt-0.5">GitHub-style contribution calendar</p>
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Application Velocity Heatmap — {currentYear}</h3>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Daily application distribution</p>
+            </div>
+            <span className="text-xs font-mono text-zinc-400 dark:text-zinc-500">{yearActivityTotal(applications, currentYear)} submissions</span>
           </div>
           <ActivityHeatmap year={currentYear} />
         </div>
 
         {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-1">
             <ApplicationStatausChart statusCounts={statusCounts} totalApplications={applications.length} />
           </div>
@@ -200,5 +220,13 @@ const Dashboard = () => {
     </div>
   );
 };
+
+function yearActivityTotal(applications, year) {
+  if (!Array.isArray(applications)) return 0;
+  return applications.filter(app => {
+    const d = new Date(app.applied_at);
+    return !isNaN(d.getTime()) && d.getFullYear() === year;
+  }).length;
+}
 
 export default Dashboard;

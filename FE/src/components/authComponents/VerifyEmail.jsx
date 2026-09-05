@@ -15,7 +15,7 @@ const VerifyEmail = () => {
   const [email] = useState(state?.email ?? "");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const [notice, setNotice] = useState(state?.email ? `We sent a code to ${state.email}` : "");
+  const [notice, setNotice] = useState(state?.email ? `Verification token dispatched to ${state.email}` : "");
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -30,7 +30,6 @@ const VerifyEmail = () => {
     setLoading(true);
     try {
       const { data } = await api.post("/auth/verify/", { email, code });
-      // Verifying also logs the user in, so go straight to the dashboard.
       setUser(data.user);
       navigate("/", { replace: true });
     } catch (err) {
@@ -52,8 +51,8 @@ const VerifyEmail = () => {
     } catch (err) {
       setError(
         err.response?.status === 429
-          ? "Too many requests. Please wait before requesting another code."
-          : err.response?.data?.message || "Could not resend the code."
+          ? "Rate limit exceeded. Please wait before re-requesting verification token."
+          : err.response?.data?.message || "Failed to dispatch token."
       );
     } finally {
       setResending(false);
@@ -61,37 +60,35 @@ const VerifyEmail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f3f4ff] via-[#f6f7ff] to-[#e9f0ff] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="rounded-3xl border-2 border-slate-200/80 bg-white/70 backdrop-blur-sm shadow-2xl shadow-slate-300/50 overflow-hidden">
-          <div className="h-1.5 w-full bg-[linear-gradient(135deg,#03001e,#7303c0,#ec38bc,#fdeff9)]" />
-
-          <div className="px-8 py-8">
-            <div className="mb-7 text-center">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef2ff] mb-3">
-                <span className="text-xl font-bold text-[#4f46e5]">C</span>
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#09090B] flex items-center justify-center px-4 transition-colors duration-150">
+      <div className="w-full max-w-sm">
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-none overflow-hidden">
+          <div className="p-6">
+            <div className="mb-6 text-center">
+              <div className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-zinc-900 dark:bg-zinc-800 border border-zinc-700 text-emerald-400 font-mono text-sm font-bold mb-2.5">
+                JB
               </div>
-              <h1 className="text-xl font-semibold text-slate-900">Verify your email</h1>
-              <p className="text-xs text-slate-400 mt-1">
-                Enter the {CODE_LENGTH}-digit code we sent you
+              <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">Email Verification</h1>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">
+                Input the {CODE_LENGTH}-digit cryptographic token
               </p>
             </div>
 
             {notice && !error && (
-              <div className="mb-4 rounded-2xl bg-emerald-50 border border-emerald-100 px-4 py-2.5 text-xs text-emerald-700">
+              <div className="mb-4 rounded-md bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 px-3 py-2 text-xs font-mono text-emerald-700 dark:text-emerald-300">
                 {notice}
               </div>
             )}
             {error && (
-              <div className="mb-4 rounded-2xl bg-red-50 border border-red-100 px-4 py-2.5 text-xs text-red-600">
+              <div className="mb-4 rounded-md bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 px-3 py-2 text-xs text-rose-600 dark:text-rose-300">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               <div>
-                <label htmlFor="code" className="block text-xs font-medium text-slate-600 mb-1.5">
-                  Verification code
+                <label htmlFor="code" className="block text-[11px] font-semibold uppercase tracking-wider text-zinc-600 dark:text-zinc-400 mb-1">
+                  Verification Code
                 </label>
                 <input
                   ref={inputRef}
@@ -100,49 +97,48 @@ const VerifyEmail = () => {
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   value={code}
-                  // Strip non-digits so pasting "482 913" still works.
                   onChange={(e) =>
                     setCode(e.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH))
                   }
                   placeholder="000000"
                   required
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white/80 text-center text-2xl tracking-[0.5em] font-semibold text-slate-800 placeholder:text-slate-200 placeholder:tracking-[0.5em] focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/10 transition-all"
+                  className="w-full px-3 py-2 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 text-center text-xl tracking-[0.4em] font-mono font-bold text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-300 dark:placeholder:text-zinc-700 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20"
                 />
-                <p className="mt-1.5 text-[11px] text-slate-400">
-                  The code expires in 15 minutes.
+                <p className="mt-1 text-[10px] font-mono text-zinc-400 dark:text-zinc-500">
+                  TOKEN EXPIRES IN 15 MINUTES
                 </p>
               </div>
 
               <button
                 type="submit"
                 disabled={loading || code.length !== CODE_LENGTH}
-                className="w-full rounded-2xl bg-[#4f46e5] py-2.5 text-sm font-medium text-white hover:bg-[#4338ca] transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full rounded-md bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 py-2 text-xs font-semibold text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
-                    <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                    Verifying...
+                    <span className="h-3.5 w-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    Validating...
                   </>
-                ) : "Verify email"}
+                ) : "Verify Token"}
               </button>
             </form>
 
-            <div className="mt-6 text-center space-y-2">
-              <p className="text-xs text-slate-400">
-                Didn't get it?{" "}
+            <div className="mt-5 text-center space-y-1.5">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Token not received?{" "}
                 <button
                   type="button"
                   onClick={handleResend}
                   disabled={resending}
-                  className="font-medium text-[#4f46e5] hover:underline disabled:opacity-60"
+                  className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline disabled:opacity-60"
                 >
-                  {resending ? "Sending..." : "Resend code"}
+                  {resending ? "Dispatching..." : "Resend Token"}
                 </button>
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Wrong address?{" "}
-                <Link to="/signup" className="font-medium text-[#4f46e5] hover:underline">
-                  Sign up again
+                <Link to="/signup" className="font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+                  Register again
                 </Link>
               </p>
             </div>
@@ -154,3 +150,5 @@ const VerifyEmail = () => {
 };
 
 export default VerifyEmail;
+
+
