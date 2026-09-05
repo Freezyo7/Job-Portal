@@ -68,6 +68,7 @@ def cold_start(keyword="data engineering"):
     params = {
         "noOfResults": 20, "urlType": "search_by_keyword", "searchType": "adv",
         "keyword": keyword, "k": keyword, "pageNo": 1,
+        "experience": 2,
         "seoKey": seo, "src": "jobsearchDesk",
     }
     headers = {
@@ -131,6 +132,7 @@ def main():
         params = {
             "noOfResults": 20, "urlType": "search_by_keyword", "searchType": "adv",
             "keyword": keyword, "k": keyword, "pageNo": 1,
+            "experience": 2,
             "seoKey": f"{keyword.replace(' ', '-')}-jobs", "src": "jobsearchDesk",
         }
 

@@ -67,6 +67,8 @@ class NaukriScraper:
     CITIES = ["noida", "greater noida", "delhi / ncr"]
     # jobAge in days; 1 = posted in the last 24h. None drops the filter.
     FRESHNESS_DAYS = 1
+    # Years of experience filter (e.g. 2). None drops the filter.
+    EXPERIENCE = 2
 
     # Raw keywords — requests handles the URL encoding.
     DOMAIN ={
@@ -211,10 +213,12 @@ class NaukriScraper:
     
 
     def scrap_job(self, keyword, page_no=1,
-                  cities=None, freshness: int | None = None, remote: bool = False):
+                  cities=None, freshness: int | None = None, remote: bool = False,
+                  experience: int | None = None):
 
         cities = self.CITIES if cities is None else cities
         freshness = self.FRESHNESS_DAYS if freshness is None else freshness
+        experience = self.EXPERIENCE if experience is None else experience
 
         params = {
             "noOfResults": 20,
@@ -234,6 +238,8 @@ class NaukriScraper:
             params["jobAge"] = freshness
         if remote:
             params["wfhType"] = 2
+        if experience is not None:
+            params["experience"] = experience
 
         # Without the app identity headers the API answers
         # 406 {"message": "recaptcha required"} even with a valid token.
@@ -403,14 +409,16 @@ class NaukriScraper:
     # ------------------------------------------------------------------
 
     def fetch_jobs(self, keyword: str, pages: int = 1, cities=None,
-                   freshness: int | None = None, remote: bool = False) -> list[NaukriJob]:
+                   freshness: int | None = None, remote: bool = False,
+                   experience: int | None = None) -> list[NaukriJob]:
         """Search `keyword` across `pages` pages and return parsed listings."""
         jobs: list[NaukriJob] = []
         seen: set[str] = set()
 
         for page_no in range(1, pages + 1):
             data = self.scrap_job(keyword, page_no, cities=cities,
-                                  freshness=freshness, remote=remote)
+                                  freshness=freshness, remote=remote,
+                                  experience=experience)
             if not data:
                 break
 
@@ -440,7 +448,8 @@ class NaukriScraper:
         return jobs
 
     def run(self, keywords=None, pages: int = 2, cities=None,
-            freshness: int | None = None) -> dict[str, list[NaukriJob]]:
+            freshness: int | None = None,
+            experience: int | None = None) -> dict[str, list[NaukriJob]]:
         """Bootstrap one browser session, then scrape every keyword."""
         if isinstance(keywords, str):
             keywords = [keywords]
@@ -458,7 +467,8 @@ class NaukriScraper:
             for kw in keywords:
                 print(f"\n=== {kw} (remote) ===")
                 remote_jobs = self.fetch_jobs(kw, pages=pages, cities=cities,
-                                              freshness=freshness, remote=True)
+                                              freshness=freshness, remote=True,
+                                              experience=experience)
                 for job in remote_jobs:
                     job.is_remote = True
                 for job in remote_jobs[:3]:
@@ -467,7 +477,8 @@ class NaukriScraper:
 
                 print(f"\n=== {kw} (all) ===")
                 all_jobs = self.fetch_jobs(kw, pages=pages, cities=cities,
-                                           freshness=freshness, remote=False)
+                                           freshness=freshness, remote=False,
+                                           experience=experience)
                 for job in all_jobs[:3]:
                     print(f"     {job.title} | {job.company} | {job.location}")
                 time.sleep(1)
