@@ -58,13 +58,13 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile Menu Button (Hamburger) */}
+      {/* Mobile Menu Button */}
       <button
         className="fixed top-3 left-3 z-50 p-2 rounded-xl border shadow-sm lg:hidden"
         style={{
-          backgroundColor: "var(--nt-bg-card)",
-          borderColor: "var(--nt-border)",
-          color: "var(--nt-text-primary)",
+          backgroundColor: "var(--bg-card)",
+          borderColor: "var(--border)",
+          color: "var(--text-primary)",
         }}
         onClick={() => setIsOpen(!isOpen)}
         aria-label="Toggle menu"
@@ -72,34 +72,33 @@ const Sidebar = () => {
         {isOpen ? "✕" : "☰"}
       </button>
 
-      {/* Overlay for mobile view */}
+      {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
           onClick={() => setIsOpen(false)}
-        ></div>
+        />
       )}
 
-      {/* Sidebar container - always fixed and full-height h-screen */}
+      {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 transform flex-col border-r transition-transform duration-150 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}
+        className={`fixed inset-y-0 left-0 z-50 flex h-screen w-64 transform flex-col transition-transform duration-150 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } lg:translate-x-0`}
         style={{
-          backgroundColor: "var(--nt-bg-sidebar)",
-          borderColor: "var(--nt-border)",
+          backgroundColor: "var(--bg-sidebar)",
+          borderRight: "1px solid var(--border)",
         }}
       >
-        {/* Header */}
+        {/* Brand header */}
         <div
-          className="h-16 px-4 border-b flex items-center justify-between flex-shrink-0"
-          style={{ borderColor: "var(--nt-border)" }}
+          className="h-16 px-4 flex items-center justify-between flex-shrink-0"
+          style={{ borderBottom: "1px solid var(--border)" }}
         >
           <div className="flex items-center gap-2.5">
             <div
-              className="h-8 w-8 rounded-xl flex items-center justify-center font-bold text-sm shadow-xs"
+              className="h-8 w-8 rounded-xl flex items-center justify-center font-bold text-sm"
               style={{
-                backgroundColor: "var(--nt-accent-sage)",
+                background: "linear-gradient(135deg, var(--green-dark), var(--green-medium))",
                 color: "#FFFFFF",
               }}
             >
@@ -107,7 +106,7 @@ const Sidebar = () => {
             </div>
             <span
               className="font-bold text-base tracking-tight"
-              style={{ color: "var(--nt-text-primary)" }}
+              style={{ color: "var(--text-primary)" }}
             >
               Career Hub
             </span>
@@ -115,48 +114,51 @@ const Sidebar = () => {
           <ThemeToggle variant="button" className="h-8 w-8 text-xs rounded-xl" />
         </div>
 
-        {/* Navigation list */}
+        {/* Navigation */}
         <nav className="flex flex-1 flex-col overflow-y-auto px-3.5 py-4 z-10">
           {navSections.map((section) => (
             <div key={section.label} className="mb-5">
-              {/* Section Label */}
+              {/* Section label */}
               <h3
-                className="text-[10px] font-bold uppercase tracking-wider px-2.5 mb-1.5 font-mono"
-                style={{ color: "var(--nt-text-muted)" }}
+                className="px-2.5 mb-1.5"
+                style={{
+                  color: "#81796B",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
               >
                 {section.label}
               </h3>
 
-              {/* Section Items */}
-              <div className="flex flex-col space-y-1">
+              {/* Items */}
+              <div className="flex flex-col space-y-0.5">
                 {section.items.map((item) => (
                   <NavLink
                     key={item.name}
                     to={item.path}
-                    target="_self"
-                    className={({ isActive }) =>
-                      `relative flex items-center px-3 py-2 rounded-xl text-xs transition-all font-medium`
-                    }
+                    className="relative flex items-center px-3 py-2 rounded-xl text-xs transition-all font-medium"
                     style={({ isActive }) =>
                       isActive
                         ? {
-                            backgroundColor: "rgba(78, 124, 97, 0.12)",
-                            color: "var(--nt-accent-sage)",
-                            fontWeight: "600",
-                          }
+                          background: "linear-gradient(90deg, #DDE8DC 0%, #E8EADF 100%)",
+                          color: "#315E4A",
+                          fontWeight: "600",
+                          borderLeft: "2.5px solid #2F7A5A",
+                        }
                         : {
-                            color: "var(--nt-text-secondary)",
-                          }
+                          color: "var(--text-secondary)",
+                          borderLeft: "2.5px solid transparent",
+                        }
                     }
                     onClick={() => setIsOpen(false)}
                   >
                     {({ isActive }) => (
                       <>
                         <span
-                          className="mr-3 text-base flex-shrink-0"
-                          style={{
-                            color: isActive ? "var(--nt-accent-sage)" : "var(--nt-text-secondary)",
-                          }}
+                          className="mr-3 flex-shrink-0"
+                          style={{ color: isActive ? "#39735A" : "var(--text-muted)" }}
                         >
                           {item.icon}
                         </span>
@@ -170,47 +172,42 @@ const Sidebar = () => {
           ))}
         </nav>
 
-        {/* Real botanical leaf PNG illustration — pinned to bottom corner */}
-        <div className="pointer-events-none absolute bottom-16 left-0 w-full overflow-hidden z-0 flex items-end justify-start">
+        {/* Botanical leaf illustration */}
+        <div className="pointer-events-none absolute bottom-[109px] left-0 w-full h-[360px] overflow-hidden z-0 flex items-end justify-start">
           <img
             src={leafPng}
             alt=""
             aria-hidden="true"
-            className="sidebar-leaf-art w-56 -ml-1 -mb-1 select-none pointer-events-none"
+            className="sidebar-leaf-art w-[150%] max-w-none -ml-4 -mb-2 select-none pointer-events-none object-contain origin-bottom-left"
             draggable={false}
+            style={{ opacity: 0.28 }}
           />
         </div>
 
-        {/* Signed-in user + logout (pinned at bottom) */}
+        {/* User section */}
         <div
-          className="border-t p-3.5 space-y-2 z-10 flex-shrink-0"
+          className="p-3.5 space-y-2 z-10 flex-shrink-0"
           style={{
-            borderColor: "var(--nt-border)",
-            backgroundColor: "var(--nt-bg-sidebar)",
+            borderTop: "1px solid var(--border)",
+            backgroundColor: "var(--bg-sidebar)",
           }}
         >
           <div className="flex items-center gap-2.5 px-1 py-1">
             <div
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold border shadow-xs"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold border"
               style={{
-                backgroundColor: "var(--nt-bg-card)",
-                borderColor: "var(--nt-border)",
-                color: "var(--nt-text-primary)",
+                backgroundColor: "var(--bg-card)",
+                borderColor: "var(--border)",
+                color: "var(--text-primary)",
               }}
             >
               {((user?.username?.[0] ?? "N")).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p
-                className="truncate text-xs font-bold"
-                style={{ color: "var(--nt-text-primary)" }}
-              >
+              <p className="truncate text-xs font-bold" style={{ color: "var(--text-primary)" }}>
                 {user?.username || "Nishant"}
               </p>
-              <p
-                className="truncate text-[10px]"
-                style={{ color: "var(--nt-text-muted)" }}
-              >
+              <p className="truncate text-[10px]" style={{ color: "var(--text-muted)" }}>
                 {user?.email || "nishantsingh27022004@gmail.com"}
               </p>
             </div>
@@ -219,9 +216,7 @@ const Sidebar = () => {
             type="button"
             onClick={handleLogout}
             className="flex w-full items-center rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors hover:opacity-80"
-            style={{
-              color: "var(--nt-text-secondary)",
-            }}
+            style={{ color: "var(--text-secondary)" }}
           >
             <MdLogout className="mr-2 text-base" />
             Log out

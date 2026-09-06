@@ -2,64 +2,128 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── Nature theme tokens ────────────────────────────────────────────────── */
+/* ── Complete Design Token System ─────────────────────────────────────────── */
 :root {
   font-size: 16px;
   color-scheme: light;
 
-  /* Light mode — Warm Cream backdrop, Pure White cards */
-  --nt-bg-primary:    #F8F5ED;   /* Warm Cream */
-  --nt-bg-secondary:  #F2EBE0;   /* soft sand surface */
-  --nt-bg-card:       #FFFFFF;   /* Surface: Card White */
-  --nt-bg-card-alt:   #F0EAE1;   /* input / inset */
-  --nt-border:        #E8E2D5;   /* minimal soft clean border */
-  --nt-border-subtle: #F0EAE1;   /* subtle inner border */
-  --nt-text-primary:  #1F2937;   /* dark primary text */
-  --nt-text-secondary:#6B7280;   /* muted secondary text */
-  --nt-text-muted:    #9CA3AF;   /* soft sand-grey */
-  --nt-accent-sage:   #4E7C61;   /* Sage Green primary */
-  --nt-accent-gold:   #B86F47;   /* Earthy Brown secondary */
-  --nt-btn-cta-text:  #FFFFFF;   /* text on button */
-  --nt-bg-cta-hover:  #A25E38;   /* Earthy Brown hover */
-  --nt-btn-sec-bg:    #F2EBE0;   /* secondary button bg */
-  --nt-btn-sec-hover: #E5DED0;   /* secondary button hover */
-  --nt-bg-cta-section:#EFE9DD;   /* CTA banner bg */
-  --nt-bg-sidebar:    #F4EFE6;   /* warm sand sidebar */
-  --nt-bg-badge:      #EFEAE1;   /* tag / pill background */
-  --nt-shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.04);
-  --nt-shadow-md:     0 4px 16px rgba(0, 0, 0, 0.06);
+  /* Backgrounds */
+  --bg-page:      #F4F1E8;
+  --bg-sidebar:   #F3F0E7;
+  --bg-card:      #FAF8F2;
+  --bg-soft:      #F7F4EC;
+
+  /* Text */
+  --text-primary:   #26383A;
+  --text-secondary: #5F655F;
+  --text-muted:     #817D74;
+  --text-faint:     #9A958B;
+
+  /* Borders */
+  --border:         #DED7C8;
+  --border-light:   #E9E4DA;
+  --border-hover:   #BFD2C2;
+
+  /* Green palette */
+  --green-dark:     #2F7A5A;
+  --green:          #4F8B6C;
+  --green-medium:   #5C9478;
+  --green-light:    #DCE9DE;
+  --green-pale:     #E7EFE7;
+
+  /* Gold palette */
+  --gold-dark:      #A97835;
+  --gold:           #B98B49;
+  --gold-light:     #F3E9D7;
+  --gold-pale:      #F8F0E2;
+
+  /* Shadows */
+  --shadow-sm:  0 4px 12px rgba(86, 75, 52, 0.04), 0 12px 30px rgba(86, 75, 52, 0.03);
+  --shadow-md:  0 10px 30px rgba(86, 75, 52, 0.05);
+  --shadow-lg:  0 20px 50px rgba(86, 75, 52, 0.06);
+
+  /* Legacy aliases (keep for backward compat) */
+  --nt-bg-primary:    var(--bg-page);
+  --nt-bg-secondary:  #EDE9DE;
+  --nt-bg-card:       var(--bg-card);
+  --nt-bg-card-alt:   var(--bg-soft);
+  --nt-border:        var(--border);
+  --nt-border-subtle: var(--border-light);
+  --nt-text-primary:  var(--text-primary);
+  --nt-text-secondary:var(--text-secondary);
+  --nt-text-muted:    var(--text-muted);
+  --nt-accent-sage:   var(--green-dark);
+  --nt-accent-gold:   var(--gold-dark);
+  --nt-btn-cta-text:  #FFFFFF;
+  --nt-bg-cta-hover:  #235E42;
+  --nt-btn-sec-bg:    var(--bg-soft);
+  --nt-btn-sec-hover: #EDE8DE;
+  --nt-bg-cta-section:#E4EDE5;
+  --nt-bg-sidebar:    var(--bg-sidebar);
+  --nt-bg-badge:      #F2EDE2;
+  --nt-shadow-sm:     var(--shadow-sm);
+  --nt-shadow-md:     var(--shadow-md);
 }
 
 html.dark {
   color-scheme: dark;
 
-  /* Dark mode — deep forest / muted teal / elevated surfaces */
-  --nt-bg-primary:    #111C15;   /* deep forest backdrop */
-  --nt-bg-secondary:  #18281E;   /* muted teal surface */
-  --nt-bg-card:       #192B20;   /* elevated deep forest card */
-  --nt-bg-card-alt:   #21382A;   /* input / inset surface */
-  --nt-border:        #294433;   /* minimal subtle border */
-  --nt-border-subtle: #203628;   /* subtle inner border */
-  --nt-text-primary:  #F3F4F6;   /* clean bright cream */
-  --nt-text-secondary:#A8B4A8;   /* soft muted sage */
-  --nt-text-muted:    #788A7D;   /* muted teal-grey */
-  --nt-accent-sage:   #6FAF7B;   /* organic sage green */
-  --nt-accent-gold:   #DCA376;   /* warm muted earthy */
-  --nt-btn-cta-text:  #111C15;   /* text on gold button */
-  --nt-bg-cta-hover:  #E8B790;   /* hover */
-  --nt-btn-sec-bg:    #21382A;   /* secondary button */
-  --nt-btn-sec-hover: #2B4836;   /* secondary hover */
-  --nt-bg-cta-section:#1D3124;   /* deep earthy contrast */
-  --nt-bg-sidebar:    #101A13;   /* deep forest sidebar */
-  --nt-bg-badge:      #21382A;   /* badge pill */
-  --nt-shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.25);
-  --nt-shadow-md:     0 4px 16px rgba(0, 0, 0, 0.35);
+  --bg-page:      #111C15;
+  --bg-sidebar:   #101A13;
+  --bg-card:      #192B20;
+  --bg-soft:      #21382A;
+
+  --text-primary:   #F3F4F6;
+  --text-secondary: #A8B4A8;
+  --text-muted:     #788A7D;
+  --text-faint:     #5E6E62;
+
+  --border:         #294433;
+  --border-light:   #203628;
+  --border-hover:   #3A6B4E;
+
+  --green-dark:     #6FAF7B;
+  --green:          #4F8B6C;
+  --green-medium:   #5C9478;
+  --green-light:    #1E3B29;
+  --green-pale:     #162A1D;
+
+  --gold-dark:      #DCA376;
+  --gold:           #C59A55;
+  --gold-light:     #382615;
+  --gold-pale:      #2A1C0E;
+
+  --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.45);
+
+  /* Legacy aliases */
+  --nt-bg-primary:    var(--bg-page);
+  --nt-bg-secondary:  #18281E;
+  --nt-bg-card:       var(--bg-card);
+  --nt-bg-card-alt:   var(--bg-soft);
+  --nt-border:        var(--border);
+  --nt-border-subtle: var(--border-light);
+  --nt-text-primary:  var(--text-primary);
+  --nt-text-secondary:var(--text-secondary);
+  --nt-text-muted:    var(--text-muted);
+  --nt-accent-sage:   var(--green-dark);
+  --nt-accent-gold:   var(--gold-dark);
+  --nt-btn-cta-text:  #111C15;
+  --nt-bg-cta-hover:  #E8B790;
+  --nt-btn-sec-bg:    var(--bg-soft);
+  --nt-btn-sec-hover: #2B4836;
+  --nt-bg-cta-section:#1D3124;
+  --nt-bg-sidebar:    var(--bg-sidebar);
+  --nt-bg-badge:      var(--bg-soft);
+  --nt-shadow-sm:     var(--shadow-sm);
+  --nt-shadow-md:     var(--shadow-md);
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background-color: var(--nt-bg-primary);
-  color: var(--nt-text-primary);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   transition: background-color 0.15s, color 0.15s;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -69,23 +133,22 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--nt-border);
+  background: var(--border);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--nt-text-muted);
+  background: var(--text-muted);
 }
 
 /* ── Botanical leaf watermark in sidebar ─────────────────────────────────── */
 .sidebar-leaf-art {
   mix-blend-mode: multiply;
-  opacity: 0.75;
+  opacity: 0.28;
   transition: opacity 0.2s ease;
 }
 
 html.dark .sidebar-leaf-art {
   mix-blend-mode: screen;
-  opacity: 0.22;
-  filter: invert(1) hue-rotate(180deg) brightness(1.2);
+  opacity: 0.18;
+  filter: invert(1) hue-rotate(180deg) brightness(1.1);
 }
-

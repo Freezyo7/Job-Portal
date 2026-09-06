@@ -40,11 +40,12 @@ function buildHeatmapGrid(activityData, year) {
 
 function heatColorStyle(count) {
   if (count === null) return { backgroundColor: "transparent" };
-  if (count === 0)    return { backgroundColor: "#EFE9DD" };
-  if (count === 1)    return { backgroundColor: "#CADDCF" };
-  if (count === 2)    return { backgroundColor: "#7BB88E" };
-  if (count <= 4)     return { backgroundColor: "#4E7C61" };
-  return { backgroundColor: "#8D5B2F" };
+  if (count === 0)    return { backgroundColor: "#EEEAE0", border: "1px solid #DED7C8" };
+  if (count === 1)    return { backgroundColor: "#DCE8DD" };
+  if (count === 2)    return { backgroundColor: "#AFCDB6" };
+  if (count <= 4)     return { backgroundColor: "#78A68A" };
+  if (count <= 6)     return { backgroundColor: "#41795D" };
+  return { backgroundColor: "#A97937" };
 }
 
 const ActivityHeatmap = ({ year }) => {
@@ -151,26 +152,24 @@ const ActivityHeatmap = ({ year }) => {
   );
 };
 
-// ── Mini bar sparkline (used in streak cards) matching UI Breakdown ────────────
+// ── Mini bar chart for streak cards ──────────────────────────────────────────
 const MiniBarChart = ({ color = "#4E7C61" }) => {
-  const bars = [35, 65, 45, 95];
+  // 5 bars with increasing heights matching target image
+  const bars = [25, 45, 35, 65, 95];
   return (
-    <div className="flex items-end gap-[3px] h-5 mb-0.5">
+    <div className="flex items-end gap-[2.5px] h-[22px]">
       {bars.map((h, i) => (
         <div
           key={i}
-          className="w-[3px] rounded-t-sm transition-all"
-          style={{
-            height: `${h}%`,
-            backgroundColor: color,
-          }}
+          className="w-[3px] rounded-sm"
+          style={{ height: `${h}%`, backgroundColor: color }}
         />
       ))}
     </div>
   );
 };
 
-// ── Streak cards matching UI Breakdown ───────────────────────────────────────
+// ── Streak / Activity KPI cards — HORIZONTAL LAYOUT matching target image ─────
 const StreakCards = ({ stats }) => {
   const safeStats = stats || {
     current_streak: 1,
@@ -184,92 +183,118 @@ const StreakCards = ({ stats }) => {
       label: "Current Streak",
       value: `${safeStats.current_streak ?? 1} days`,
       sub: "Consecutive activity",
-      icon: <HiOutlineFire size={16} />,
-      iconBg: "bg-[#F6E9D8] text-[#B86F47] dark:bg-[#382615] dark:text-[#FBBF24]",
+      icon: <HiOutlineFire size={18} />,
+      iconBg: "#F4EBDD",
+      iconColor: "#A77A37",
       badge: "Active",
-      badgeClass: "bg-[#DCEDE1] text-[#2F7B4C] dark:bg-[#1E3B29] dark:text-[#6FAF7B]",
-      chartColor: "#4E7C61",
-      cardBg: "bg-[#FAF6F0] dark:bg-[#231C16]",
-      cardBorder: "border-[#EFE5D6] dark:border-[#382C1F]",
+      badgeBg: "#E1ECE2",
+      badgeColor: "#47745B",
+      chartColor: "#4F8B6C",
+      cardBg: "#FAF8F2",
+      cardBorder: "#E2DCCD",
     },
     {
       label: "Longest Streak",
       value: `${safeStats.longest_streak ?? 1} days`,
       sub: "Personal record",
-      icon: <RiTrophyLine size={16} />,
-      iconBg: "bg-[#F6E9D8] text-[#B86F47] dark:bg-[#382615] dark:text-[#FBBF24]",
+      icon: <RiTrophyLine size={18} />,
+      iconBg: "#F4EBDD",
+      iconColor: "#A77A37",
       badge: "Best",
-      badgeClass: "bg-[#F9EBD8] text-[#A65E36] dark:bg-[#382615] dark:text-[#FBBF24]",
-      chartColor: "#4E7C61",
-      cardBg: "bg-[#FAF6F0] dark:bg-[#231C16]",
-      cardBorder: "border-[#EFE5D6] dark:border-[#382C1F]",
+      badgeBg: "#F5F0E5",
+      badgeColor: "#8D7A58",
+      chartColor: "#B98B49",
+      cardBg: "#FAF8F2",
+      cardBorder: "#E2DCCD",
     },
     {
       label: "This Week",
       value: safeStats.applied_this_week ?? 46,
       sub: "Mon – Sun submissions",
-      icon: <BsCalendar3 size={15} />,
-      iconBg: "bg-[#E2EFE6] text-[#4E7C61] dark:bg-[#1E3B29] dark:text-[#6FAF7B]",
+      icon: <BsCalendar3 size={16} />,
+      iconBg: "#E1ECE2",
+      iconColor: "#39745A",
       badge: "7d",
-      badgeClass: "bg-[#EFE8DC] text-[#7C7567] dark:bg-[#233A2C] dark:text-[#A8B4A8]",
-      chartColor: "#4E7C61",
-      cardBg: "bg-[#F4F8F5] dark:bg-[#15271D]",
-      cardBorder: "border-[#DEEBE1] dark:border-[#223E2D]",
+      badgeBg: "#F5F0E5",
+      badgeColor: "#8D7A58",
+      chartColor: "#4F8B6C",
+      cardBg: "#FAF8F2",
+      cardBorder: "#E2DCCD",
     },
     {
       label: "This Month",
       value: safeStats.applied_this_month ?? 46,
       sub: "Calendar month submissions",
-      icon: <BsCalendar3 size={15} />,
-      iconBg: "bg-[#E2EFE6] text-[#4E7C61] dark:bg-[#1E3B29] dark:text-[#6FAF7B]",
+      icon: <BsCalendarMonth size={16} />,
+      iconBg: "#E1ECE2",
+      iconColor: "#39745A",
       badge: "30d",
-      badgeClass: "bg-[#EFE8DC] text-[#7C7567] dark:bg-[#233A2C] dark:text-[#A8B4A8]",
-      chartColor: "#4E7C61",
-      cardBg: "bg-[#F4F8F5] dark:bg-[#15271D]",
-      cardBorder: "border-[#DEEBE1] dark:border-[#223E2D]",
+      badgeBg: "#F5F0E5",
+      badgeColor: "#8D7A58",
+      chartColor: "#4F8B6C",
+      cardBg: "#FAF8F2",
+      cardBorder: "#E2DCCD",
     },
   ];
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map(({ label, value, sub, icon, iconBg, badge, badgeClass, chartColor, cardBg, cardBorder }) => (
+      {cards.map(({ label, value, sub, icon, iconBg, iconColor, badge, badgeBg, badgeColor, chartColor, cardBg, cardBorder }) => (
         <div
           key={label}
-          className={`rounded-2xl border p-4.5 flex flex-col justify-between transition-all duration-200 hover:shadow-md ${cardBg} ${cardBorder}`}
+          className="rounded-2xl border px-4 py-3.5 flex items-center gap-3.5 transition-all duration-200 hover:shadow-md"
           style={{
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.03)",
+            backgroundColor: cardBg,
+            borderColor: cardBorder,
+            boxShadow: "0 4px 12px rgba(86,75,52,0.04), 0 12px 30px rgba(86,75,52,0.03)",
           }}
         >
-          {/* Top row: Icon + Label on left, Badge on right */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className={`h-7 w-7 rounded-lg flex items-center justify-center ${iconBg}`}>
-                {icon}
-              </span>
-              <span className="text-[13px] font-semibold tracking-tight text-[#1F2937] dark:text-[#F3F4F6]">
-                {label}
-              </span>
-            </div>
-            <span
-              className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full ${badgeClass}`}
-            >
-              {badge}
-            </span>
+          {/* Left: Icon */}
+          <div
+            className="flex-shrink-0 rounded-xl flex items-center justify-center"
+            style={{
+              width: 44,
+              height: 44,
+              backgroundColor: iconBg,
+              color: iconColor,
+              border: "1px solid rgba(218,207,187,0.55)",
+              boxShadow: "0 4px 12px rgba(95,77,45,0.04)",
+            }}
+          >
+            {icon}
           </div>
 
-          {/* Value */}
-          <p
-            className="text-2xl font-bold font-mono tracking-tight leading-none text-[#1F2937] dark:text-[#F3F4F6] mt-2.5 mb-1.5"
-          >
-            {value}
-          </p>
+          {/* Middle: Label + Value + Subtitle */}
+          <div className="flex-1 min-w-0">
+            {/* Label + Badge row */}
+            <div className="flex items-center justify-between mb-0.5">
+              <span className="text-[12px] font-semibold truncate pr-1" style={{ color: "#26383A" }}>
+                {label}
+              </span>
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+                style={{
+                  backgroundColor: badgeBg,
+                  color: badgeColor,
+                  border: "1px solid #E4DAC6",
+                }}
+              >
+                {badge}
+              </span>
+            </div>
 
-          {/* Subtitle + Mini Bar Chart */}
-          <div className="flex items-end justify-between mt-2 pt-1">
-            <p className="text-[11px] text-[#6B7280] dark:text-[#9CA3AF]">
-              {sub}
+            {/* Value */}
+            <p className="text-[22px] font-bold font-mono leading-tight tracking-tight" style={{ color: "#263A3B" }}>
+              {value}
             </p>
-            <MiniBarChart color={chartColor} />
+
+            {/* Subtitle + Bar chart row */}
+            <div className="flex items-end justify-between mt-0.5">
+              <p className="text-[11px] truncate pr-2" style={{ color: "#817D74" }}>
+                {sub}
+              </p>
+              <MiniBarChart color={chartColor} />
+            </div>
           </div>
         </div>
       ))}
@@ -367,82 +392,100 @@ const Dashboard = () => {
   return (
     <div
       className="min-h-screen px-6 py-6 md:px-8 transition-colors"
-      style={{ backgroundColor: "var(--nt-bg-primary)", color: "var(--nt-text-primary)" }}
+      style={{ backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}
     >
       <div className="mx-auto max-w-[1400px] flex flex-col gap-5">
 
-        {/* ── Header ── */}
+        {/* ══ Telemetry & Activity container box ══ */}
         <div
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b"
-          style={{ borderColor: "var(--nt-border)" }}
+          className="rounded-2xl border px-5 pt-5 pb-6 flex flex-col gap-4"
+          style={{
+            background: "rgba(255, 253, 248, 0.45)",
+            border: "1px solid rgba(226, 220, 205, 0.7)",
+            boxShadow: "0 10px 40px rgba(91, 77, 50, 0.04)",
+          }}
         >
-          <div>
-            <h1 className="text-[28px] font-semibold tracking-tight leading-tight" style={{ color: "var(--nt-text-primary)" }}>
-              Telemetry &amp; Activity
-            </h1>
-            <p className="text-sm mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>
-              High-density application tracking and pipeline metrics
-            </p>
-          </div>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-medium transition-all hover:opacity-90"
-              style={{
-                backgroundColor: "var(--nt-bg-card)",
-                borderColor: "var(--nt-border)",
-                color: "var(--nt-text-primary)",
-                boxShadow: "var(--nt-shadow-sm)",
-              }}
-            >
-              <BsCalendar3 size={13} style={{ color: "var(--nt-text-secondary)" }} />
-              <span>{dateRangeLabel}</span>
-              <BsChevronDown size={11} style={{ color: "var(--nt-text-secondary)" }} />
-            </button>
+          {/* ── Header ── */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h1 className="text-[26px] font-semibold tracking-tight leading-tight" style={{ color: "#26383A" }}>
+                Telemetry &amp; Activity
+              </h1>
+              <p className="text-sm mt-0.5" style={{ color: "#5F655F" }}>
+                High-density application tracking and pipeline metrics
+              </p>
+            </div>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium transition-all hover:opacity-90"
+                style={{
+                  backgroundColor: "#FAF8F2",
+                  border: "1px solid #DDD5C6",
+                  color: "#626760",
+                  boxShadow: "0 4px 10px rgba(70, 60, 40, 0.03)",
+                }}
+              >
+                <BsCalendar3 size={13} style={{ color: "#69736B" }} />
+                <span>{dateRangeLabel}</span>
+                <BsChevronDown size={11} style={{ color: "#69736B" }} />
+              </button>
 
-            {/* Live Sync indicator matching UI Breakdown */}
-            <div
-              className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl border bg-[#EAF6EE] dark:bg-[#183022] border-[#C6E8D1] dark:border-[#274834]"
-            >
-              <span className="h-2 w-2 rounded-full bg-[#34A853] animate-pulse" />
-              <div className="flex flex-col text-left">
-                <span className="text-[11px] font-bold leading-tight text-[#236B3B] dark:text-[#6FAF7B]">
-                  Live Sync
-                </span>
-                <span className="text-[9px] leading-tight text-[#558465] dark:text-[#8BAF93]">
-                  Last synced 2 min ago
-                </span>
+              {/* Live Sync indicator */}
+              <div
+                className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl border"
+                style={{
+                  background: "linear-gradient(135deg, #EAF1E8, #DCE8DD)",
+                  borderColor: "#D2DFD1",
+                }}
+              >
+                <span
+                  className="h-2 w-2 rounded-full animate-pulse"
+                  style={{
+                    backgroundColor: "#3D8A64",
+                    boxShadow: "0 0 0 6px rgba(61, 138, 100, 0.10)",
+                  }}
+                />
+                <div className="flex flex-col text-left">
+                  <span className="text-[11px] font-bold leading-tight" style={{ color: "#365E49" }}>
+                    Live Sync
+                  </span>
+                  <span className="text-[9px] leading-tight" style={{ color: "#5C8A6E" }}>
+                    Last synced 2 min ago
+                  </span>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* 4 Metric KPI Cards */}
+          <DashCards statusCounts={statusCounts} totalApplications={totalApps} />
+
+          {/* 4 Streak / Activity Cards */}
+          <StreakCards stats={stats} />
         </div>
-
-        {/* 4 Metric Cards (Top Row) */}
-        <DashCards statusCounts={statusCounts} totalApplications={totalApps} />
-
-        {/* 4 Streak Cards (Second Row) */}
-        <StreakCards stats={stats} />
 
         {/* ── Activity Heatmap ── */}
         <div
           className="rounded-2xl border p-5 transition-all hover:shadow-md"
           style={{
-            backgroundColor: "var(--nt-bg-card)",
-            borderColor: "var(--nt-border)",
-            boxShadow: "var(--nt-shadow-sm)",
+            backgroundColor: "#FAF8F2",
+            borderColor: "#E2DCCD",
+            boxShadow: "0 4px 12px rgba(86,75,52,0.04), 0 12px 30px rgba(86,75,52,0.03)",
           }}
         >
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-sm font-semibold tracking-tight" style={{ color: "var(--nt-text-primary)" }}>
+              <h3 className="text-sm font-semibold tracking-tight" style={{ color: "#26383A" }}>
                 Application Velocity Heatmap — {currentYear}
               </h3>
-              <p className="text-xs mt-0.5" style={{ color: "var(--nt-text-secondary)" }}>
+              <p className="text-xs mt-0.5" style={{ color: "#817D74" }}>
                 Daily application distribution
               </p>
             </div>
             <span
-              className="text-xs font-semibold px-3 py-1 rounded-full bg-[#EFEAE1] dark:bg-[#21382A] text-[#6B7280] dark:text-[#A8B4A8]"
+              className="text-xs font-semibold px-3 py-1 rounded-full"
+              style={{ backgroundColor: "#F2EDE2", color: "#817D74" }}
             >
               {yearActivityTotal(applications, currentYear) || totalApps} submissions
             </span>
