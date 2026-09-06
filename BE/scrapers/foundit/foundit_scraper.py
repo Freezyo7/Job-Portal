@@ -16,7 +16,13 @@ import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
-import requests
+try:
+    from curl_cffi import requests
+    USE_CURL_CFFI = True
+except ImportError:
+    import requests
+    USE_CURL_CFFI = False
+
 from dotenv import load_dotenv
 
 from scrapers.common import clean_html, to_text
@@ -78,13 +84,18 @@ class FounditScraper:
 
     def __init__(self, delay: float = 1.0):
         self.delay = delay
-        self.session = requests.Session()
+        if USE_CURL_CFFI:
+            self.session = requests.Session(impersonate="chrome124")
+        else:
+            self.session = requests.Session()
+            self.session.headers.update({
+                "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                               "AppleWebKit/537.36 (KHTML, like Gecko) "
+                               "Chrome/131.0.0.0 Safari/537.36"),
+                "Accept": "*/*",
+                "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
+            })
         self.session.headers.update({
-            "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                           "AppleWebKit/537.36 (KHTML, like Gecko) "
-                           "Chrome/151.0.0.0 Safari/537.36"),
-            "Accept": "*/*",
-            "Accept-Language": "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
             # Identifies the Foundit tenant; present on every API call.
             "x-source-site-context": "rexmonster",
             "sec-fetch-dest": "empty",
@@ -344,22 +355,18 @@ class FounditScraper:
         try:
             resp = self.session.get(self.SEARCH_URL, params=params,
                                     headers=headers, timeout=20)
-            resp.raise_for_status()
-            return resp.json()
-        except requests.HTTPError as e:
-            status = e.response.status_code if e.response is not None else "?"
-            body = e.response.text[:200] if e.response is not None else ""
+            status = getattr(resp, "status_code", 0)
             if status in (401, 403):
                 print(f"[x] search rejected: {status} — MSSOAT may be stale, or "
                       "Akamai flagged the request")
-            else:
+                return None
+            elif status >= 400:
+                body = resp.text[:200] if hasattr(resp, "text") else ""
                 print(f"[x] search failed: {status} {body}")
-            return None
-        except requests.RequestException as e:
+                return None
+            return resp.json()
+        except Exception as e:
             print(f"[x] search failed: {e}")
-            return None
-        except ValueError:
-            print("[x] search returned a non-JSON body")
             return None
 
     def run(self, keywords=None, pages: int = 2, cities=None,
