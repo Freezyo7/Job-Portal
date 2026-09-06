@@ -20,15 +20,17 @@ function AppShell() {
   const showSidebar = !isNoSidebarPage && !isLandingRoot && !!user;
 
   return (
-    <div className="min-h-screen flex bg-[#FAFAFA] dark:bg-[#09090B] text-[#09090B] dark:text-[#FAFAFA] transition-colors duration-150">
-      {showSidebar && (
-        <div>
-          <Sidebar />
-        </div>
-      )}
-      <div className={showSidebar ? "lg:ml-64 flex-1" : "flex-1"}>
+    <div
+      className="min-h-screen flex transition-colors duration-150"
+      style={{
+        backgroundColor: "var(--nt-bg-primary)",
+        color: "var(--nt-text-primary)",
+      }}
+    >
+      {showSidebar && <Sidebar />}
+      <main className={showSidebar ? "lg:ml-64 flex-1 min-w-0 flex flex-col" : "flex-1 min-w-0 flex flex-col"}>
         <Router />
-      </div>
+      </main>
     </div>
   );
 }
