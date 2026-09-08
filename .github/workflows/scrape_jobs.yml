@@ -101,7 +101,7 @@ jobs:
           # LinkedIn is excluded: it revokes sessions used from GitHub's
           # datacenter IPs, so it has to run from a trusted machine instead.
           # To include it again: python main.py --all
-          python main.py --all --source apna
+          python main.py --all --source foundit --source naukri --source instahyre --source hirist --source unstop --source apna
 
       - name: Upload scraper debug snapshots
         if: always()
