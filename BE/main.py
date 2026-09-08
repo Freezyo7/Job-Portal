@@ -27,6 +27,7 @@ from scrapers.instahyre import InstahyreScraper  # noqa: E402
 from scrapers.linkedin import LinkedInScraper  # noqa: E402
 from scrapers.naukri import NaukriScraper  # noqa: E402
 from scrapers.unstop import UnstopScraper  # noqa: E402
+from scrapers.apna import ApnaScraper  # noqa: E402
 
 # Every keyword we search for, across all sources.
 DOMAINS = [
@@ -193,6 +194,18 @@ def _linkedin_source(_keywords):
     }
 
 
+APNA_LOCATION = "Delhi-NCR"
+
+
+def _apna_source(keywords):
+    """Apna uses free-text keyword search across its production API."""
+    return ApnaScraper, ", ".join(keywords), {
+        "keywords": keywords,
+        "pages": PAGES,
+        "location": APNA_LOCATION,
+    }
+
+
 SOURCES = {
     "foundit":   _keyword_source(FounditScraper, FOUNDIT_CITIES),
     "naukri":    _keyword_source(NaukriScraper, NAUKRI_CITIES),
@@ -200,6 +213,7 @@ SOURCES = {
     "hirist":    _hirist_source,
     "unstop":    _unstop_source,
     "linkedin":  _linkedin_source,
+    "apna":      _apna_source,
 }
 
 

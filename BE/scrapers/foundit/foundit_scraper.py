@@ -15,6 +15,7 @@ import os
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from urllib.parse import quote
 
 try:
     from curl_cffi import requests
@@ -25,7 +26,7 @@ except ImportError:
 
 from dotenv import load_dotenv
 
-from scrapers.common import clean_html, to_text
+from scrapers.common import clean_html, dump_debug_snapshot, to_text
 
 load_dotenv()
 
@@ -114,6 +115,10 @@ class FounditScraper:
             if client:
                 self.session.cookies.set("MSSOCLIENT", client, domain=".foundit.in")
 
+        self._pw = None
+        self._browser = None
+        self._page = None
+
     # ------------------------------------------------------------------
     # Auth
     # ------------------------------------------------------------------
@@ -159,6 +164,109 @@ class FounditScraper:
             return json.loads(base64.urlsafe_b64decode(part))
         except Exception:
             return None
+
+    # ------------------------------------------------------------------
+    # Browser bootstrap (Akamai)
+    # ------------------------------------------------------------------
+    # curl_cffi's TLS impersonation is not enough on its own: Akamai Bot
+    # Manager also checks for `_abck`/`bm_sz`/`ak_bmsc` sensor cookies that
+    # only get minted by real JS execution in a browser. We load one search
+    # page once per run to earn those cookies, then reuse them on the fast
+    # curl_cffi session for the actual paginated calls — falling back to
+    # running the fetch from inside the live page if a call still 403s.
+
+    def bootstrap(self, keyword: str = "software developer") -> bool:
+        from playwright.sync_api import sync_playwright
+
+        seo_key = f"{keyword.replace(' ', '-')}-jobs"
+        search_url = f"{self.BASE_URL}/search/{seo_key}"
+
+        is_headless = os.getenv("HEADLESS", "false").lower() in ("true", "1", "yes")
+        self._pw = sync_playwright().start()
+        self._browser = self._pw.chromium.launch(
+            headless=is_headless,
+            args=["--disable-blink-features=AutomationControlled"],
+        )
+
+        ctx = self._browser.new_context(
+            user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/131.0.0.0 Safari/537.36"),
+            locale="en-IN",
+            viewport={"width": 1440, "height": 900},
+        )
+        ctx.add_init_script(
+            "Object.defineProperty(navigator, 'webdriver', { get: () => undefined });")
+
+        # Seed the seeker identity before the first load so Akamai's JS
+        # challenge runs against an authenticated session, same as prod.
+        if self.mssoat:
+            cookies = [{"name": "MSSOAT", "value": self.mssoat,
+                        "domain": ".foundit.in", "path": "/"}]
+            client = os.getenv("FOUNDIT_MSSOCLIENT")
+            if client:
+                cookies.append({"name": "MSSOCLIENT", "value": client,
+                                "domain": ".foundit.in", "path": "/"})
+            ctx.add_cookies(cookies)
+
+        page = ctx.new_page()
+        try:
+            page.goto(search_url, wait_until="domcontentloaded", timeout=90000)
+            page.wait_for_timeout(6000)
+        except Exception as e:
+            print(f"[x] bootstrap navigation failed: {e}")
+            dump_debug_snapshot(page, "foundit", "bootstrap_nav_failed")
+            self._teardown()
+            return False
+
+        for c in ctx.cookies():
+            self.session.cookies.set(c["name"], c["value"], domain=c["domain"])
+
+        self._page = page
+        print(f"[ok] bootstrapped browser session ({len(ctx.cookies())} cookies)")
+        return True
+
+    def _teardown(self) -> None:
+        try:
+            if getattr(self, "_browser", None):
+                self._browser.close()
+            if getattr(self, "_pw", None):
+                self._pw.stop()
+        except Exception:
+            pass
+        # Clear the handles so a second bootstrap() doesn't leak this browser.
+        self._browser = None
+        self._pw = None
+        self._page = None
+
+    def _fetch_in_browser(self, params: dict) -> dict | None:
+        """Replay the search call as a fetch() inside the live page.
+
+        Cookies and referer come from the page itself, which is why this
+        succeeds where the out-of-page curl_cffi call gets 403'd — Akamai
+        is scoring the sensor data attached to this exact browser session.
+        """
+        parts = []
+        for k, v in params.items():
+            if isinstance(v, (list, tuple)):
+                parts.extend(f"{k}={quote(str(i))}" for i in v)
+            else:
+                parts.append(f"{k}={quote(str(v))}")
+        qs = "&".join(parts)
+
+        result = self._page.evaluate(
+            """async ({url, qs}) => {
+                const r = await fetch(url + "?" + qs, {
+                    headers: {"x-source-site-context": "rexmonster"}
+                });
+                return {status: r.status, body: await r.text()};
+            }""",
+            {"url": self.SEARCH_URL, "qs": qs},
+        )
+        if result["status"] != 200:
+            print(f"[x] in-page: {result['status']} {result['body'][:150]}")
+            return None
+        return json.loads(result["body"])
 
     # ------------------------------------------------------------------
     # Parsing
@@ -356,6 +464,9 @@ class FounditScraper:
             resp = self.session.get(self.SEARCH_URL, params=params,
                                     headers=headers, timeout=20)
             status = getattr(resp, "status_code", 0)
+            if status == 403 and self._page:
+                print("[x] search rejected: 403 — retrying inside browser")
+                return self._fetch_in_browser(params)
             if status in (401, 403):
                 print(f"[x] search rejected: {status} — MSSOAT may be stale, or "
                       "Akamai flagged the request")
@@ -379,14 +490,20 @@ class FounditScraper:
             keywords = [keywords]
         keywords = keywords or list(self.DOMAIN.values())
 
+        if not self.bootstrap(keywords[0]):
+            return {}
+
         results: dict[str, list[FounditJob]] = {}
-        for kw in keywords:
-            print(f"\n=== {kw} ===")
-            results[kw] = self.fetch_jobs(kw, pages=pages, cities=cities,
-                                          freshness=freshness)
-            for job in results[kw][:3]:
-                print(f"     {job.title} | {job.company} | {job.location}")
-            time.sleep(self.delay)
+        try:
+            for kw in keywords:
+                print(f"\n=== {kw} ===")
+                results[kw] = self.fetch_jobs(kw, pages=pages, cities=cities,
+                                              freshness=freshness)
+                for job in results[kw][:3]:
+                    print(f"     {job.title} | {job.company} | {job.location}")
+                time.sleep(self.delay)
+        finally:
+            self._teardown()
 
         total = sum(len(v) for v in results.values())
         print(f"\n[ok] {total} jobs across {len(results)} keywords")
