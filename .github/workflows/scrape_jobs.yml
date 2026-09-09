@@ -95,6 +95,7 @@ jobs:
           FOUNDIT_MSSOCLIENT: ${{ secrets.FOUNDIT_MSSOCLIENT }}
           INSTAHYRE_EMAIL: ${{ secrets.INSTAHYRE_EMAIL }}
           INSTAHYRE_PASSWORD: ${{ secrets.INSTAHYRE_PASSWORD }}
+          APNA_TOKEN: ${{ secrets.APNA_TOKEN }}
         run: |
           echo "DISPLAY is $DISPLAY"
           # LinkedIn is excluded: it revokes sessions used from GitHub's
