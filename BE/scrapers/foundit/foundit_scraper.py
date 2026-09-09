@@ -239,13 +239,44 @@ class FounditScraper:
         self._pw = None
         self._page = None
 
-    def _fetch_in_browser(self, params: dict) -> dict | None:
+    def _re_navigate(self, keyword: str) -> bool:
+        """Navigate the live Playwright page to a search URL for `keyword`.
+
+        This re-runs Akamai's JS challenge against the current browser
+        session, producing fresh sensor cookies (_abck, bm_sz, ak_bmsc).
+        After navigation the curl_cffi session is updated so the next
+        out-of-page request has a fighting chance too.
+        """
+        seo_key = f"{keyword.replace(' ', '-')}-jobs"
+        url = f"{self.BASE_URL}/search/{seo_key}"
+        try:
+            self._page.goto(url, wait_until="domcontentloaded", timeout=90000)
+            self._page.wait_for_timeout(6000)
+        except Exception as e:
+            print(f"[x] re-navigate failed: {e}")
+            return False
+
+        # Refresh the curl_cffi session with the new cookies.
+        for c in self._page.context.cookies():
+            self.session.cookies.set(c["name"], c["value"], domain=c["domain"])
+        print(f"[ok] re-navigated browser to {seo_key}")
+        return True
+
+    def _fetch_in_browser(self, params: dict, keyword: str = "") -> dict | None:
         """Replay the search call as a fetch() inside the live page.
 
         Cookies and referer come from the page itself, which is why this
         succeeds where the out-of-page curl_cffi call gets 403'd — Akamai
         is scoring the sensor data attached to this exact browser session.
+
+        Before the fetch, the page is re-navigated to the search URL for
+        `keyword` so Akamai's JS challenge runs fresh and the sensor
+        cookies are guaranteed to be valid.
         """
+        # Re-navigate to earn fresh Akamai sensor cookies.
+        if keyword and not self._re_navigate(keyword):
+            return None
+
         parts = []
         for k, v in params.items():
             if isinstance(v, (list, tuple)):
@@ -466,7 +497,7 @@ class FounditScraper:
             status = getattr(resp, "status_code", 0)
             if status == 403 and self._page:
                 print("[x] search rejected: 403 — retrying inside browser")
-                return self._fetch_in_browser(params)
+                return self._fetch_in_browser(params, keyword=keyword)
             if status in (401, 403):
                 print(f"[x] search rejected: {status} — MSSOAT may be stale, or "
                       "Akamai flagged the request")
